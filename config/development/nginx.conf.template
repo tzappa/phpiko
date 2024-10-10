@@ -25,7 +25,7 @@ server {
 
 	## cache all images, css, js files and do not let them in index.php
 	location ~* \.(swf|jpg|jpeg|png|gif|ico|css|js)$ {
-		expires            1h;
+		expires            -1;
 		log_not_found      on;
 	}
 
