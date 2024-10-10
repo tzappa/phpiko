@@ -1,0 +1,7 @@
+log/*
+tmp/*
+vendor/*
+.*
+_*
+!*/.gitkeep
+!.gitignore
