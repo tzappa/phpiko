@@ -1,0 +1,20 @@
+{
+    "name": "tzappa/phpiko",
+    "description": "Short description goes here",
+    "type": "project",
+    "require": {
+        "php": ">=8.2",
+        "psr/container": "^2.0",
+        "psr/log": "^3.0"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "PHPiko\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
