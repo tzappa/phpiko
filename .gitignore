@@ -3,7 +3,8 @@ tmp/*
 vendor/*
 config/development/*
 config/production/*
+!config/*/*.template
 .*
-_*
 !*.gitkeep
 !.gitignore
+_*
