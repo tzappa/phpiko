@@ -1,0 +1,52 @@
+## NGINX configuration for a development environment
+
+## www to non-www redirect - duplicate content is bad
+server {
+	## listen on the www host
+	server_name        www.phpiko.loc;
+
+	# and redirect to the non-www host
+	return             301 $scheme://$srvname.loc$request_uri;
+}
+
+## the non-www host
+server {
+	server_name        phpiko.loc;
+	listen             80;
+
+	root               /var/www/phpiko/public;
+	index              index.php;
+	autoindex          off;
+
+	## custom error log (per site)
+	error_log          /var/www/phpiko/log/nginx-error.log error;
+	## no access log for development
+	access_log         off;
+
+	## cache all images, css, js files and do not let them in index.php
+	location ~* \.(swf|jpg|jpeg|png|gif|ico|css|js)$ {
+		expires            1h;
+		log_not_found      on;
+	}
+
+	location ~ \.php$ {
+		fastcgi_param      SCRIPT_FILENAME $document_root/index.php;
+		include            snippets/fastcgi-php.conf;
+		fastcgi_pass       unix:/run/php/php8.3-fpm.sock;
+
+		## Define some custom parameters that will be available throw $_SERVER in PHP
+		fastcgi_param      APPLICATION_ENV development;
+	}
+
+	## deny access to .htaccess files
+	location ~ /\.ht {
+		deny               all;
+	}
+
+	location / {
+        # auth_basic             "Under construction";
+        # auth_basic_user_file   /var/www/phpiko/www/.htpasswd;
+
+		try_files          $uri /index.php?$args;
+	}
+}
