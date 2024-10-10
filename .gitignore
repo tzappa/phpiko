@@ -1,7 +1,9 @@
 log/*
 tmp/*
 vendor/*
+config/development/*
+config/production/*
 .*
 _*
-!*/.gitkeep
+!*.gitkeep
 !.gitignore
