@@ -61,15 +61,14 @@ $request = ServerRequestFactory::fromGlobals();
 try {
     $result = $router->dispatch($request);
 } catch (NotFoundException $e) {
-    $result = new TextResponse($e->getMessage(), 404);
-} catch (UnauthorizedException $e) {
-    $returnTo = (string) $this->request->getUri();
-    $loginUrl = $this->getNamedRoute('login')->getPath();
-    $result = new RedirectResponse("{$loginUrl}?return={$returnTo}", 302);
+    $result = new TextResponse('Not Found', 404);
+    $app->logger->warning($e->getMessage(), ['exception' => $e]);
 } catch (HttpException $e) {
-    $result = new TextResponse($e->getMessage(), $e->getCode());
+    $result = new TextResponse('An error occurred', $e->getCode());
+    $app->logger->error($e->getMessage(), ['exception' => $e]);
 } catch (Exception $e) {
-    $result = new TextResponse($e->getMessage(), 500);
+    $result = new TextResponse('Internal Server Error', 500);
+    $app->logger->critical($e->getMessage(), ['exception' => $e]);
 }
 
 (new SapiEmitter)->emit($result);
