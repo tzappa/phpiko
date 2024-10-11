@@ -128,7 +128,7 @@ class Router implements RouterInterface
         if ($name) {
             // check the name exists
             if (key_exists($name, $this->routes)) {
-                throw new InvalidArgumentException("Route name `{$name}` already exists");
+                throw new InvalidArgumentException("Route name '{$name}' already exists");
             }
             // add the route to the list of routes
             $this->routes[$name] = $route;
