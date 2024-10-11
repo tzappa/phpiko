@@ -8,6 +8,7 @@ namespace PHPiko\Http;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use InvalidArgumentException;
 
 trait MiddlewareTrait
 {
@@ -65,7 +66,7 @@ trait MiddlewareTrait
             return $middleware->process($request, new CallbackRequestHandler($handler));
         }
 
-        throw new \InvalidArgumentException('Invalid middleware');
+        throw new InvalidArgumentException('Invalid middleware');
     }
 
     private function appendMiddleware($middleware): self

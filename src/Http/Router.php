@@ -7,6 +7,7 @@ namespace PHPiko\Http;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use InvalidArgumentException;
 
 class Router implements RouterInterface
 {
@@ -116,7 +117,7 @@ class Router implements RouterInterface
     {
         // check if the route name exists
         if (!key_exists($name, $this->routes)) {
-            throw new \InvalidArgumentException('Route name not found: ' . $name);
+            throw new InvalidArgumentException('Route name not found: ' . $name);
         }
 
         return $this->routes[$name]->buildPath($params);
@@ -127,7 +128,7 @@ class Router implements RouterInterface
         if ($name) {
             // check the name exists
             if (key_exists($name, $this->routes)) {
-                throw new \InvalidArgumentException("Route name `{$name}` already exists");
+                throw new InvalidArgumentException("Route name `{$name}` already exists");
             }
             // add the route to the list of routes
             $this->routes[$name] = $route;
