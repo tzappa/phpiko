@@ -117,7 +117,7 @@ class Router implements RouterInterface
     {
         // check if the route name exists
         if (!key_exists($name, $this->routes)) {
-            throw new InvalidArgumentException('Route name not found: ' . $name);
+            throw new InvalidArgumentException("Route name not found: {$name}");
         }
 
         return $this->routes[$name]->buildPath($params);

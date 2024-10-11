@@ -94,7 +94,7 @@ class Route implements RequestHandlerInterface
             // check the value matches the parameter regex
             if (!empty($this->regexParams[$key])) {
                 if (!preg_match('~^' . $this->regexParams[$key] . '$~', $value)) {
-                    throw new InvalidArgumentException('Invalid param value for ' . $key . ': ' . $value);
+                    throw new InvalidArgumentException("Invalid param value for {$key}: {$value}");
                 }
                 $path = str_replace('{' . $key . ':' . $this->regexParams[$key] . '}', $value, $path);
             } else {
