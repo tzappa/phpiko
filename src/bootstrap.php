@@ -9,6 +9,8 @@ use PHPiko\Config\Factory as ConfigFactory;
 use PHPiko\Config\ConfigInterface;
 use PHPiko\Container\Container;
 use PHPiko\Logger\FileLogger;
+use PHPiko\Http\Router;
+use Laminas\Diactoros\ServerRequestFactory;
 use Psr\Log\LoggerInterface;
 
 // Load Composer's autoloader
@@ -38,3 +40,18 @@ $app->logger = function () use ($app): LoggerInterface {
 };
 
 $app->logger->debug('Application started');
+
+// Router
+$router = new Router();
+$router->map('GET', '/', function () {
+    return 'Hello, World!';
+});
+$router->map('GET', '/hello/{name}', function ($request) {
+    $name = $request->getAttribute('name');
+    return 'Hello, ' . $name . '!';
+});
+
+// Dispatch the request
+$request = ServerRequestFactory::fromGlobals();
+$res = $router->dispatch($request);
+dump($res);
