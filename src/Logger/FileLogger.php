@@ -378,6 +378,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
 
     private function formatMessage($level, $message, array $context)
     {
+        $unprocessedContext = [];
         if ($this->interpolatePlaceholders && (count($context) > 0) && (strpos($message, '{') !== false)) {
             $message = $this->interpolate($message, $context, $unprocessedContext);
             if ($this->removeInterpolatedContext) {

@@ -8,6 +8,7 @@ namespace PHPiko\Http;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
+use InvalidArgumentException;
 
 class Route implements RequestHandlerInterface
 {
@@ -54,7 +55,7 @@ class Route implements RequestHandlerInterface
     public function __construct(string $method, string $path, $handler)
     {
         if (empty($method)) {
-            throw new \InvalidArgumentException('Accept method cannot be empty');
+            throw new InvalidArgumentException('Accept method cannot be empty');
         }
         if ($method !== '*') { // accept all methods
             $this->acceptedMethods = explode('|', $method);
@@ -93,7 +94,7 @@ class Route implements RequestHandlerInterface
             // check the value matches the parameter regex
             if (!empty($this->regexParams[$key])) {
                 if (!preg_match('~^' . $this->regexParams[$key] . '$~', $value)) {
-                    throw new \InvalidArgumentException('Invalid param value for ' . $key . ': ' . $value);
+                    throw new InvalidArgumentException('Invalid param value for ' . $key . ': ' . $value);
                 }
                 $path = str_replace('{' . $key . ':' . $this->regexParams[$key] . '}', $value, $path);
             } else {
@@ -102,7 +103,7 @@ class Route implements RequestHandlerInterface
         }
         // throw an exception if there are any params left
         if (preg_match_all($this->paramCatchRegEx, $path, $matches)) {
-            throw new \InvalidArgumentException('Missing params: ' . implode(', ', $matches[1]));
+            throw new InvalidArgumentException('Missing params: ' . implode(', ', $matches[1]));
         }
 
         return $path;
