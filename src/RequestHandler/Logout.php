@@ -26,8 +26,7 @@ final class Logout implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        session_start();
-        session_destroy();
+        $this->session->clear();
         return new RedirectResponse('/');
     }
 }

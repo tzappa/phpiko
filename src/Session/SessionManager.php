@@ -4,6 +4,12 @@ namespace PHPiko\Session;
 
 use RuntimeException;
 
+use function session_status;
+use function session_start;
+use function session_destroy;
+use function session_unset;
+use function ini_set;
+
 class SessionManager implements SessionInterface
 {
     public function __construct()
@@ -57,5 +63,4 @@ class SessionManager implements SessionInterface
             $_SESSION = [];
         }
     }
-
 }

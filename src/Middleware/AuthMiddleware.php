@@ -34,7 +34,7 @@ final class AuthMiddleware implements MiddlewareInterface
         }
         
         // attach user to the request
-        $request = $request->withAttribute('user', ['username' => $_SESSION['username']]);
+        $request = $request->withAttribute('user', ['username' => $username]);
 
         return $handler->handle($request);
     }
