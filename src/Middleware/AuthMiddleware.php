@@ -7,6 +7,7 @@
 
 namespace PHPiko\Middleware;
 
+use PHPiko\Session\SessionInterface;
 use PHPiko\Http\Exception\UnauthorizedException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -15,18 +16,25 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class AuthMiddleware implements MiddlewareInterface
 {
+    private SessionInterface $session;
+
+    public function __construct(SessionInterface $session)
+    {
+        $this->session = $session;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-
-        session_start();
-        if (empty($_SESSION['username'])) {
+        $username = $this->session->get('username');
+        if ($username === null) {
             throw new UnauthorizedException('You are not authorized to access this page');
         }
-        // attach username to request
-        $request = $request->withAttribute('username', $_SESSION['username']);
+        
+        // attach user to the request
+        $request = $request->withAttribute('user', ['username' => $_SESSION['username']]);
 
         return $handler->handle($request);
     }

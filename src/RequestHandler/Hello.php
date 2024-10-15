@@ -17,7 +17,8 @@ final class Hello implements RequestHandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $name = $_SESSION['username'];
+        $user = $request->getAttribute('user');
+        $username = $user['username'] ?? null;
         $html = <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -25,7 +26,7 @@ final class Hello implements RequestHandlerInterface
     <title>Hello</title>
 </head>
 <body>
-    <h1>Hello, {$name}!</h1>
+    <h1>Hello, {$username}!</h1>
     <p><a href="/logout">Logout</a></p>
 </body>
 </html>
