@@ -10,8 +10,15 @@ use PHPiko\Config\ConfigInterface;
 use PHPiko\Container\Container;
 use PHPiko\Logger\FileLogger;
 use PHPiko\Http\Router;
+use PHPiko\Http\LazyMiddleware;
 use PHPiko\Http\Exception\NotFoundException;
+use PHPiko\Http\Exception\UnauthorizedException;
 use PHPiko\Http\HttpException;
+use PHPiko\Middleware\AuthMiddleware;
+use PHPiko\RequestHandler\Home;
+use PHPiko\RequestHandler\Hello;
+use PHPiko\RequestHandler\Login;
+use PHPiko\RequestHandler\Logout;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Response\TextResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
@@ -46,12 +53,25 @@ $app->logger = function () use ($app): LoggerInterface {
 
 // Router
 $router = new Router();
+// Public routes
 $router->map('GET', '/', function ($request) {
-    $requestHandler = new RequestHandler\Home();
+    $requestHandler = new Home();
     return $requestHandler->handle($request);
 });
-$router->map('GET', '/hello/{name}', function ($request) {
-    $requestHandler = new RequestHandler\Hello();
+$router->map('*', '/login', function ($request) {
+    $requestHandler = new Login();
+    return $requestHandler->handle($request);
+});
+$router->map('*', '/logout', function ($request) {
+    $requestHandler = new Logout();
+    return $requestHandler->handle($request);
+});
+// Private routes
+$private = $router->group('/private')->middleware(new LazyMiddleware(function () use ($app) {
+    return new AuthMiddleware();
+}));
+$private->map('GET', '/hello', function ($request) {
+    $requestHandler = new Hello();
     return $requestHandler->handle($request);
 });
 
@@ -62,6 +82,9 @@ try {
 } catch (NotFoundException $e) {
     $result = new TextResponse('Not Found', 404);
     $app->logger->warning($e->getMessage(), ['exception' => $e]);
+} catch (UnauthorizedException $e) {
+    $result = new TextResponse($e->getMessage(), 401);
+    $app->logger->notice('Unauthorized access to ' . $request->getUri());
 } catch (HttpException $e) {
     $result = new TextResponse('An error occurred', $e->getCode());
     $app->logger->error($e->getMessage(), ['exception' => $e]);
