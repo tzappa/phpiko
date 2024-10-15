@@ -12,6 +12,8 @@ use PHPiko\Logger\FileLogger;
 use PHPiko\Http\Router;
 use PHPiko\Http\Exception\NotFoundException;
 use PHPiko\Http\HttpException;
+use PHPiko\RequestHandler\Home;
+use PHPiko\RequestHandler\Hello;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Response\TextResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
@@ -47,11 +49,11 @@ $app->logger = function () use ($app): LoggerInterface {
 // Router
 $router = new Router();
 $router->map('GET', '/', function ($request) {
-    $requestHandler = new RequestHandler\Home();
+    $requestHandler = new Home();
     return $requestHandler->handle($request);
 });
 $router->map('GET', '/hello/{name}', function ($request) {
-    $requestHandler = new RequestHandler\Hello();
+    $requestHandler = new Hello();
     return $requestHandler->handle($request);
 });
 
