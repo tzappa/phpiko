@@ -17,6 +17,18 @@ final class Home implements RequestHandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return new HtmlResponse("Hello World!");
+        $html = <<<HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Home</title>
+</head>
+<body>
+    <p>Welcome to PHPiko!</p>
+    <p><a href="/login">Login</a></p>
+</body>
+</html>
+HTML;
+        return new HtmlResponse($html);
     }
 }

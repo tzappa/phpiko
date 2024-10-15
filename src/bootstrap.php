@@ -11,9 +11,12 @@ use PHPiko\Container\Container;
 use PHPiko\Logger\FileLogger;
 use PHPiko\Http\Router;
 use PHPiko\Http\Exception\NotFoundException;
+use PHPiko\Http\Exception\UnauthorizedException;
 use PHPiko\Http\HttpException;
 use PHPiko\RequestHandler\Home;
 use PHPiko\RequestHandler\Hello;
+use PHPiko\RequestHandler\Login;
+use PHPiko\RequestHandler\Logout;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Response\TextResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
@@ -52,7 +55,15 @@ $router->map('GET', '/', function ($request) {
     $requestHandler = new Home();
     return $requestHandler->handle($request);
 });
-$router->map('GET', '/hello/{name}', function ($request) {
+$router->map('*', '/login', function ($request) {
+    $requestHandler = new Login();
+    return $requestHandler->handle($request);
+});
+$router->map('*', '/logout', function ($request) {
+    $requestHandler = new Logout();
+    return $requestHandler->handle($request);
+});
+$router->map('GET', '/hello', function ($request) {
     $requestHandler = new Hello();
     return $requestHandler->handle($request);
 });
@@ -63,6 +74,9 @@ try {
     $result = $router->dispatch($request);
 } catch (NotFoundException $e) {
     $result = new TextResponse('Not Found', 404);
+    $app->logger->warning($e->getMessage(), ['exception' => $e]);
+} catch (UnauthorizedException $e) {
+    $result = new TextResponse('Unauthorized', 401);
     $app->logger->warning($e->getMessage(), ['exception' => $e]);
 } catch (HttpException $e) {
     $result = new TextResponse('An error occurred', $e->getCode());
