@@ -47,11 +47,12 @@ $app->logger = function () use ($app): LoggerInterface {
 // Router
 $router = new Router();
 $router->map('GET', '/', function ($request) {
-    return new TextResponse('Hello, World!');
+    $requestHandler = new RequestHandler\Home();
+    return $requestHandler->handle($request);
 });
 $router->map('GET', '/hello/{name}', function ($request) {
-    $name = $request->getAttribute('name');
-    return new TextResponse("Hello, {$name}!");
+    $requestHandler = new RequestHandler\Hello();
+    return $requestHandler->handle($request);
 });
 
 // Dispatch the request
