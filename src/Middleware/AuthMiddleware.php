@@ -21,7 +21,7 @@ final class AuthMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
 
-        @session_start();
+        session_start();
         if (empty($_SESSION['username'])) {
             throw new UnauthorizedException('You are not authorized to access this page');
         }
