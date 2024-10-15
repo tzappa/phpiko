@@ -17,10 +17,6 @@ final class Hello implements RequestHandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        @session_start();
-        if (empty($_SESSION['username'])) {
-            throw new UnauthorizedException('You are not authorized to access this page');
-        }
         $name = $_SESSION['username'];
         $html = <<<HTML
 <!DOCTYPE html>

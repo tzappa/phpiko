@@ -27,7 +27,7 @@ final class Login implements RequestHandlerInterface
             if ($username === 'admin' && $password === 'admin') {
                 @session_start();
                 $_SESSION['username'] = $username;
-                return new RedirectResponse('/hello');
+                return new RedirectResponse('/private/hello');
             }
             $error = 'Invalid username or password';
         }
