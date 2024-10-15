@@ -1,4 +1,7 @@
 <?php declare(strict_types=1);
+/**
+ * @package PHPiko
+ */
 
 namespace PHPiko\Session;
 
@@ -10,6 +13,9 @@ use function session_destroy;
 use function session_unset;
 use function ini_set;
 
+/**
+ * Session Manager
+ */
 class SessionManager implements SessionInterface
 {
     public function __construct()
@@ -17,32 +23,51 @@ class SessionManager implements SessionInterface
         $this->start();
     }
 
-    public function get(string $key, $default = null)
+    /**
+     * @inheritDoc
+     */
+    public function get(string $key, $default = null): mixed
     {
         return $_SESSION[$key] ?? $default;
     }
 
-    public function set(string $key, $value): void
+    /**
+     * @inheritDoc
+     */
+    public function set(string $key, mixed $value): void
     {
         $_SESSION[$key] = $value;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function has(string $key): bool
     {
         return isset($_SESSION[$key]);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function remove(string $key): void
     {
         unset($_SESSION[$key]);
     }
-    
+
+    /**
+     * @inheritDoc
+     */    
     public function clear(): void
     {
         session_unset();
+        $_SESSION = [];
     }
     
-    private function start()
+    /**
+     * Start the session
+     */
+    public function start()
     {
         if (session_status() == PHP_SESSION_NONE) {
             // Set session cookie parameters for security
@@ -51,12 +76,15 @@ class SessionManager implements SessionInterface
             ini_set('session.cookie_samesite', 'Strict');
 
             if (session_start() === false) {
-                throw new RuntimeException('Failed to start the session');
+                throw new RuntimeException('Failed to start the session: ' . error_get_last()['message']);
             }
         }
     }
 
-    private function destroy()
+    /**
+     * Destroy the session
+     */
+    public function destroy()
     {
         if (session_status() == PHP_SESSION_ACTIVE) {
             session_destroy();

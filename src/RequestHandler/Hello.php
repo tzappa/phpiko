@@ -18,7 +18,9 @@ final class Hello implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $user = $request->getAttribute('user');
-        $username = $user['username'] ?? null;
+        // we are sure that the user is authenticated, but we still set a default value
+        $username = $user['username'] ?? 'Guest';
+        $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
         $html = <<<HTML
 <!DOCTYPE html>
 <html lang="en">
