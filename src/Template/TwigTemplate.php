@@ -38,9 +38,10 @@ final class TwigTemplate implements TemplateInterface
     /**
      * Constructor
      *
-     * @var string $path Template search path
-     * @var string $cachePath The place where twig cache files should be stored
-     * @var boolean $debugMode Set to true in dev environment to ease development
+     * @param string        $path        Template search path
+     * @param string|false  $cachePath   The place where twig cache files should be stored
+     * @param bool          $debugMode   Set to true in dev environment to ease development
+     * @param bool|null     $autoReload  Whether to enable automatic template recompilation; null defaults to $debugMode
      */
     public function __construct(string $path, string|false $cachePath, bool $debugMode, ?bool $autoReload = null)
     {
