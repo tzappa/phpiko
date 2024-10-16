@@ -37,7 +37,7 @@ final class DotConfig implements ConfigInterface
 	}
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function has(string $key): bool
     {
@@ -53,7 +53,7 @@ final class DotConfig implements ConfigInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function get(string $key, $default = null)
     {

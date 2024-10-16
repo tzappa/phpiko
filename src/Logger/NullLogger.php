@@ -15,7 +15,7 @@ use Stringable;
 class NullLogger extends AbstractLogger implements LoggerInterface
 {
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function log($level, Stringable|string $message, array $context = []): void
     {

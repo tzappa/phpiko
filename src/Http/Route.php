@@ -142,7 +142,7 @@ class Route implements RequestHandlerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

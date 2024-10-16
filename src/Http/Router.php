@@ -29,7 +29,7 @@ class Router implements RouterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function map(string $method, string $path, $handler, string $name = ''): Route
     {
@@ -44,7 +44,7 @@ class Router implements RouterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function group(string $path): self
     {
@@ -63,7 +63,7 @@ class Router implements RouterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function dispatch(ServerRequestInterface $request)
     {
@@ -111,7 +111,7 @@ class Router implements RouterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function buildPath(string $name, array $params = []): string
     {

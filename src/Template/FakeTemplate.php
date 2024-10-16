@@ -26,7 +26,7 @@ class FakeTemplate implements TemplateInterface
     public $container = [];
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function load(string $name): self
     {
@@ -37,7 +37,7 @@ class FakeTemplate implements TemplateInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function assign(string $key, $value): self
     {
@@ -47,7 +47,7 @@ class FakeTemplate implements TemplateInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function parse(): string
     {

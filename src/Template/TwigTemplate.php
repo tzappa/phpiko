@@ -60,7 +60,7 @@ final class TwigTemplate implements TemplateInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function load(string $name): self
     {
@@ -70,7 +70,7 @@ final class TwigTemplate implements TemplateInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function assign(string $key, $value): self
     {
@@ -80,7 +80,7 @@ final class TwigTemplate implements TemplateInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function parse(): string
     {
@@ -88,7 +88,7 @@ final class TwigTemplate implements TemplateInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritDoc}
      */
     public function registerFunction(string $name, callable $callback): self
     {
