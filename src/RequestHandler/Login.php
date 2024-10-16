@@ -7,6 +7,7 @@
 
 namespace PHPiko\RequestHandler;
 
+use PHPiko\Logger\LoggerTrait;
 use PHPiko\Session\SessionInterface;
 
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -18,6 +19,13 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class Login implements RequestHandlerInterface
 {
+    use LoggerTrait;
+
+    /**
+     * The session instance.
+     *
+     * @var \PHPiko\Session\SessionInterface
+     */
     private SessionInterface $session;
 
     public function __construct(SessionInterface $session)
@@ -35,9 +43,11 @@ final class Login implements RequestHandlerInterface
             $password = $data['password'] ?? '';
             if ($username === 'admin' && $password === 'admin') {
                 $this->session->set('username', $username);
+                $this->info('User logged in', ['username' => $username]);
                 return new RedirectResponse('/private/hello');
             }
             $error = 'Invalid username or password';
+            $this->warning('Invalid login attempt', ['username' => $username]);
         }
 
         $html = <<<HTML

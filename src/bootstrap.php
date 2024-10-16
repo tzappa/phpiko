@@ -66,6 +66,7 @@ $router->map('GET', '/', function ($request) {
 });
 $router->map('*', '/login', function ($request) use ($app) {
     $requestHandler = new Login($app->session);
+    $requestHandler->setLogger($app->logger);
     return $requestHandler->handle($request);
 });
 $router->map('*', '/logout', function ($request) use ($app) {
@@ -74,7 +75,7 @@ $router->map('*', '/logout', function ($request) use ($app) {
 });
 // Private routes
 $private = $router->group('/private')->middleware(new LazyMiddleware(function () use ($app) {
-    return new AuthMiddleware($app->session);
+    return new AuthMiddleware($app->session, $app->logger);
 }));
 $private->map('GET', '/hello', function ($request) {
     $requestHandler = new Hello();
@@ -90,7 +91,6 @@ try {
     $app->logger->warning($e->getMessage(), ['exception' => $e]);
 } catch (UnauthorizedException $e) {
     $result = new TextResponse($e->getMessage(), 401);
-    $app->logger->notice('Unauthorized access to ' . $request->getUri());
 } catch (HttpException $e) {
     $result = new TextResponse('An error occurred', $e->getCode());
     $app->logger->error($e->getMessage(), ['exception' => $e]);
