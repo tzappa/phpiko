@@ -50,7 +50,7 @@ final class Login implements RequestHandlerInterface
             $this->warning('Invalid login attempt', ['username' => $username]);
         }
 
-        $tpl = $this->template->load('login');
+        $tpl = $this->template->load('login.twig');
         $tpl->assign('error', $error);
         $html = $tpl->parse();
 

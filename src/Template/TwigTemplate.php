@@ -36,6 +36,13 @@ final class TwigTemplate implements TemplateInterface
     private $registry = [];
 
     /**
+     * Template file extension
+     *
+     * @var string
+     */
+    private $extension = '.twig';
+
+    /**
      * Constructor
      *
      * @param string        $path        Template search path
@@ -61,11 +68,28 @@ final class TwigTemplate implements TemplateInterface
     }
 
     /**
+     * Configure the template file extension
+     * 
+     * @param   string  $extension
+     * @return  self
+     */
+    public function setExtension(string $extension): self
+    {
+        $this->extension = $extension;
+
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function load(string $name): self
     {
-        $this->tpl = $this->twig->load($name.'.twig');
+        // check the name for the extension
+        if (substr($name, -strlen($this->extension)) !== $this->extension) {
+            $name .= $this->extension;
+        }
+        $this->tpl = $this->twig->load($name);
 
         return $this;
     }

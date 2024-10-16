@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>{{ title }}</title>
-</head>
-<body>
+{% extends 'layout.twig' %}
+
+{% set head_title = 'Home' %}
+
+{% block content %}
     <p>Welcome to PHPiko!</p>
     <p><a href="/login">Login</a></p>
-</body>
-</html>
+{% endblock %}
