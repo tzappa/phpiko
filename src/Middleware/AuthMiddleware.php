@@ -13,14 +13,26 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 final class AuthMiddleware implements MiddlewareInterface
 {
+    /**
+     * The session instance.
+     *
+     * @var \PHPiko\Session\SessionInterface
+     */
     private SessionInterface $session;
+    
+    /**
+     * Logger instance.
+     */
+    private LoggerInterface $logger;
 
-    public function __construct(SessionInterface $session)
+    public function __construct(SessionInterface $session, LoggerInterface $logger)
     {
         $this->session = $session;
+        $this->logger = $logger;
     }
 
     /**
@@ -30,6 +42,7 @@ final class AuthMiddleware implements MiddlewareInterface
     {
         $username = $this->session->get('username');
         if ($username === null) {
+            $this->logger->notice('Unauthorized access blocked to {uri}', ['uri' => (string) $request->getUri()]);
             throw new UnauthorizedException('You are not authorized to access this page');
         }
         

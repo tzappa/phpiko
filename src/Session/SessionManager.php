@@ -59,8 +59,8 @@ class SessionManager implements SessionInterface
      */    
     public function clear(): void
     {
+        $this->start();
         session_unset();
-        $_SESSION = [];
     }
     
     /**
