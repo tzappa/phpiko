@@ -16,7 +16,7 @@ trait LoggerTrait
      *
      * @var \Psr\Log\LoggerInterface
      */
-    private ?LoggerInterface $logger = null;
+    protected ?LoggerInterface $logger = null;
 
     /**
      * Sets a logger.
@@ -35,7 +35,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    private function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = array())
     {
         if ($this->logger) {
             $this->logger->log($level, $message, $context);
@@ -48,7 +48,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    private function debug($message, array $context = array())
+    public function debug($message, array $context = array())
     {
         $this->log('debug', $message, $context);
     }
@@ -59,7 +59,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    private function info($message, array $context = array())
+    public function info($message, array $context = array())
     {
         $this->log('info', $message, $context);
     }
@@ -70,7 +70,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    private function notice($message, array $context = array())
+    public function notice($message, array $context = array())
     {
         $this->log('notice', $message, $context);
     }
@@ -81,7 +81,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    private function warning($message, array $context = array())
+    public function warning($message, array $context = array())
     {
         $this->log('warning', $message, $context);
     }
@@ -92,7 +92,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    private function error($message, array $context = array())
+    public function error($message, array $context = array())
     {
         $this->log('error', $message, $context);
     }
@@ -103,7 +103,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    private function critical($message, array $context = array())
+    public function critical($message, array $context = array())
     {
         $this->log('critical', $message, $context);
     }
@@ -114,7 +114,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    private function alert($message, array $context = array())
+    public function alert($message, array $context = array())
     {
         $this->log('alert', $message, $context);
     }
@@ -125,7 +125,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    private function emergency($message, array $context = array())
+    public function emergency($message, array $context = array())
     {
         $this->log('emergency', $message, $context);
     }
