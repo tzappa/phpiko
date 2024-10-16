@@ -1,0 +1,10 @@
+name = "PHPiko"
+
+[logger]
+; Log levels: debug, info, notice, warning, error, critical, alert, emergency
+level = debug
+filename = "../log/phpiko.log"
+format = "[{datetime}] [{level}] {message} {context}"
+dateFormat = "Y-m-d H:i:s"
+interpolatePlaceholders = on
+removeInterpolatedContext = on
