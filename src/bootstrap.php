@@ -44,6 +44,11 @@ $app->config = function () use ($app): ConfigInterface {
     return ConfigFactory::create(dirname(__DIR__) . '/config/' . $app->env . '/' . $filename);
 };
 
+// Timezone settings
+if ($app->config->has('timezone')) {
+    date_default_timezone_set($app->config->get('timezone'));
+}
+
 // Logger
 $app->logger = function () use ($app): LoggerInterface {
     $config = $app->config->get('logger');

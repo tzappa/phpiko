@@ -1,4 +1,5 @@
 name = "PHPiko"
+timezone = "UTC"
 
 [logger]
 ; Log levels: debug, info, notice, warning, error, critical, alert, emergency

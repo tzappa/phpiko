@@ -8,6 +8,7 @@
 namespace PHPiko\Logger;
 
 use Psr\Log\LoggerInterface;
+use Stringable;
 
 trait LoggerTrait
 {
@@ -23,7 +24,7 @@ trait LoggerTrait
      *
      * @param \Psr\Log\LoggerInterface $logger
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -35,7 +36,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, string|Stringable $message, array $context = array())
     {
         if ($this->logger) {
             $this->logger->log($level, $message, $context);
@@ -48,7 +49,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    public function debug($message, array $context = array())
+    public function debug(string|Stringable $message, array $context = array())
     {
         $this->log('debug', $message, $context);
     }
@@ -59,7 +60,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    public function info($message, array $context = array())
+    public function info(string|Stringable $message, array $context = array())
     {
         $this->log('info', $message, $context);
     }
@@ -70,7 +71,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    public function notice($message, array $context = array())
+    public function notice(string|Stringable $message, array $context = array())
     {
         $this->log('notice', $message, $context);
     }
@@ -81,7 +82,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    public function warning($message, array $context = array())
+    public function warning(string|Stringable $message, array $context = array())
     {
         $this->log('warning', $message, $context);
     }
@@ -92,7 +93,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    public function error($message, array $context = array())
+    public function error(string|Stringable $message, array $context = array())
     {
         $this->log('error', $message, $context);
     }
@@ -103,7 +104,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    public function critical($message, array $context = array())
+    public function critical(string|Stringable $message, array $context = array())
     {
         $this->log('critical', $message, $context);
     }
@@ -114,7 +115,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    public function alert($message, array $context = array())
+    public function alert(string|Stringable $message, array $context = array())
     {
         $this->log('alert', $message, $context);
     }
@@ -125,7 +126,7 @@ trait LoggerTrait
      * @param string $message
      * @param array $context
      */
-    public function emergency($message, array $context = array())
+    public function emergency(string|Stringable $message, array $context = array())
     {
         $this->log('emergency', $message, $context);
     }
