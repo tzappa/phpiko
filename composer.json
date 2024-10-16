@@ -13,7 +13,8 @@
         "laminas/laminas-httphandlerrunner": "^2.10"
     },
     "require-dev": {
-        "symfony/var-dumper": "^7.1"
+        "symfony/var-dumper": "^7.1",
+        "phpunit/phpunit": "^11.4"
     },
     "autoload": {
         "psr-4": {
