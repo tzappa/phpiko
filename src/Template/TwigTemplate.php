@@ -12,6 +12,8 @@ use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 use Twig\Extension\DebugExtension;
 
+use function str_ends_with;
+
 final class TwigTemplate implements TemplateInterface
 {
     /**
@@ -70,8 +72,9 @@ final class TwigTemplate implements TemplateInterface
     /**
      * Configure the template file extension
      * 
-     * @param   string  $extension
-     * @return  self
+     * @param string $extension The file extension to use for templates (e.g., '.twig')
+     * 
+     * @return self Returns the current instance for method chaining
      */
     public function setExtension(string $extension): self
     {
@@ -86,7 +89,7 @@ final class TwigTemplate implements TemplateInterface
     public function load(string $name): self
     {
         // check the name for the extension
-        if (substr($name, -strlen($this->extension)) !== $this->extension) {
+        if (!str_ends_with($name, $this->extension)) {
             $name .= $this->extension;
         }
         $this->tpl = $this->twig->load($name);

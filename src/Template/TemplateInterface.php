@@ -17,8 +17,8 @@ interface TemplateInterface
      * This way different template engines can be used - .twig, .html (for smarty), .php
      *
      * @var string $name
-     *
-     * @return self
+     * 
+     * @return self Returns the current instance for method chaining
      */
     public function load(string $name): self;
 
@@ -28,7 +28,7 @@ interface TemplateInterface
      * @param string $key
      * @param mixed $value
      *
-     * @return self
+     * @return self Returns the current instance for method chaining
      */
     public function assign(string $key, $value): self;
 
@@ -44,8 +44,8 @@ interface TemplateInterface
      *
      * @param string $name
      * @param callable $function
-     *
-     * @return self
+     * 
+     * @return self Returns the current instance for method chaining
      */
     public function registerFunction(string $name, callable $function): self;
 }
