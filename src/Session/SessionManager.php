@@ -18,16 +18,12 @@ use function ini_set;
  */
 class SessionManager implements SessionInterface
 {
-    public function __construct()
-    {
-        $this->start();
-    }
-
     /**
      * @inheritDoc
      */
     public function get(string $key, $default = null): mixed
     {
+        $this->start();
         return $_SESSION[$key] ?? $default;
     }
 
@@ -36,6 +32,7 @@ class SessionManager implements SessionInterface
      */
     public function set(string $key, mixed $value): void
     {
+        $this->start();
         $_SESSION[$key] = $value;
     }
 
@@ -44,6 +41,7 @@ class SessionManager implements SessionInterface
      */
     public function has(string $key): bool
     {
+        $this->start();
         return isset($_SESSION[$key]);
     }
 
@@ -52,6 +50,7 @@ class SessionManager implements SessionInterface
      */
     public function remove(string $key): void
     {
+        $this->start();
         unset($_SESSION[$key]);
     }
 
