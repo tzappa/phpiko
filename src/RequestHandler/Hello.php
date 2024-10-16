@@ -17,7 +17,10 @@ final class Hello implements RequestHandlerInterface
 {
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $name = $_SESSION['username'];
+        $user = $request->getAttribute('user');
+        // we are sure that the user is authenticated, but we still set a default value
+        $username = $user['username'] ?? 'Guest';
+        $username = htmlspecialchars($username, ENT_QUOTES, 'UTF-8');
         $html = <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -25,7 +28,7 @@ final class Hello implements RequestHandlerInterface
     <title>Hello</title>
 </head>
 <body>
-    <h1>Hello, {$name}!</h1>
+    <h1>Hello, {$username}!</h1>
     <p><a href="/logout">Logout</a></p>
 </body>
 </html>

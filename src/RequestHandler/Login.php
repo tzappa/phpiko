@@ -7,6 +7,8 @@
 
 namespace PHPiko\RequestHandler;
 
+use PHPiko\Session\SessionInterface;
+
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 
@@ -16,6 +18,13 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class Login implements RequestHandlerInterface
 {
+    private SessionInterface $session;
+
+    public function __construct(SessionInterface $session)
+    {
+        $this->session = $session;
+    }
+
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $error = '';
@@ -25,8 +34,7 @@ final class Login implements RequestHandlerInterface
             $username = $data['username'] ?? '';
             $password = $data['password'] ?? '';
             if ($username === 'admin' && $password === 'admin') {
-                session_start();
-                $_SESSION['username'] = $username;
+                $this->session->set('username', $username);
                 return new RedirectResponse('/private/hello');
             }
             $error = 'Invalid username or password';

@@ -19,6 +19,7 @@ use PHPiko\RequestHandler\Home;
 use PHPiko\RequestHandler\Hello;
 use PHPiko\RequestHandler\Login;
 use PHPiko\RequestHandler\Logout;
+use PHPiko\Session\SessionManager;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Response\TextResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
@@ -51,6 +52,11 @@ $app->logger = function () use ($app): LoggerInterface {
     return $logger;
 };
 
+// Session Manager
+$app->session = function () {
+    return new SessionManager();
+}; 
+
 // Router
 $router = new Router();
 // Public routes
@@ -58,17 +64,17 @@ $router->map('GET', '/', function ($request) {
     $requestHandler = new Home();
     return $requestHandler->handle($request);
 });
-$router->map('*', '/login', function ($request) {
-    $requestHandler = new Login();
+$router->map('*', '/login', function ($request) use ($app) {
+    $requestHandler = new Login($app->session);
     return $requestHandler->handle($request);
 });
-$router->map('*', '/logout', function ($request) {
-    $requestHandler = new Logout();
+$router->map('*', '/logout', function ($request) use ($app) {
+    $requestHandler = new Logout($app->session);
     return $requestHandler->handle($request);
 });
 // Private routes
 $private = $router->group('/private')->middleware(new LazyMiddleware(function () use ($app) {
-    return new AuthMiddleware();
+    return new AuthMiddleware($app->session);
 }));
 $private->map('GET', '/hello', function ($request) {
     $requestHandler = new Hello();
