@@ -42,7 +42,7 @@ final class TwigTemplate implements TemplateInterface
      * @var string $cachePath The place where twig cache files should be stored
      * @var boolean $debugMode Set to true in dev environment to ease development
      */
-    public function __construct(string $path, $cachePath, bool $debugMode, ?bool $autoReload = null)
+    public function __construct(string $path, string|false $cachePath, bool $debugMode, ?bool $autoReload = null)
     {
         $loader = new FilesystemLoader($path);
         $this->twig = new Environment($loader, [
