@@ -13,7 +13,7 @@ use PHPiko\Config\Exception\FileException;
 abstract class AbstractFileReader implements ParserInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     abstract public function fromString(string $string): array;
 

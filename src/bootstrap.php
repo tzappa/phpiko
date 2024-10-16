@@ -20,6 +20,8 @@ use PHPiko\RequestHandler\Hello;
 use PHPiko\RequestHandler\Login;
 use PHPiko\RequestHandler\Logout;
 use PHPiko\Session\SessionManager;
+use PHPiko\Template\TwigTemplate;
+use PHPiko\Template\TemplateInterface;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Response\TextResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
@@ -57,6 +59,16 @@ $app->logger = function () use ($app): LoggerInterface {
     return $logger;
 };
 
+// Template Engine
+$app->template = function () use ($app): TemplateInterface {
+    $cachePath = $app->config->get('twig.cache_path', false); // set to false to disable caching
+    $debug = boolval($app->config->get('twig.debug', false)); // typically false for production and true for development
+    $templatePath = $app->config->get('twig.template_path', __DIR__ . '/templates/');
+    $tpl = new TwigTemplate($templatePath, $cachePath, $debug);
+
+    return $tpl;
+};
+
 // Session Manager
 $app->session = function () {
     return new SessionManager();
@@ -65,12 +77,12 @@ $app->session = function () {
 // Router
 $router = new Router();
 // Public routes
-$router->map('GET', '/', function ($request) {
-    $requestHandler = new Home();
+$router->map('GET', '/', function ($request) use ($app) {
+    $requestHandler = new Home($app->template);
     return $requestHandler->handle($request);
 });
 $router->map('*', '/login', function ($request) use ($app) {
-    $requestHandler = new Login($app->session);
+    $requestHandler = new Login($app->session, $app->template);
     $requestHandler->setLogger($app->logger);
     return $requestHandler->handle($request);
 });
@@ -82,8 +94,8 @@ $router->map('*', '/logout', function ($request) use ($app) {
 $private = $router->group('/private')->middleware(new LazyMiddleware(function () use ($app) {
     return new AuthMiddleware($app->session, $app->logger);
 }));
-$private->map('GET', '/hello', function ($request) {
-    $requestHandler = new Hello();
+$private->map('GET', '/hello', function ($request) use ($app) {
+    $requestHandler = new Hello($app->template);
     return $requestHandler->handle($request);
 });
 

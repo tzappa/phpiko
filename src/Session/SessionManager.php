@@ -19,7 +19,7 @@ use function ini_set;
 class SessionManager implements SessionInterface
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function get(string $key, $default = null): mixed
     {
@@ -28,7 +28,7 @@ class SessionManager implements SessionInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function set(string $key, mixed $value): void
     {
@@ -37,7 +37,7 @@ class SessionManager implements SessionInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function has(string $key): bool
     {
@@ -46,7 +46,7 @@ class SessionManager implements SessionInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function remove(string $key): void
     {
@@ -55,7 +55,7 @@ class SessionManager implements SessionInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */    
     public function clear(): void
     {

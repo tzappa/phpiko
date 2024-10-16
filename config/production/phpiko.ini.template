@@ -9,3 +9,8 @@ format = "[{datetime}] [{level}] {message} {context}"
 dateFormat = "Y-m-d H:i:s"
 interpolatePlaceholders = on
 removeInterpolatedContext = on
+
+[twig]
+debug = off
+; template_path = "../templates"
+cache_path = "../tmp/twig"

@@ -5,6 +5,7 @@ namespace PHPiko\Tests;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use PHPiko\RequestHandler\Home;
+use PHPiko\Template\TwigTemplate;
 use Psr\Http\Message\ResponseInterface;
 
 final class HomeTest extends TestCase
@@ -14,7 +15,11 @@ final class HomeTest extends TestCase
      */
     public function testHandleReturnsHtmlResponse(): void
     {
-        $home = new Home();
+        $twig = new TwigTemplate(__DIR__ . '/../src/templates', false, false);
+        $home = new Home($twig);
+        // $mock = $this->createMock(TwigTemplate::class);
+        // $mock->method('render')->willReturn('<p>Welcome to PHPiko!</p><a href="/login">Login</a>');
+        // $home = new Home($mock);
         $request = new ServerRequest([], [], '/', 'GET');
         
         $response = $home->handle($request);

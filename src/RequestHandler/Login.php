@@ -9,10 +9,10 @@ namespace PHPiko\RequestHandler;
 
 use PHPiko\Logger\LoggerTrait;
 use PHPiko\Session\SessionInterface;
+use PHPiko\Template\TemplateInterface;
 
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
-
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -28,7 +28,7 @@ final class Login implements RequestHandlerInterface
      */
     private SessionInterface $session;
 
-    public function __construct(SessionInterface $session)
+    public function __construct(SessionInterface $session, private TemplateInterface $template)
     {
         $this->session = $session;
     }
@@ -50,25 +50,10 @@ final class Login implements RequestHandlerInterface
             $this->warning('Invalid login attempt', ['username' => $username]);
         }
 
-        $html = <<<HTML
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Login</title>
-</head>
-<body>
-    <form action="/login" method="POST">
-        <h1>Login</h1>
-        <p style="color: red;">{$error}</p>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password">
-        <button type="submit">Login</button>
-    </form>
-</body>
-</html>
-HTML;
+        $tpl = $this->template->load('login');
+        $tpl->assign('error', $error);
+        $html = $tpl->parse();
+
         return new HtmlResponse($html);
     }
 }

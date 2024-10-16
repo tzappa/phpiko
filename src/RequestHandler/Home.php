@@ -7,6 +7,7 @@
 
 namespace PHPiko\RequestHandler;
 
+use PHPiko\Template\TemplateInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 
 use Psr\Http\Message\ResponseInterface;
@@ -15,20 +16,17 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class Home implements RequestHandlerInterface
 {
+    public function __construct(private TemplateInterface $template)
+    {
+        
+    }
+
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $html = <<<HTML
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Home</title>
-</head>
-<body>
-    <p>Welcome to PHPiko!</p>
-    <p><a href="/login">Login</a></p>
-</body>
-</html>
-HTML;
+        $tpl = $this->template->load('home');
+        $tpl->assign('title', 'Home');
+        $html = $tpl->parse();
+
         return new HtmlResponse($html);
     }
 }
