@@ -13,12 +13,12 @@ interface TemplateInterface
 {
     /**
      * Loads the template with a given name.
-     * The name MAY not include the path and SHOUD not include the extension.
+     * The name MAY not include the path and SHOULD not include the extension.
      * This way different template engines can be used - .twig, .html (for smarty), .php
      *
      * @var string $name
-     * 
      * @return self Returns the current instance for method chaining
+     * @throws \RuntimeException If the template file is not found
      */
     public function load(string $name): self;
 
@@ -27,7 +27,6 @@ interface TemplateInterface
      *
      * @param string $key
      * @param mixed $value
-     *
      * @return self Returns the current instance for method chaining
      */
     public function assign(string $key, $value): self;
@@ -44,7 +43,6 @@ interface TemplateInterface
      *
      * @param string $name
      * @param callable $function
-     * 
      * @return self Returns the current instance for method chaining
      */
     public function registerFunction(string $name, callable $function): self;

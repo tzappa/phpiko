@@ -10,7 +10,9 @@ namespace PHPiko\Template;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
+use Twig\Error\LoaderError;
 use Twig\Extension\DebugExtension;
+use RuntimeException;
 
 use function str_ends_with;
 
@@ -71,9 +73,8 @@ final class TwigTemplate implements TemplateInterface
 
     /**
      * Configure the template file extension
-     * 
+     *
      * @param string $extension The file extension to use for templates (e.g., '.twig')
-     * 
      * @return self Returns the current instance for method chaining
      */
     public function setExtension(string $extension): self
@@ -92,7 +93,11 @@ final class TwigTemplate implements TemplateInterface
         if (!str_ends_with($name, $this->extension)) {
             $name .= $this->extension;
         }
-        $this->tpl = $this->twig->load($name);
+        try {
+            $this->tpl = $this->twig->load($name);
+        } catch (LoaderError $e) {
+            throw new RuntimeException($e->getMessage());
+        }
 
         return $this;
     }

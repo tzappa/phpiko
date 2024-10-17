@@ -17,12 +17,12 @@ final class Hello implements RequestHandlerInterface
 {
     public function __construct(private TemplateInterface $template)
     {
-        
+
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $user = $request->getAttribute('user.twig');
+        $user = $request->getAttribute('user');
         // we are sure that the user is authenticated, but we still set a default value
         $username = $user['username'] ?? 'Guest';
 

@@ -9,6 +9,8 @@
 
 namespace PHPiko\Template;
 
+use function json_encode;
+
 class FakeTemplate implements TemplateInterface
 {
     /**
@@ -54,6 +56,9 @@ class FakeTemplate implements TemplateInterface
         return json_encode($this->container);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function registerFunction(string $name, callable $function): self
     {
         return $this;
