@@ -17,9 +17,6 @@ final class HomeTest extends TestCase
     {
         $twig = new TwigTemplate(__DIR__ . '/../src/templates', false, false);
         $home = new Home($twig);
-        // $mock = $this->createMock(TwigTemplate::class);
-        // $mock->method('render')->willReturn('<p>Welcome to PHPiko!</p><a href="/login">Login</a>');
-        // $home = new Home($mock);
         $request = new ServerRequest([], [], '/', 'GET');
         
         $response = $home->handle($request);

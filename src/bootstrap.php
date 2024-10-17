@@ -72,7 +72,7 @@ $app->template = function () use ($app): TemplateInterface {
 // Session Manager
 $app->session = function () {
     return new SessionManager();
-}; 
+};
 
 // Router
 $router = new Router();

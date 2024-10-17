@@ -23,8 +23,7 @@ final class Home implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $tpl = $this->template->load('home');
-        $tpl->assign('title', 'Home');
+        $tpl = $this->template->load('home.twig');
         $html = $tpl->parse();
 
         return new HtmlResponse($html);
