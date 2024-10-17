@@ -18,7 +18,7 @@ final class Home implements RequestHandlerInterface
 {
     public function __construct(private TemplateInterface $template)
     {
-        
+
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
