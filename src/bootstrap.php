@@ -105,7 +105,7 @@ try {
     $result = $router->dispatch($request);
 } catch (NotFoundException $e) {
     $result = new TextResponse('Not Found', 404);
-    $app->logger->warning('404 {url} not found', ['url' => (string) $request->getUri(), 'message' => $e->getMessage()]);
+    $app->logger->warning('404 {url} not found', ['code' => $e->getCode(), 'message' => $e->getMessage(), 'url' => (string) $request->getUri()]);
 } catch (UnauthorizedException $e) {
     // Log message is handled by AuthMiddleware
     $result = new TextResponse($e->getMessage(), 401);
@@ -114,7 +114,7 @@ try {
     $app->logger->error('{code} An error occured: {message} in {url}', ['code' => $e->getCode(), 'message' => $e->getMessage(), 'url' => (string) $request->getUri()]);
 } catch (Exception $e) {
     $result = new TextResponse('Internal Server Error', 500);
-    $app->logger->critical('500 {message} in {url}', ['message' => $e->getMessage(), 'url' => (string) $request->getUri()]);
+    $app->logger->critical('500 {message} in {url}', ['code' => $e->getCode(), 'message' => $e->getMessage(), 'url' => (string) $request->getUri()]);
 }
 
 (new SapiEmitter)->emit($result);
