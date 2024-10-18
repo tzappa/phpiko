@@ -65,6 +65,8 @@ $app->template = function () use ($app): TemplateInterface {
     $debug = boolval($app->config->get('twig.debug', false)); // typically false for production and true for development
     $templatePath = $app->config->get('twig.template_path', __DIR__ . '/templates/');
     $tpl = new TwigTemplate($templatePath, $cachePath, $debug);
+    // use .revision file modification time on server or something else - current timestamp for development and no cache
+    $tpl->assign('assets_revision', '?rev=' . (@filemtime(dirname(__DIR__, 1) . '/.revision') ?: time()));
 
     return $tpl;
 };
