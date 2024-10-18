@@ -11,7 +11,7 @@
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "laminas/laminas-diactoros": "^3.5",
-        "laminas/laminas-httphandlerrunner": "^2.10",
+        "laminas/laminas-httphandlerrunner": "^2.11",
         "twig/twig": "^3.14"
     },
     "require-dev": {
