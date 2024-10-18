@@ -2,6 +2,7 @@
     "name": "tzappa/phpiko",
     "description": "Short description goes here",
     "type": "project",
+    "license": "UNLICENSED",
     "require": {
         "php": ">=8.2",
         "psr/container": "^2.0",

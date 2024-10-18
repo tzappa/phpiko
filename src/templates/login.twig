@@ -8,9 +8,9 @@
         <input type="hidden" name="csrf" value="{{ csrf }}" />
         <p style="color: red;">{{ error }}</p>
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username" aria-required="true" />
+        <input type="text" id="username" name="username" required aria-required="true" />
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" aria-required="true" />
+        <input type="password" id="password" name="password" required aria-required="true" />
         <button type="submit">Login</button>
     </form>
 {% endblock %}
