@@ -13,9 +13,18 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        operating-system: [ ubuntu-latest, windows-latest ]
+        php: [ '8.2', '8.3' ]
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
@@ -24,7 +33,6 @@ jobs:
       id: composer-cache
       uses: actions/cache@v3
       with:
-        php-version: '8.3'
         path: vendor
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
