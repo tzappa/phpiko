@@ -3,13 +3,14 @@
 {% set head_title = 'Login' %}
 
 {% block content %}
+    <h1>Login</h1>
     <form action="/login" method="POST">
-        <h1>Login</h1>
+        <input type="hidden" name="csrf" value="{{ csrf }}" />
         <p style="color: red;">{{ error }}</p>
         <label for="username">Username:</label>
-        <input type="text" id="username" name="username">
+        <input type="text" id="username" name="username" aria-required="true" />
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password">
+        <input type="password" id="password" name="password" aria-required="true" />
         <button type="submit">Login</button>
     </form>
 {% endblock %}
