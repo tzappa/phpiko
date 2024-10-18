@@ -4,7 +4,13 @@
 {% block head %}
 	<meta charset="utf-8">
 	<title>{{ head_title|default('PHPiko') }}</title>
-{% if head_description %}	<meta name="description" content="{{ head_description }}" />{% endif %}
+	{% if head_description %}<meta name="description" content="{{ head_description }}" />{% endif %}
+	{% block css %}
+		<link rel="stylesheet" media="all" href="/css/base.css{{ assets_revision }}" />
+		{% for css in css_files %}
+			<link rel="stylesheet" media="all" href="{{ css }}{{ assets_revision }}"/>
+		{% endfor %}
+	{% endblock %}
 	<meta name="viewport" content="width=device-width,initial-scale=1.0" />
 	<link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png" />
 	<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
@@ -15,6 +21,8 @@
 {% endblock head %}
 </head>
 <body>
-{% block content %}{% endblock %}
+{% block content %}
+
+{% endblock %}
 </body>
 </html>
