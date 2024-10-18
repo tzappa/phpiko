@@ -3,23 +3,29 @@
 {% set head_title = 'Login' %}
 
 {% block css %}
-    {{ parent() }}
+	{{ parent() }}
 <style>
-    .error-message {
-        color: red;
-    }
+.error-message {
+	color: #D8000C;
+	background-color: #FFD2D2;
+	padding: 10px;
+	border-radius: 5px;
+	border: 1px solid #D8000C;
+}
 </style>
 {% endblock %}
 
 {% block content %}
-    <h1>Login</h1>
-    <form action="/login" method="POST">
-        <input type="hidden" name="csrf" value="{{ csrf }}" />
-        <p class="error-message">{{ error }}</p>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required aria-required="true" />
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required aria-required="true" />
-        <button type="submit">Login</button>
-    </form>
+	<h1>Login</h1>
+	<form action="/login" method="POST">
+		<input type="hidden" name="csrf" value="{{ csrf }}" />
+		{% if error %}
+			<p class="error-message">{{ error }}</p>
+		{% endif %}
+		<label for="username">Username:</label>
+		<input type="text" id="username" name="username" required aria-required="true" />
+		<label for="password">Password:</label>
+		<input type="password" id="password" name="password" required aria-required="true" />
+		<button type="submit">Login</button>
+	</form>
 {% endblock %}
