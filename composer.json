@@ -12,7 +12,8 @@
         "psr/http-server-middleware": "^1.0",
         "laminas/laminas-diactoros": "^3.5",
         "laminas/laminas-httphandlerrunner": "^2.11",
-        "twig/twig": "^3.14"
+        "twig/twig": "^3.14",
+        "psr/event-dispatcher": "^1.0"
     },
     "require-dev": {
         "symfony/var-dumper": "^7.1",
