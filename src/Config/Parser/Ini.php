@@ -1,14 +1,14 @@
-<?php declare(strict_types=1);
-/**
- * INI parser
- *
- * @package PHPiko
- */
+<?php
+
+declare(strict_types=1);
 
 namespace PHPiko\Config\Parser;
 
 use PHPiko\Config\Exception\ConfigException;
 
+/**
+ * INI parser
+ */
 final class Ini extends AbstractFileReader
 {
     /**
@@ -22,6 +22,5 @@ final class Ini extends AbstractFileReader
         }
 
         return $arr;
-
     }
 }

@@ -1,7 +1,4 @@
 <?php
-/**
- * @package PHPiko
- */
 
 declare(strict_types=1);
 

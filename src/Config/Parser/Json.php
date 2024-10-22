@@ -1,14 +1,14 @@
-<?php declare(strict_types=1);
-/**
- * JSON parser
- *
- * @package PHPiko
- */
+<?php
+
+declare(strict_types=1);
 
 namespace PHPiko\Config\Parser;
 
 use PHPiko\Config\Exception\ParserException;
 
+/**
+ * JSON parser
+ */
 final class Json extends AbstractFileReader
 {
     /**

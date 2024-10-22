@@ -1,13 +1,13 @@
-<?php declare(strict_types=1);
-/**
- * A parser should convert a string or a file into an associative array which
- * then can be passed to a Config class.
- *
- * @package PHPiko
- */
+<?php
+
+declare(strict_types=1);
 
 namespace PHPiko\Config\Parser;
 
+/**
+ * A parser should convert a string or a file into an associative array which
+ * then can be passed to a Config class.
+ */
 interface ParserInterface
 {
     /**

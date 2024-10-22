@@ -1,12 +1,12 @@
-<?php declare(strict_types=1);
-/**
- * Repository Interface defines methods for a configuration reader.
- *
- * @package PHPiko
- */
+<?php
+
+declare(strict_types=1);
 
 namespace PHPiko\Config;
 
+/**
+ * Repository Interface defines methods for a configuration reader.
+ */
 interface ConfigInterface
 {
     /**
