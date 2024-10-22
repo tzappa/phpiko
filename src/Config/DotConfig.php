@@ -1,9 +1,6 @@
-<?php declare(strict_types=1);
-/**
- * DotConfig
- *
- * @package PHPiko
- */
+<?php
+
+declare(strict_types=1);
 
 namespace PHPiko\Config;
 
@@ -21,9 +18,9 @@ namespace PHPiko\Config;
  */
 final class DotConfig implements ConfigInterface
 {
-	/**
-	 * @var array
-	 */
+    /**
+     * @var array
+     */
     private $registry = [];
 
     /**
@@ -31,10 +28,10 @@ final class DotConfig implements ConfigInterface
      *
      * @param array $data
      */
-	public function __construct(array $data)
-	{
-		$this->registry = $data;
-	}
+    public function __construct(array $data)
+    {
+        $this->registry = $data;
+    }
 
     /**
      * {@inheritDoc}
@@ -49,7 +46,7 @@ final class DotConfig implements ConfigInterface
             }
             $registry = $registry[$subkey];
         }
-    	return true;
+        return true;
     }
 
     /**
