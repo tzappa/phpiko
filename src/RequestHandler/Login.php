@@ -1,15 +1,13 @@
-<?php declare(strict_types=1);
-/**
- * Login Page
- *
- * @package PHPiko
- */
+<?php 
+
+declare(strict_types=1);
 
 namespace PHPiko\RequestHandler;
 
 use PHPiko\Logger\LoggerTrait;
 use PHPiko\Session\SessionInterface;
 use PHPiko\Template\TemplateInterface;
+use PHPiko\Event\DispatcherTrait;
 
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -17,9 +15,13 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Login Page
+ */
 final class Login implements RequestHandlerInterface
 {
     use LoggerTrait;
+    use DispatcherTrait;
 
     /**
      * The session instance.
@@ -47,6 +49,7 @@ final class Login implements RequestHandlerInterface
                 if ($username === 'admin' && $password === 'admin') {
                     $this->session->set('username', $username);
                     $this->info('User logged in', ['username' => $username]);
+                    $this->dispatch(new LoginEvent($username));
                     return new RedirectResponse('/private/hello');
                 }
                 $error = 'Invalid username or password';

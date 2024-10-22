@@ -8,6 +8,8 @@ namespace PHPiko;
 use PHPiko\Config\Factory as ConfigFactory;
 use PHPiko\Config\ConfigInterface;
 use PHPiko\Container\Container;
+use PHPiko\Event\Dispatcher;
+use PHPiko\Event\Provider;
 use PHPiko\Logger\FileLogger;
 use PHPiko\Http\Router;
 use PHPiko\Http\LazyMiddleware;
@@ -27,6 +29,7 @@ use Laminas\Diactoros\Response\TextResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Psr\Log\LoggerInterface;
 use Exception;
+
 
 // Load Composer's autoloader
 require_once dirname(__DIR__) . '/vendor/autoload.php';
@@ -76,6 +79,19 @@ $app->session = function () {
     return new SessionManager();
 };
 
+
+// Events
+$app->eventProvider = function () {
+    return new Provider();
+};
+$app->eventDispatcher = function () use ($app) {
+    return new Dispatcher($app->eventProvider, $app->logger);
+};
+$app->eventProvider->addListener(RequestHandler\LoginEvent::class, function (RequestHandler\LoginEvent $event) use ($app) {
+    $app->logger->debug('User {user} logged in', ['user' => $event->getUser()]);
+});
+
+
 // Router
 $router = new Router();
 // Public routes
@@ -86,6 +102,7 @@ $router->map('GET', '/', function ($request) use ($app) {
 $router->map('*', '/login', function ($request) use ($app) {
     $requestHandler = new Login($app->session, $app->template);
     $requestHandler->setLogger($app->logger);
+    $requestHandler->setDispatcher($app->eventDispatcher);
     return $requestHandler->handle($request);
 });
 $router->map('*', '/logout', function ($request) use ($app) {

@@ -1,9 +1,6 @@
-<?php declare(strict_types=1);
-/**
- * Hello Page
- *
- * @package PHPiko
- */
+<?php 
+
+declare(strict_types=1);
 
 namespace PHPiko\RequestHandler;
 
@@ -13,6 +10,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Hello Page
+ */
 final class Hello implements RequestHandlerInterface
 {
     public function __construct(private TemplateInterface $template)
