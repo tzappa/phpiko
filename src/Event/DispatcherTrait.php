@@ -13,10 +13,11 @@ trait DispatcherTrait
         $this->dispatcher = $dispatcher;
     }
 
-    public function dispatch(object $event): object
+    public function dispatch(object $event): ?object
     {
-        if ($this->dispatcher) {
+        if (isset($this->dispatcher)) {
             return $this->dispatcher->dispatch($event);
         }
+        return null;
     }
 }

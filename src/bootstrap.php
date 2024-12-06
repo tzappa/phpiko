@@ -88,9 +88,11 @@ $app->eventDispatcher = function () use ($app) {
     return new Dispatcher($app->eventProvider, $app->logger);
 };
 $app->eventProvider->addListener(Events\LoginEvent::class, function (Events\LoginEvent $event) use ($app) {
-    $app->logger->debug('User {user} logged in', ['user' => $event->getUser()]);
+    $app->logger->debug('User {user} logged in', ['user' => $event->getUsername()]);
 });
-
+$app->eventProvider->addListener(Events\LogoutEvent::class, function (Events\LogoutEvent $event) use ($app) {
+    $app->logger->debug('User {user} logged out', ['user' => $event->getUsername()]);
+});
 
 // Router
 $router = new Router();
@@ -107,6 +109,7 @@ $router->map('*', '/login', function ($request) use ($app) {
 });
 $router->map('*', '/logout', function ($request) use ($app) {
     $requestHandler = new Logout($app->session);
+    $requestHandler->setDispatcher($app->eventDispatcher);
     return $requestHandler->handle($request);
 });
 // Private routes

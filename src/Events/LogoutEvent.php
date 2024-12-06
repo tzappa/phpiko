@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace PHPiko\Events;
 
 /**
- * Event dispatched when a user successfully logs in.
+ * Event dispatched when a user logs out.
  *
- * This event is typically dispatched by the Login request handler
- * after successful authentication.
+ * This event is typically dispatched by the Logout request handler
+ * after the user clicks the logout button.
  */
-final class LoginEvent
+final class LogoutEvent
 {
     public function __construct(private string $username)
     {
