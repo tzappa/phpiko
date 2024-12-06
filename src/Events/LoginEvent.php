@@ -12,7 +12,7 @@ namespace PHPiko\Events;
  */
 final class LoginEvent
 {
-    public function __construct(private string $username)
+    public function __construct(private readonly string $username)
     {
 
     }
