@@ -1,6 +1,6 @@
 <?php
 
-namespace PHPiko\RequestHandler;
+namespace PHPiko\Events;
 
 class LoginEvent
 {

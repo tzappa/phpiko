@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -8,6 +8,7 @@ use PHPiko\Logger\LoggerTrait;
 use PHPiko\Session\SessionInterface;
 use PHPiko\Template\TemplateInterface;
 use PHPiko\Event\DispatcherTrait;
+use PHPiko\Events\LoginEvent;
 
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;

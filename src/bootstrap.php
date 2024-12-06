@@ -87,7 +87,7 @@ $app->eventProvider = function () {
 $app->eventDispatcher = function () use ($app) {
     return new Dispatcher($app->eventProvider, $app->logger);
 };
-$app->eventProvider->addListener(RequestHandler\LoginEvent::class, function (RequestHandler\LoginEvent $event) use ($app) {
+$app->eventProvider->addListener(Events\LoginEvent::class, function (Events\LoginEvent $event) use ($app) {
     $app->logger->debug('User {user} logged in', ['user' => $event->getUser()]);
 });
 
