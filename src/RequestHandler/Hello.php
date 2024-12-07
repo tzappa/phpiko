@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace PHPiko\RequestHandler;
 
+use Clear\Template\TemplateInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
-use PHPiko\Template\TemplateInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;

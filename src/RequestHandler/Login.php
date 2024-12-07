@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace PHPiko\RequestHandler;
 
-use PHPiko\Logger\LoggerTrait;
-use PHPiko\Session\SessionInterface;
-use PHPiko\Template\TemplateInterface;
-use PHPiko\Events\EventDispatcherTrait;
 use PHPiko\Event\LoginEvent;
 
+use Clear\Logger\LoggerTrait;
+use Clear\Session\SessionInterface;
+use Clear\Template\TemplateInterface;
+use Clear\Events\EventDispatcherTrait;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;

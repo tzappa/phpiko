@@ -1,19 +1,18 @@
-<?php declare(strict_types=1);
-/**
- * Home Page
- *
- * @package PHPiko
- */
+<?php 
+
+declare(strict_types=1);
 
 namespace PHPiko\RequestHandler;
 
-use PHPiko\Template\TemplateInterface;
+use Clear\Template\TemplateInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
-
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Home Page
+ */
 final class Home implements RequestHandlerInterface
 {
     public function __construct(private TemplateInterface $template)

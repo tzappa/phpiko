@@ -1,22 +1,21 @@
-<?php declare(strict_types=1);
-/**
- * Logout
- *
- * @package PHPiko
- */
+<?php 
+
+declare(strict_types=1);
 
 namespace PHPiko\RequestHandler;
 
-use PHPiko\Session\SessionInterface;
-use PHPiko\Events\EventDispatcherTrait;
 use PHPiko\Event\LogoutEvent;
 
+use Clear\Session\SessionInterface;
+use Clear\Events\EventDispatcherTrait;
 use Laminas\Diactoros\Response\RedirectResponse;
-
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Logout
+ */
 final class Logout implements RequestHandlerInterface
 {
     use EventDispatcherTrait;

@@ -2,10 +2,11 @@
 
 namespace PHPiko\Tests;
 
+use PHPiko\RequestHandler\Home;
+
+use Clear\Template\TwigTemplate;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\TestCase;
-use PHPiko\RequestHandler\Home;
-use PHPiko\Template\TwigTemplate;
 use Psr\Http\Message\ResponseInterface;
 
 final class HomeTest extends TestCase

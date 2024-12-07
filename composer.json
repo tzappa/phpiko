@@ -21,6 +21,7 @@
     },
     "autoload": {
         "psr-4": {
+            "Clear\\": "src/Clear/",
             "PHPiko\\": "src/"
         }
     },

@@ -5,28 +5,33 @@
 
 namespace PHPiko;
 
-use PHPiko\Config\Factory as ConfigFactory;
-use PHPiko\Config\ConfigInterface;
-use PHPiko\Container\Container;
-use PHPiko\Events\Dispatcher;
-use PHPiko\Events\Provider;
-use PHPiko\Logger\FileLogger;
-use PHPiko\Http\Router;
-use PHPiko\Http\LazyMiddleware;
-use PHPiko\Http\Exception\NotFoundException;
-use PHPiko\Http\Exception\UnauthorizedException;
-use PHPiko\Http\HttpException;
 use PHPiko\Middleware\AuthMiddleware;
 use PHPiko\RequestHandler\Home;
 use PHPiko\RequestHandler\Hello;
 use PHPiko\RequestHandler\Login;
 use PHPiko\RequestHandler\Logout;
-use PHPiko\Session\SessionManager;
-use PHPiko\Template\TwigTemplate;
-use PHPiko\Template\TemplateInterface;
+use PHPiko\Event\LoginEvent;
+use PHPiko\Event\LogoutEvent;
+
+use Clear\Config\Factory as ConfigFactory;
+use Clear\Config\ConfigInterface;
+use Clear\Container\Container;
+use Clear\Events\Dispatcher;
+use Clear\Events\Provider;
+use Clear\Http\Router;
+use Clear\Http\LazyMiddleware;
+use Clear\Http\Exception\NotFoundException;
+use Clear\Http\Exception\UnauthorizedException;
+use Clear\Http\HttpException;
+use Clear\Logger\FileLogger;
+use Clear\Session\SessionManager;
+use Clear\Template\TwigTemplate;
+use Clear\Template\TemplateInterface;
+
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Response\TextResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
+
 use Psr\Log\LoggerInterface;
 use Exception;
 
@@ -87,10 +92,10 @@ $app->eventProvider = function () {
 $app->eventDispatcher = function () use ($app) {
     return new Dispatcher($app->eventProvider, $app->logger);
 };
-$app->eventProvider->addListener(Event\LoginEvent::class, function (Event\LoginEvent $event) use ($app) {
+$app->eventProvider->addListener(LoginEvent::class, function (LoginEvent $event) use ($app) {
     $app->logger->debug('User {user} logged in', ['user' => $event->getUsername()]);
 });
-$app->eventProvider->addListener(Event\LogoutEvent::class, function (Event\LogoutEvent $event) use ($app) {
+$app->eventProvider->addListener(LogoutEvent::class, function (LogoutEvent $event) use ($app) {
     $app->logger->debug('User {user} logged out', ['user' => $event->getUsername()]);
 });
 

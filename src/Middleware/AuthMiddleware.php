@@ -1,20 +1,21 @@
-<?php declare(strict_types=1);
-/**
- * Auth middleware (PSR-15).
- *
- * @package PHPiko
- */
+<?php 
+
+declare(strict_types=1);
+
 
 namespace PHPiko\Middleware;
 
-use PHPiko\Session\SessionInterface;
-use PHPiko\Http\Exception\UnauthorizedException;
+use Clear\Session\SessionInterface;
+use Clear\Http\Exception\UnauthorizedException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 
+/**
+ * Auth middleware (PSR-15).
+ */
 final class AuthMiddleware implements MiddlewareInterface
 {
     /**
