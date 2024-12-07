@@ -29,7 +29,7 @@
         ignoreDeprecatedCodeUnits="true" 
         disableCodeCoverageIgnore="true">
         <report>
-            <html outputDirectory="/home/tzappa/reports"/>
+            <html outputDirectory="reports"/>
         </report>
     </coverage>
 </phpunit>
