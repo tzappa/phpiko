@@ -1,5 +1,6 @@
 log/*
 tmp/*
+reports/*
 vendor/*
 config/development/*
 config/production/*

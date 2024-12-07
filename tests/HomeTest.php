@@ -4,16 +4,17 @@ namespace App\Tests;
 
 use App\RequestHandler\Home;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
+use PHPUnit\Framework\TestCase;
+
 use Clear\Template\TwigTemplate;
 use Laminas\Diactoros\ServerRequest;
-use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
+#[CoversClass(Home::class)]
 final class HomeTest extends TestCase
 {   
-    /**
-     * @covers Home::handle
-     */
     public function testHandleReturnsHtmlResponse(): void
     {
         $twig = new TwigTemplate(__DIR__ . '/../src/App/templates', false, false);

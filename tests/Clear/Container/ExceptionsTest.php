@@ -5,6 +5,10 @@ declare(strict_types=1);
 
 namespace Tests\Clear\Container;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
+use PHPUnit\Framework\TestCase;
+
 use Clear\Container\ContainerException;
 use Clear\Container\NotFoundException;
 use Psr\Container\ContainerExceptionInterface;
@@ -13,7 +17,9 @@ use Psr\Container\NotFoundExceptionInterface;
 /**
  * Tests PSR-11 exceptions
  */
-class ExceptionsTest extends \PHPUnit\Framework\TestCase
+#[CoversClass(ContainerException::class)]
+#[CoversClass(NotFoundException::class)]
+class ExceptionsTest extends TestCase
 {
     public function testContainerExceptionImplementsPsrContainerExceptionInterface()
     {
