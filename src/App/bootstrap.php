@@ -9,8 +9,7 @@ use App\RequestHandler\Home;
 use App\RequestHandler\Hello;
 use App\RequestHandler\Login;
 use App\RequestHandler\Logout;
-use App\Event\LoginEvent;
-use App\Event\LogoutEvent;
+use App\Event\LoginFailEvent;
 
 use Clear\Config\Factory as ConfigFactory;
 use Clear\Config\ConfigInterface;
@@ -91,11 +90,9 @@ $app->eventProvider = function () {
 $app->eventDispatcher = function () use ($app) {
     return new Dispatcher($app->eventProvider, $app->logger);
 };
-$app->eventProvider->addListener(LoginEvent::class, function (LoginEvent $event) use ($app) {
-    $app->logger->debug('User {user} logged in', ['user' => $event->getUsername()]);
-});
-$app->eventProvider->addListener(LogoutEvent::class, function (LogoutEvent $event) use ($app) {
-    $app->logger->debug('User {user} logged out', ['user' => $event->getUsername()]);
+$app->eventProvider->addListener(LoginFailEvent::class, function (LoginFailEvent $event) use ($app) {
+    // After some failed login attempts, you can block the user's IP address, send an email to the user or to admin, etc.
+    $app->logger->warning('Login failed for {username}', ['username' => $event->getUsername()]);
 });
 
 // Router

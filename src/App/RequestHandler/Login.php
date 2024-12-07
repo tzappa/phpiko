@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\RequestHandler;
 
 use App\Event\LoginEvent;
+use App\Event\LoginFailEvent;
 
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
@@ -55,6 +56,7 @@ final class Login implements RequestHandlerInterface
                 }
                 $error = 'Invalid username or password';
                 $this->warning('Invalid login attempt', ['username' => $username]);
+                $this->dispatch(new LoginFailEvent($username));
             }
         }
 
