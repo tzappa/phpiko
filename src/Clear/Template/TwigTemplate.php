@@ -77,7 +77,7 @@ final class TwigTemplate implements TemplateInterface
      * @param string $extension The file extension to use for templates (e.g., '.twig')
      * @return self Returns the current instance for method chaining
      */
-    public function setExtension(string $extension): self
+    public function setFileExtension(string $extension): self
     {
         $this->extension = $extension;
 

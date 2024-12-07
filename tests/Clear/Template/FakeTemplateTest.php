@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
  * Fake Template Tests
  */
 #[CoversClass(FakeTemplate::class)]
-#[UsesClass(TemplateInterface::class)]
 class FakeTemplateTest extends TestCase
 {
     public function testFakeTemplateImplementsTemplateInterface()

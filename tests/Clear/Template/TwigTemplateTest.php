@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
  * Unit test the Twig Template wrapper
  */
 #[CoversClass(TwigTemplate::class)]
-#[UsesClass(TemplateInterface::class)]
 class TwigTemplateTest extends TestCase
 {
     public function testPageCreate()
@@ -84,5 +83,14 @@ class TwigTemplateTest extends TestCase
 
         $html = $page->parse();
         $this->assertSame("bar\n333\n", $html);
+    }
+
+    public function testDebug()
+    {
+        $page = new TwigTemplate(__DIR__, false, true);
+        $page->load('debug');
+        $page->assign('foo', 6);
+        $html = $page->parse();
+        $this->assertSame("int(6)\n\n", $html);
     }
 }
