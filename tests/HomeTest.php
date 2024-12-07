@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace PHPiko\Tests;
+namespace App\Tests;
 
-use PHPiko\RequestHandler\Home;
+use App\RequestHandler\Home;
 
 use Clear\Template\TwigTemplate;
 use Laminas\Diactoros\ServerRequest;
@@ -16,7 +16,7 @@ final class HomeTest extends TestCase
      */
     public function testHandleReturnsHtmlResponse(): void
     {
-        $twig = new TwigTemplate(__DIR__ . '/../src/templates', false, false);
+        $twig = new TwigTemplate(__DIR__ . '/../src/App/templates', false, false);
         $home = new Home($twig);
         $request = new ServerRequest([], [], '/', 'GET');
         

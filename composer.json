@@ -21,8 +21,9 @@
     },
     "autoload": {
         "psr-4": {
-            "Clear\\": "src/Clear/",
-            "PHPiko\\": "src/"
+            "API\\": "src/API/",
+            "App\\": "src/App/",
+            "Clear\\": "src/Clear/"
         }
     },
     "scripts": {

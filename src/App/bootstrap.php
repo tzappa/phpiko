@@ -1,17 +1,16 @@
-<?php declare(strict_types=1);
-/**
- * @package PHPiko
- */
+<?php 
 
-namespace PHPiko;
+declare(strict_types=1);
 
-use PHPiko\Middleware\AuthMiddleware;
-use PHPiko\RequestHandler\Home;
-use PHPiko\RequestHandler\Hello;
-use PHPiko\RequestHandler\Login;
-use PHPiko\RequestHandler\Logout;
-use PHPiko\Event\LoginEvent;
-use PHPiko\Event\LogoutEvent;
+namespace App;
+
+use App\Middleware\AuthMiddleware;
+use App\RequestHandler\Home;
+use App\RequestHandler\Hello;
+use App\RequestHandler\Login;
+use App\RequestHandler\Logout;
+use App\Event\LoginEvent;
+use App\Event\LogoutEvent;
 
 use Clear\Config\Factory as ConfigFactory;
 use Clear\Config\ConfigInterface;
@@ -37,7 +36,7 @@ use Exception;
 
 
 // Load Composer's autoloader
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 // Application Container used as DI
 $app = new Container();
@@ -51,7 +50,7 @@ $app->env = function () {
 // Configurations
 $app->config = function () use ($app): ConfigInterface {
     $filename = strtolower($app->name) . '.ini';
-    return ConfigFactory::create(dirname(__DIR__) . '/config/' . $app->env . '/' . $filename);
+    return ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . $filename);
 };
 
 // Timezone settings
@@ -74,7 +73,7 @@ $app->template = function () use ($app): TemplateInterface {
     $templatePath = $app->config->get('twig.template_path', __DIR__ . '/templates/');
     $tpl = new TwigTemplate($templatePath, $cachePath, $debug);
     // use .revision file modification time on server or something else - current timestamp for development and no cache
-    $tpl->assign('assets_revision', '?rev=' . (@filemtime(dirname(__DIR__, 1) . '/.revision') ?: time()));
+    $tpl->assign('assets_revision', '?rev=' . (@filemtime(dirname(__DIR__, 2) . '/.revision') ?: time()));
 
     return $tpl;
 };

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace PHPiko\Middleware;
+namespace App\Middleware;
 
 use Clear\Session\SessionInterface;
 use Clear\Http\Exception\UnauthorizedException;
@@ -21,7 +21,7 @@ final class AuthMiddleware implements MiddlewareInterface
     /**
      * The session instance.
      *
-     * @var \PHPiko\Session\SessionInterface
+     * @var \App\Session\SessionInterface
      */
     private SessionInterface $session;
     

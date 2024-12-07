@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PHPiko\RequestHandler;
+namespace App\RequestHandler;
 
-use PHPiko\Event\LogoutEvent;
+use App\Event\LogoutEvent;
 
 use Clear\Session\SessionInterface;
 use Clear\Events\EventDispatcherTrait;

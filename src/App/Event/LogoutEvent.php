@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PHPiko\Event;
+namespace App\Event;
 
 /**
  * Event dispatched when a user logs out.

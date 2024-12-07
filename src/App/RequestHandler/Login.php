@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PHPiko\RequestHandler;
+namespace App\RequestHandler;
 
-use PHPiko\Event\LoginEvent;
+use App\Event\LoginEvent;
 
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
@@ -27,7 +27,7 @@ final class Login implements RequestHandlerInterface
     /**
      * The session instance.
      *
-     * @var \PHPiko\Session\SessionInterface
+     * @var \App\Session\SessionInterface
      */
     private SessionInterface $session;
 
