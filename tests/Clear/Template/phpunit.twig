@@ -1,0 +1,8 @@
+<title>{{ head_title }}</title>
+{{ testkey }}
+{% for css in css_files %}
+<link rel="stylesheet" href="/css/{{ css }}" />
+{% endfor %}
+{% for js in js_files %}
+<script src="/js/{{ js }}"></script>
+{% endfor %}

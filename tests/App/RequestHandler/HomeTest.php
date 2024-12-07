@@ -1,23 +1,23 @@
 <?php declare(strict_types=1);
 
-namespace App\Tests;
+namespace Tests\App\RequestHandler;
 
 use App\RequestHandler\Home;
 
+use Clear\Template\TwigTemplate;
+use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
-
-use Clear\Template\TwigTemplate;
-use Laminas\Diactoros\ServerRequest;
 use Psr\Http\Message\ResponseInterface;
 
 #[CoversClass(Home::class)]
+#[UsesClass(TwigTemplate::class)]
 final class HomeTest extends TestCase
 {   
     public function testHandleReturnsHtmlResponse(): void
     {
-        $twig = new TwigTemplate(__DIR__ . '/../src/App/templates', false, false);
+        $twig = new TwigTemplate(__DIR__ . '/../../../src/App/templates', false, false);
         $home = new Home($twig);
         $request = new ServerRequest([], [], '/', 'GET');
         

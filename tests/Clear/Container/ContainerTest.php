@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Clear\Container;
 
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
-use PHPUnit\Framework\TestCase;
-
 use Clear\Container\Container;
 use Clear\Container\ContainerException;
 use Clear\Container\NotFoundException;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
+use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use stdClass;
 
@@ -18,6 +17,8 @@ use stdClass;
  * Container (PSR-11) Tests
  */
 #[CoversClass(Container::class)]
+#[UsesClass(ContainerException::class)]
+#[UsesClass(NotFoundException::class)]
 class ContainerTest extends TestCase
 {
     public function testContainerImplementsContainerInteropInterface()
