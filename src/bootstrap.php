@@ -8,8 +8,8 @@ namespace PHPiko;
 use PHPiko\Config\Factory as ConfigFactory;
 use PHPiko\Config\ConfigInterface;
 use PHPiko\Container\Container;
-use PHPiko\Event\Dispatcher;
-use PHPiko\Event\Provider;
+use PHPiko\Events\Dispatcher;
+use PHPiko\Events\Provider;
 use PHPiko\Logger\FileLogger;
 use PHPiko\Http\Router;
 use PHPiko\Http\LazyMiddleware;
@@ -87,10 +87,10 @@ $app->eventProvider = function () {
 $app->eventDispatcher = function () use ($app) {
     return new Dispatcher($app->eventProvider, $app->logger);
 };
-$app->eventProvider->addListener(Events\LoginEvent::class, function (Events\LoginEvent $event) use ($app) {
+$app->eventProvider->addListener(Event\LoginEvent::class, function (Event\LoginEvent $event) use ($app) {
     $app->logger->debug('User {user} logged in', ['user' => $event->getUsername()]);
 });
-$app->eventProvider->addListener(Events\LogoutEvent::class, function (Events\LogoutEvent $event) use ($app) {
+$app->eventProvider->addListener(Event\LogoutEvent::class, function (Event\LogoutEvent $event) use ($app) {
     $app->logger->debug('User {user} logged out', ['user' => $event->getUsername()]);
 });
 
@@ -104,12 +104,12 @@ $router->map('GET', '/', function ($request) use ($app) {
 $router->map('*', '/login', function ($request) use ($app) {
     $requestHandler = new Login($app->session, $app->template);
     $requestHandler->setLogger($app->logger);
-    $requestHandler->setDispatcher($app->eventDispatcher);
+    $requestHandler->setEventDispatcher($app->eventDispatcher);
     return $requestHandler->handle($request);
 });
 $router->map('*', '/logout', function ($request) use ($app) {
     $requestHandler = new Logout($app->session);
-    $requestHandler->setDispatcher($app->eventDispatcher);
+    $requestHandler->setEventDispatcher($app->eventDispatcher);
     return $requestHandler->handle($request);
 });
 // Private routes

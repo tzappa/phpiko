@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PHPiko\Event;
+namespace PHPiko\Events;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;

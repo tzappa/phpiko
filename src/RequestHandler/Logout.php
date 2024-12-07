@@ -8,8 +8,8 @@
 namespace PHPiko\RequestHandler;
 
 use PHPiko\Session\SessionInterface;
-use PHPiko\Event\DispatcherTrait;
-use PHPiko\Events\LogoutEvent;
+use PHPiko\Events\EventDispatcherTrait;
+use PHPiko\Event\LogoutEvent;
 
 use Laminas\Diactoros\Response\RedirectResponse;
 
@@ -19,7 +19,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 final class Logout implements RequestHandlerInterface
 {
-    use DispatcherTrait;
+    use EventDispatcherTrait;
 
     private SessionInterface $session;
 

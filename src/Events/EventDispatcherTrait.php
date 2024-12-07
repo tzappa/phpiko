@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PHPiko\Event;
+namespace PHPiko\Events;
 
-trait DispatcherTrait
+trait EventDispatcherTrait
 {
     private Dispatcher $dispatcher;
 
-    public function setDispatcher(Dispatcher $dispatcher): void
+    public function setEventDispatcher(Dispatcher $dispatcher): void
     {
         $this->dispatcher = $dispatcher;
     }

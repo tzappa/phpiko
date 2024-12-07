@@ -7,8 +7,8 @@ namespace PHPiko\RequestHandler;
 use PHPiko\Logger\LoggerTrait;
 use PHPiko\Session\SessionInterface;
 use PHPiko\Template\TemplateInterface;
-use PHPiko\Event\DispatcherTrait;
-use PHPiko\Events\LoginEvent;
+use PHPiko\Events\EventDispatcherTrait;
+use PHPiko\Event\LoginEvent;
 
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -22,7 +22,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 final class Login implements RequestHandlerInterface
 {
     use LoggerTrait;
-    use DispatcherTrait;
+    use EventDispatcherTrait;
 
     /**
      * The session instance.

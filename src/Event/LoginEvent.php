@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace PHPiko\Events;
+namespace PHPiko\Event;
 
 /**
- * Event dispatched when a user logs out.
+ * Event dispatched when a user successfully logs in.
  *
- * This event is typically dispatched by the Logout request handler
- * after the user clicks the logout button.
+ * This event is typically dispatched by the Login request handler
+ * after successful authentication.
  */
-final class LogoutEvent
+final class LoginEvent
 {
     public function __construct(private readonly string $username)
     {
