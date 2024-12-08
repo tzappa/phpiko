@@ -6,9 +6,7 @@ namespace Clear\Database\Event;
 
 class PdoEvent
 {
-    public function __construct(private string $eventType)
-    {
-    }
+    public function __construct(private string $eventType) {}
 
     public function getEventType(): string
     {

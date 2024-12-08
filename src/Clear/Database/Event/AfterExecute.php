@@ -6,7 +6,7 @@ namespace Clear\Database\Event;
 
 final class AfterExecute extends PdoEvent
 {
-    public function __construct(private string $statement, private ?array $params = null, private $result)
+    public function __construct(private string $statement, private ?array $params = null, private bool $result)
     {
         parent::__construct('AfterExecute');
     }
@@ -21,7 +21,7 @@ final class AfterExecute extends PdoEvent
         return $this->params;
     }
 
-    public function getResult(): int|false
+    public function getResult(): bool
     {
         return $this->result;
     }

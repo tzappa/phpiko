@@ -6,14 +6,14 @@ namespace Clear\Database\Event;
 
 final class AfterExec extends PdoEvent
 {
-    public function __construct(private string $statement, private int|false $result)
+    public function __construct(private string $queryString, private int|false $result)
     {
         parent::__construct('AfterExec');
     }
 
-    public function getStatement(): string
+    public function getQueryString(): string
     {
-        return $this->statement;
+        return $this->queryString;
     }
 
     public function getResult(): int|false

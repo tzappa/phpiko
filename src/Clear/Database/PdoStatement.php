@@ -11,15 +11,7 @@ use PDOStatement as PhpPdoStatement;
  */
 class PdoStatement extends PhpPdoStatement implements PdoStatementInterface
 {
-    /**
-     * @var \Clear\Database\Pdo
-     */
-    private $connection;
-
-    protected function __construct($connection)
-    {
-        $this->connection = $connection;
-    }
+    protected function __construct(private Pdo $connection) {}
 
     /**
      * {@inheritDoc}

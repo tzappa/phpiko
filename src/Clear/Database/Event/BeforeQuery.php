@@ -6,13 +6,13 @@ namespace Clear\Database\Event;
 
 final class BeforeQuery extends PdoEvent
 {
-    public function __construct(private string $statement)
+    public function __construct(private string $queryString)
     {
         parent::__construct('BeforeQuery');
     }
 
-    public function getStatement(): string
+    public function getQueryString(): string
     {
-        return $this->statement;
+        return $this->queryString;
     }
 }

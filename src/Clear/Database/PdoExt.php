@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Clear\Database;
 
+use Clear\Database\PdoInterface;
 use Clear\Database\Event\AfterExec;
 use Clear\Database\Event\AfterQuery;
 use Clear\Database\Event\BeforeExec;
@@ -22,7 +23,7 @@ class PdoExt extends PDO implements PdoInterface
     {
         parent::__construct($dsn, $username, $passwd, $options);
 
-        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Clear\Database\PdoStatementExt', array($this, $this->dispatcher)));
+        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Clear\Database\PdoStatementExt', array(null)));
     }
 
     /**
@@ -31,6 +32,7 @@ class PdoExt extends PDO implements PdoInterface
     public function setEventDispatcher(EventDispatcherInterface $dispatcher): void
     {
         $this->dispatcher = $dispatcher;
+        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Clear\Database\PdoStatementExt', array($this->dispatcher)));
     }
 
     /**
@@ -48,7 +50,7 @@ class PdoExt extends PDO implements PdoInterface
     /**
      * {@inheritDoc}
      */
-    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): PdoStatement|false
+    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): PdoStatementExt|false
     {
         $args = func_get_args();
         $argsCnt = count($args);

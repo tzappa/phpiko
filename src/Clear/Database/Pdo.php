@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Clear\Database;
 
+use Clear\Database\PdoInterface;
+use Clear\Database\PdoStatement;
 use PDO as PhpPdo;
 
 /**

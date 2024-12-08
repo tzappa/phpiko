@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Clear\Database;
 
 use PDO;
+use PDOStatement;
 
 /**
  * PDO Interface declares all PDO methods as they are defined in PHP
@@ -95,11 +96,11 @@ interface PdoInterface
      * @param string $statement The SQL statement to prepare and execute.
      * @param mixed ...$fetch Optional fetch-related parameters.
      *
-     * @return \PDOStatement
+     * @return \PDOStatement|false
      *
      * @see http://php.net/manual/en/pdo.query.php
      */
-    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): PdoStatement|false;
+    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): PDOStatement|false;
 
     /**
      * Quotes a value for use in an SQL statement.
