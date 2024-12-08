@@ -16,6 +16,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use PDO;
 
 /**
  * Login Page
@@ -25,17 +26,11 @@ final class Login implements RequestHandlerInterface
     use LoggerTrait;
     use EventDispatcherTrait;
 
-    /**
-     * The session instance.
-     *
-     * @var \App\Session\SessionInterface
-     */
-    private SessionInterface $session;
-
-    public function __construct(SessionInterface $session, private TemplateInterface $template)
-    {
-        $this->session = $session;
-    }
+    public function __construct(
+        private SessionInterface $session, 
+        private TemplateInterface $template, 
+        private PDO $db
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -48,7 +43,11 @@ final class Login implements RequestHandlerInterface
             } else {
                 $username = $data['username'] ?? '';
                 $password = $data['password'] ?? '';
-                if ($username === 'admin' && $password === 'admin') {
+                $sql = 'SELECT * FROM users WHERE username = :username';
+                $sth = $this->db->prepare($sql);
+                $sth->execute([':username' => $username]);
+                $user = $sth->fetch(PDO::FETCH_ASSOC);
+                if ($user && password_verify($password, $user['password'])) {
                     $this->session->set('username', $username);
                     $this->info('User logged in', ['username' => $username]);
                     $this->dispatch(new LoginEvent($username));

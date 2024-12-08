@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Clear\Database;
 
 use Clear\Database\PdoInterface;
-use Clear\Database\Event\AfterExec;
-use Clear\Database\Event\AfterQuery;
-use Clear\Database\Event\BeforeExec;
-use Clear\Database\Event\BeforeQuery;
+use Clear\Database\Event\{
+    AfterConnect,
+    AfterExec,
+    AfterQuery,
+    BeforeExec,
+    BeforeQuery
+};
 use Psr\EventDispatcher\EventDispatcherInterface;
 use PDO;
 
@@ -21,9 +24,14 @@ class PdoExt extends PDO implements PdoInterface
 
     public function __construct(string $dsn, string $username = '', string $passwd = '', array $options = [])
     {
+        $dispatcher = null;
+        if (isset($options['dispatcher']) && ($options['dispatcher'] instanceof EventDispatcherInterface)) {
+            $dispatcher = $options['dispatcher'];
+            unset($options['dispatcher']);
+        }
         parent::__construct($dsn, $username, $passwd, $options);
-        
-        $this->setEventDispatcher($options['dispatcher'] ?? null);
+        $this->setEventDispatcher($dispatcher);
+        $this->dispatch(new AfterConnect($dsn, $username, $options));
     }
 
     /**

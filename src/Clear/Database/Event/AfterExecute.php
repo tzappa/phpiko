@@ -12,7 +12,7 @@ final class AfterExecute extends PdoEvent
 {
     public function __construct(
         private readonly string $queryString, 
-        private readonly ?array $params = null, 
+        private readonly ?array $params, 
         private readonly bool $result
     ) {
         parent::__construct('AfterExecute');

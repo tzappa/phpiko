@@ -39,7 +39,7 @@ final class Pdo extends PdoExt implements PdoInterface
     public function setEventDispatcher(?EventDispatcherInterface $dispatcher): void
     {
         $this->dispatcher = $dispatcher;
-        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Clear\Database\PdoStatementExt', array($this, $this->dispatcher)));
+        $this->setAttribute(PdoExt::ATTR_STATEMENT_CLASS, array('\Clear\Database\PdoStatementExt', array($this, $this->dispatcher)));
     }
 
     /**

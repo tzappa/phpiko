@@ -67,6 +67,12 @@ $app->logger = function () use ($app): LoggerInterface {
     return $logger;
 };
 
+// Events
+$app->eventProvider = new Provider();
+$app->eventDispatcher = function () use ($app) {
+    return new Dispatcher($app->eventProvider, $app->logger);
+};
+
 // Database connection
 $app->database = function () use ($app): PDO {
     if ('sqlite' == $app->config->get('database.driver')) {
@@ -93,6 +99,10 @@ $app->database = function () use ($app): PDO {
         $app->logger->log('emergency', 'PDOException: ' . $e->getMessage());
         exit;
     }
+    if ($dsn === 'sqlite::memory:') {
+        $db->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, username VARCHAR(30), password TEXT)');
+        $db->exec('INSERT INTO users (username, password) VALUES ("admin", ' . $db->quote(password_hash('admin', PASSWORD_DEFAULT)) . ')');
+    }
     // Sets the Database connection to be on read/write or only in read mode.
     $db->setState($app->config->get('database.state', 'rw'));
 
@@ -117,13 +127,6 @@ $app->session = function () {
 };
 
 
-// Events
-$app->eventProvider = function () {
-    return new Provider();
-};
-$app->eventDispatcher = function () use ($app) {
-    return new Dispatcher($app->eventProvider, $app->logger);
-};
 $app->eventProvider->addListener(LoginFailEvent::class, function (LoginFailEvent $event) use ($app) {
     // After some failed login attempts, you can block the user's IP address, send an email to the user or to admin, etc.
     $app->logger->warning('Login failed for {username}', ['username' => $event->getUsername()]);
@@ -137,7 +140,7 @@ $router->map('GET', '/', function ($request) use ($app) {
     return $requestHandler->handle($request);
 });
 $router->map('*', '/login', function ($request) use ($app) {
-    $requestHandler = new Login($app->session, $app->template);
+    $requestHandler = new Login($app->session, $app->template, $app->database);
     $requestHandler->setLogger($app->logger);
     $requestHandler->setEventDispatcher($app->eventDispatcher);
     return $requestHandler->handle($request);

@@ -7,12 +7,15 @@ namespace Tests\Clear\Database;
 use Clear\Database\PdoExt;
 use Clear\Database\PdoStatementExt;
 use Clear\Database\PDOInterface;
-use Clear\Database\Event\AfterExec;
-use Clear\Database\Event\AfterExecute;
-use Clear\Database\Event\AfterQuery;
-use Clear\Database\Event\BeforeExec;
-use Clear\Database\Event\BeforeExecute;
-use Clear\Database\Event\BeforeQuery;
+use Clear\Database\Event\{
+    AfterConnect,
+    AfterExec,
+    AfterExecute,
+    AfterQuery,
+    BeforeExec,
+    BeforeExecute,
+    BeforeQuery
+};
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -24,6 +27,7 @@ use PDO;
  */
 #[CoversClass(PdoExt::class)]
 #[CoversClass(PdoStatementExt::class)]
+#[CoversClass(AfterConnect::class)]
 #[CoversClass(AfterExec::class)]
 #[CoversClass(AfterExecute::class)]
 #[CoversClass(AfterQuery::class)]
