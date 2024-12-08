@@ -4,21 +4,17 @@ declare(strict_types=1);
 
 namespace Clear\Database;
 
-use PDOStatement as PhpPdoStatement;
+use Clear\Database\PdoStatementExt;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * PDO Statement extends PHP internal PdoStatement
  */
-class PdoStatement extends PhpPdoStatement implements PdoStatementInterface
+final class PdoStatement extends PdoStatementExt
 {
-    /**
-     * @var \Clear\Database\Pdo
-     */
-    private $connection;
-
-    protected function __construct($connection)
+    protected function __construct(private Pdo $connection, private ?EventDispatcherInterface $dispatcher)
     {
-        $this->connection = $connection;
+        parent::__construct($dispatcher);
     }
 
     /**
@@ -30,12 +26,6 @@ class PdoStatement extends PhpPdoStatement implements PdoStatementInterface
             return false;
         }
 
-        $result = parent::execute($params);
-
-        if (is_null($params)) {
-            $params = [];
-        }
-
-        return $result;
+        return parent::execute($params);
     }
 }
