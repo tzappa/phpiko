@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Clear\Database\Event;
 
+use Psr\EventDispatcher\StoppableEventInterface;
+
 /**
  * Base class for PDO events.
  */
-class PdoEvent
+class PdoEvent implements StoppableEventInterface
 {
     public function __construct(private readonly string $eventType) {}
 
@@ -19,5 +21,10 @@ class PdoEvent
     public function getEventType(): string
     {
         return $this->eventType;
+    }
+
+    public function isPropagationStopped(): bool
+    {
+        return false;
     }
 }

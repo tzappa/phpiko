@@ -22,14 +22,14 @@ class PdoExt extends PDO implements PdoInterface
     public function __construct(string $dsn, string $username = '', string $passwd = '', array $options = [])
     {
         parent::__construct($dsn, $username, $passwd, $options);
-
-        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Clear\Database\PdoStatementExt', array(null)));
+        
+        $this->setEventDispatcher($options['dispatcher'] ?? null);
     }
 
     /**
      * when set, the Event Dispatcher will be used to dispatch events.
      */
-    public function setEventDispatcher(EventDispatcherInterface $dispatcher): void
+    public function setEventDispatcher(?EventDispatcherInterface $dispatcher): void
     {
         $this->dispatcher = $dispatcher;
         $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Clear\Database\PdoStatementExt', array($this->dispatcher)));

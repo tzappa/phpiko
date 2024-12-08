@@ -4,8 +4,15 @@ declare(strict_types=1);
 
 namespace Clear\Database\Event;
 
+/**
+ * Event dispatched before a query is executed.
+ */
 final class BeforeExecute extends PdoEvent
 {
+    /**
+     * @param string $queryString The SQL query to be executed
+     * @param array|null $params The parameters to be bound to the query
+     */
     public function __construct(private string $queryString, private ?array $params = null)
     {
         parent::__construct('BeforeExecute');
@@ -21,6 +28,11 @@ final class BeforeExecute extends PdoEvent
         return $this->queryString;
     }
 
+    /**
+     * Get the parameters bound to the query.
+     *
+     * @return array|null The bound parameters or null if none were provided.
+     */
     public function getParams(): ?array
     {
         return $this->params;

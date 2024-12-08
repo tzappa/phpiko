@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Clear\Database\Event;
 
 /**
-* Event dispatched after a PDO statement is executed.
+ * Event dispatched after a PDO statement is executed.
  * Contains the executed statement, parameters, and execution result.
  */
 final class AfterExecute extends PdoEvent
@@ -28,6 +28,11 @@ final class AfterExecute extends PdoEvent
         return $this->queryString;
     }
 
+    /**
+     * Get the parameters bound to the query.
+     *
+     * @return array|null The bound parameters or null if none were provided.
+     */
     public function getParams(): ?array
     {
         return $this->params;
