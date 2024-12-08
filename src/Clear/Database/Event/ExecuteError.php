@@ -6,16 +6,27 @@ namespace Clear\Database\Event;
 
 use PDOException;
 
+/**
+ * Event sent when an PDOException occurs during the execution of a statement.
+ */
 final class ExecuteError extends PdoEvent
 {
-    public function __construct(private string $statement, private ?array $params = null, private $exception)
-    {
+    public function __construct(
+        private readonly string $queryString, 
+        private readonly ?array $params = null, 
+        private readonly PDOException $exception
+    ) {
         parent::__construct('ExecuteError');
     }
 
-    public function getStatement(): string
+    /**
+     * Get the SQL query string.
+     *
+     * @return string The SQL query string.
+     */
+    public function getQueryString(): string
     {
-        return $this->statement;
+        return $this->queryString;
     }
 
     public function getParams(): ?array

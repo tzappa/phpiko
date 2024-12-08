@@ -6,12 +6,14 @@ namespace Clear\Database;
 
 use Clear\Database\PdoInterface;
 use Clear\Database\PdoStatement;
-use PDO as PhpPdo;
+use Clear\Database\PdoExt;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use InvalidArgumentException;
 
 /**
  * PDO extends PHP internal PDO with additional Read/Write state
  */
-class Pdo extends PhpPdo implements PdoInterface
+final class Pdo extends PdoExt implements PdoInterface
 {
     const STATE_READ_ONLY   = 'r';
     const STATE_READ_WRITE  = 'rw';
@@ -24,12 +26,20 @@ class Pdo extends PhpPdo implements PdoInterface
      */
     private $state = self::STATE_READ_WRITE;
 
-
     public function __construct(string $dsn, string $username = '', string $passwd = '', array $options = [])
     {
         parent::__construct($dsn, $username, $passwd, $options);
 
-        $this->setAttribute(PhpPdo::ATTR_STATEMENT_CLASS, array('\Clear\Database\PdoStatement', array($this)));
+        $this->setAttribute(PdoExt::ATTR_STATEMENT_CLASS, array('\Clear\Database\PdoStatement', array($this, $this->dispatcher)));
+    }
+
+    /**
+     * when set, the Event Dispatcher will be used to dispatch events.
+     */
+    public function setEventDispatcher(EventDispatcherInterface $dispatcher): void
+    {
+        $this->dispatcher = $dispatcher;
+        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Clear\Database\PdoStatementExt', array($this, $this->dispatcher)));
     }
 
     /**
@@ -51,21 +61,7 @@ class Pdo extends PhpPdo implements PdoInterface
         if (!$this->canExecute($query)) {
             return false;
         }
-
-        $args = func_get_args();
-        $argsCnt = count($args);
-
-        if ($argsCnt == 2) {
-            $result = parent::query($query, $args[1]);
-        } elseif ($argsCnt == 3) {
-            $result = parent::query($query, $args[1], $args[2]);
-        } elseif ($argsCnt == 4) {
-            $result = parent::query($query, $args[1], $args[2], $args[3]);
-        } else {
-            $result = parent::query($query);
-        }
-
-        return $result;
+        return parent::query($query, $fetchMode, ...$fetchModeArgs);
     }
 
     /**
@@ -73,7 +69,7 @@ class Pdo extends PhpPdo implements PdoInterface
      *
      * @return string
      */
-    public function getState()
+    public function getState(): string
     {
         return $this->state;
     }
@@ -82,17 +78,20 @@ class Pdo extends PhpPdo implements PdoInterface
      * Sets the Database Read/Write state
      *
      * @param string $state
-     *
      * @return self
+     * @throws InvalidArgumentException on invalid state
      */
-    public function setState($state)
+    public function setState(string $state): self
     {
+        if (!in_array($state, [self::STATE_READ_WRITE, self::STATE_READ_ONLY, self::STATE_UNAVAILABLE], true)) {
+            throw new InvalidArgumentException('Invalid state provided');
+        }
         $this->state = $state;
 
         return $this;
     }
 
-    public function canExecute($statement)
+    public function canExecute(string $queryString)
     {
         if (self::STATE_READ_WRITE === $this->state) {
             return true;
@@ -100,6 +99,6 @@ class Pdo extends PhpPdo implements PdoInterface
         if (self::STATE_UNAVAILABLE === $this->state) {
             return false;
         }
-        return ! preg_match("/^(UPDATE|INSERT|DELETE|CREATE|ALTER)\s/i", trim($statement));
+        return ! preg_match("/^(ALTER|CREATE|DELETE|DROP|GRANT|INSERT|RENAME|REVOKE|TRUNCATE|UPDATE)\s/i", trim($queryString));
     }
 }

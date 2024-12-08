@@ -17,9 +17,9 @@ use PDO;
  */
 class PdoExt extends PDO implements PdoInterface
 {
-    private ?EventDispatcherInterface $dispatcher = null;
+    protected ?EventDispatcherInterface $dispatcher = null;
 
-     public function __construct(string $dsn, string $username = '', string $passwd = '', array $options = [])
+    public function __construct(string $dsn, string $username = '', string $passwd = '', array $options = [])
     {
         parent::__construct($dsn, $username, $passwd, $options);
 
@@ -52,19 +52,8 @@ class PdoExt extends PDO implements PdoInterface
      */
     public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): PdoStatementExt|false
     {
-        $args = func_get_args();
-        $argsCnt = count($args);
-
         $this->dispatch(new BeforeQuery($query));
-        if ($argsCnt == 2) {
-            $result = parent::query($query, $args[1]);
-        } elseif ($argsCnt == 3) {
-            $result = parent::query($query, $args[1], $args[2]);
-        } elseif ($argsCnt == 4) {
-            $result = parent::query($query, $args[1], $args[2], $args[3]);
-        } else {
-            $result = parent::query($query);
-        }
+        $result = parent::query($query, $fetchMode, ...$fetchModeArgs);
         $this->dispatch(new AfterQuery($query, $result));
 
         return $result;

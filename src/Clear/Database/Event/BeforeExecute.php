@@ -6,14 +6,19 @@ namespace Clear\Database\Event;
 
 final class BeforeExecute extends PdoEvent
 {
-    public function __construct(private string $statement, private ?array $params = null)
+    public function __construct(private string $queryString, private ?array $params = null)
     {
         parent::__construct('BeforeExecute');
     }
 
-    public function getStatement(): string
+    /**
+     * Get the SQL query string.
+     *
+     * @return string The SQL query string.
+     */
+    public function getQueryString(): string
     {
-        return $this->statement;
+        return $this->queryString;
     }
 
     public function getParams(): ?array

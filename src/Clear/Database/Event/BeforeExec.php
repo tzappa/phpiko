@@ -10,7 +10,12 @@ final class BeforeExec extends PdoEvent
     {
         parent::__construct('BeforeExec');
     }
-
+    
+    /**
+     * Get the SQL query string.
+     *
+     * @return string The SQL query string.
+     */
     public function getQueryString(): string
     {
         return $this->queryString;

@@ -10,7 +10,6 @@ use Clear\Database\Event\ExecuteError;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use PDOStatement;
 use PDOException;
-use PDO;
 
 /**
  * PDOStatementExt extends PHP internal PDOStatement
@@ -36,9 +35,9 @@ class PdoStatementExt extends PDOStatement implements PdoStatementInterface
         return $result;
     }
 
-    private function dispatch($event)
+    private function dispatch(object $event): void
     {
-        if ($this->dispatcher) {
+        if (isset($this->dispatcher)) {
             $this->dispatcher->dispatch($event);
         }
     }
