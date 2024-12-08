@@ -14,6 +14,7 @@ use App\Event\LoginFailEvent;
 use Clear\Config\Factory as ConfigFactory;
 use Clear\Config\ConfigInterface;
 use Clear\Container\Container;
+use Clear\Database\Pdo as PDO;
 use Clear\Events\Dispatcher;
 use Clear\Events\Provider;
 use Clear\Http\Router;
@@ -32,6 +33,7 @@ use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 use Psr\Log\LoggerInterface;
 use Exception;
+use PDOException;
 
 
 // Load Composer's autoloader
@@ -63,6 +65,38 @@ $app->logger = function () use ($app): LoggerInterface {
     $logger = new FileLogger($config);
 
     return $logger;
+};
+
+// Database connection
+$app->database = function () use ($app): PDO {
+    if ('sqlite' == $app->config->get('database.driver')) {
+        $dsn = 'sqlite:' . $app->config->get('database.dbname');
+    } else {
+        $dsn = $app->config->get('database.driver') . ':' . 'dbname=' . $app->config->get('database.dbname');
+        if ($host = $app->config->get('database.host')) {
+            $dsn .= ';host=' . $host;
+        }
+        if ($port = $app->config->get('database.port')) {
+            $dsn .= ';port=' . $port;
+        }
+        if ($charset = $app->config->get('database.charset')) {
+            $dsn .= ';charset=' . $charset;
+        }
+    }
+    $options = [
+        PDO::ATTR_TIMEOUT => 1, // in seconds - for pgsql driver 2s. is the minimum value.
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+    ];
+    try {
+        $db = new PDO($dsn, $app->config->get('database.user', ''), $app->config->get('database.pass', ''), $options);
+    } catch (PDOException $e) {
+        $app->logger->log('emergency', 'PDOException: ' . $e->getMessage());
+        exit;
+    }
+    // Sets the Database connection to be on read/write or only in read mode.
+    $db->setState($app->config->get('database.state', 'rw'));
+
+    return $db;
 };
 
 // Template Engine

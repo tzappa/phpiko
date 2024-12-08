@@ -10,6 +10,17 @@ dateFormat = "Y-m-d H:i:s"
 interpolatePlaceholders = on
 removeInterpolatedContext = on
 
+[database]
+; the type of the database - mysql, pgsql, sqlite, etc.
+driver = sqlite
+dbname = ../tmp/phpiko.sqlite
+;host = localhost
+;port = 
+;user = 
+;pass = 
+; Set the database in read-only (r) / read-write (rw) or in unavailable mode (-). Default is rw
+state = rw
+
 [twig]
 debug = on
 ;template_path = "../templates"
