@@ -20,6 +20,10 @@ user = phpiko
 pass = phpiko
 ; Set the database in read-only (r) / read-write (rw) or in unavailable mode (-). Default is rw
 state = rw
+; Enable or disable profiling. Default is disabled (0)
+log_enabled = Off
+; The level at which to log profile messages. Default level is debug
+log_level = debug
 
 [twig]
 debug = off
