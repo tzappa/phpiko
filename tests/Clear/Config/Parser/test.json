@@ -1,0 +1,16 @@
+{
+  "key": "value",
+  "db" : {
+    "type": "mysql",
+    "port": 3306,
+    "name": "clear",
+    "user": null,
+    "pass": ""
+  },
+  "api"  : {
+    "log"     : {
+        "enabled": true,
+        "level": "debug"
+    }
+  }
+}

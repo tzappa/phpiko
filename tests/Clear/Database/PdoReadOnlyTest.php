@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Clear\Database;
 
 use Clear\Database\PdoExt;
-use Clear\Database\PdoStatement;
 use Clear\Database\PdoInterface;
 use Clear\Database\Event\{
     AfterConnect,
@@ -16,15 +15,14 @@ use Clear\Database\Event\{
     BeforeExecute,
     BeforeQuery
 };
+use Clear\Database\PdoStatementExt;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for PDO database class
  */
 #[CoversClass(PdoExt::class)]
-#[CoversClass(PdoStatement::class)]
 #[CoversClass(AfterConnect::class)]
 #[CoversClass(AfterExec::class)]
 #[CoversClass(AfterExecute::class)]
@@ -32,7 +30,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(BeforeExec::class)]
 #[CoversClass(BeforeQuery::class)]
 #[CoversClass(BeforeExecute::class)]
-class PdoTest extends TestCase
+#[CoversClass(PdoStatementExt::class)]
+class PdoReadOnlyTest extends TestCase
 {
 
     public function testCreate()
@@ -60,7 +59,7 @@ class PdoTest extends TestCase
     public function testSetStateReturnsSelf()
     {
         $db = new PdoExt('sqlite::memory:');
-        $this->assertSame($db, $db->setState(Pdo::STATE_READ_ONLY));
+        $this->assertSame($db, $db->setState(PdoExt::STATE_READ_ONLY));
     }
 
     public function testSetAndGetStateMethods()
