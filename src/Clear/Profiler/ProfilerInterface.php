@@ -17,7 +17,7 @@ interface ProfilerInterface
      *
      * @param string $label The label starting the profile entry.
      */
-    public function start($label);
+    public function start(string $label);
 
     /**
      * Finishes and logs a profile entry.
@@ -25,5 +25,5 @@ interface ProfilerInterface
      * @param string $message The message you wish to add, if any.
      * @param array  $values The values bound to the message, if any.
      */
-    public function finish($message = '', array $values = []);
+    public function finish(string $message = '', array $values = []): void;
 }

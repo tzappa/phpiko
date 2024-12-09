@@ -6,6 +6,8 @@ namespace Clear\Profiler;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Profiler which calculates the time used to execute a
@@ -75,9 +77,29 @@ final class LogProfiler implements ProfilerInterface
      * Level at which to log profile messages.
      *
      * @param string $logLevel A PSR-3 LogLevel constant.
+     * @throws \InvalidArgumentException If the log level is invalid.
      */
     public function setLogLevel($logLevel)
     {
+        $validLevels = [
+            LogLevel::EMERGENCY,
+            LogLevel::ALERT,
+            LogLevel::CRITICAL,
+            LogLevel::ERROR,
+            LogLevel::WARNING,
+            LogLevel::NOTICE,
+            LogLevel::INFO,
+            LogLevel::DEBUG,
+        ];
+        if (!in_array($logLevel, $validLevels, true)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'Invalid log level "%s". Must be one of: %s',
+                    $logLevel,
+                    implode(', ', $validLevels)
+                )
+            );
+        }
         $this->logLevel = $logLevel;
     }
 
@@ -104,7 +126,7 @@ final class LogProfiler implements ProfilerInterface
     /**
      * {@inheritDoc}
      */
-    public function start($label)
+    public function start(string $label)
     {
         $this->context = [
             'label' => $label,
@@ -115,15 +137,19 @@ final class LogProfiler implements ProfilerInterface
     /**
      * {@inheritDoc}
      */
-    public function finish($message = '', array $values = [])
+    public function finish(string $message = '', array $values = []): void
     {
+        if (empty($this->context)) {
+            throw new RuntimeException('Profiler->start() must be called before finish()');
+        }
         $finish = microtime(true);
         $duration = round(($finish - $this->context['start']) * 1000); // in milliseconds
 
-        $msg = $this->getLogFormat();
-        $msg = str_replace('{label}', $this->context['label'], $msg);
-        $msg = str_replace('{message}', $message, $msg);
-        $msg = str_replace('{duration}', (string) $duration, $msg);
+        $msg = strtr($this->getLogFormat(), [
+            '{label}' => $this->context['label'],
+            '{message}' => $message,
+            '{duration}' => (string) $duration,
+        ]);
         $this->logger->log($this->logLevel, $msg, $values);
 
         $this->context = [];
