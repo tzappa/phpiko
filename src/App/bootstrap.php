@@ -14,7 +14,8 @@ use App\RequestHandler\Logout;
 use Clear\Config\Factory as ConfigFactory;
 use Clear\Config\ConfigInterface;
 use Clear\Container\Container;
-use Clear\Database\Pdo as PDO;
+use Clear\Database\PdoExt as PDO;
+use Clear\Database\PdoInterface;
 use Clear\Database\Event\{
     AfterConnect,
     AfterExec,
@@ -84,7 +85,7 @@ $app->eventDispatcher = function () use ($app) {
 };
 
 // Database connection
-$app->database = function () use ($app): PDO {
+$app->database = function () use ($app): PdoInterface {
     if ('sqlite' == $app->config->get('database.driver')) {
         $dsn = 'sqlite:' . $app->config->get('database.dbname');
     } else {

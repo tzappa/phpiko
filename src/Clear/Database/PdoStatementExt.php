@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -12,17 +12,20 @@ use PDOStatement;
 use PDOException;
 
 /**
- * PDOStatementExt extends PHP internal PDOStatement
+ * PDOStatementExt extends PHP internal PDOStatement with additional event dispatching and write protection
  */
-class PdoStatementExt extends PDOStatement implements PdoStatementInterface
+final class PdoStatementExt extends PDOStatement implements PdoStatementInterface
 {
-    protected function __construct(private ?EventDispatcherInterface $dispatcher) {}
+    protected function __construct(private PdoExt $connection, private ?EventDispatcherInterface $dispatcher) {}
 
     /**
      * {@inheritDoc}
      */
     public function execute(?array $params = null): bool
     {
+        if (!$this->connection->canExecute($this->queryString)) {
+            return false;
+        }
         $this->dispatch(new BeforeExecute($this->queryString, $params));
         try {
             $result = parent::execute($params);
