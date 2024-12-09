@@ -15,7 +15,15 @@ use Clear\Config\Factory as ConfigFactory;
 use Clear\Config\ConfigInterface;
 use Clear\Container\Container;
 use Clear\Database\Pdo as PDO;
-use Clear\Database\Event\AfterConnect;
+use Clear\Database\Event\{
+    AfterConnect,
+    AfterExec,
+    AfterExecute,
+    AfterQuery,
+    BeforeExec,
+    BeforeExecute,
+    BeforeQuery,
+};
 use Clear\Events\Dispatcher;
 use Clear\Events\Provider;
 use Clear\Http\Router;
@@ -24,6 +32,7 @@ use Clear\Http\Exception\NotFoundException;
 use Clear\Http\Exception\UnauthorizedException;
 use Clear\Http\HttpException;
 use Clear\Logger\FileLogger;
+use Clear\Profiler\LogProfiler;
 use Clear\Session\SessionManager;
 use Clear\Template\TwigTemplate;
 use Clear\Template\TemplateInterface;
@@ -93,13 +102,41 @@ $app->database = function () use ($app): PDO {
     $options = [
         PDO::ATTR_TIMEOUT => 1, // in seconds - for pgsql driver 2s. is the minimum value.
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        'dispatcher' => $app->eventDispatcher,
     ];
+    // Profiler
+    if ($app->config->get('database.log_enabled', false)) {
+        $options['dispatcher'] = $app->eventDispatcher;
+        $profiler = new LogProfiler($app->logger);
+        $profiler->setLogLevel($app->config->get('database.log_level', 'debug'));
+        // Registering events for profiling
+        $app->eventProvider->addListener(BeforeExec::class, function (BeforeExec $event) use ($profiler) {
+            $profiler->start('Exec');
+        });
+        $app->eventProvider->addListener(AfterExec::class, function (AfterExec $event) use ($profiler) {
+            $profiler->finish('', ['sql' => $event->getQueryString(), 'rows' => $event->getResult()]);
+        });
+        $app->eventProvider->addListener(BeforeQuery::class, function (BeforeQuery $event) use ($profiler) {
+            $profiler->start('Query');
+        });
+        $app->eventProvider->addListener(AfterQuery::class, function (AfterQuery $event) use ($profiler) {
+            $profiler->finish('', ['sql' => $event->getQueryString()]);
+        });
+        $app->eventProvider->addListener(BeforeExecute::class, function (BeforeExecute $event) use ($profiler) {
+            $profiler->start('Execute');
+        });
+        $app->eventProvider->addListener(AfterExecute::class, function (AfterExecute $event) use ($profiler) {
+            $profiler->finish('', ['sql' => $event->getQueryString(), 'params' => $event->getParams(), 'result' => $event->getResult()]);
+        });
+    }
     try {
         $db = new PDO($dsn, $app->config->get('database.user', ''), $app->config->get('database.pass', ''), $options);
     } catch (PDOException $e) {
         $app->logger->log('emergency', 'PDOException: ' . $e->getMessage());
         exit;
+    }
+    if ($dsn === 'sqlite::memory:') {
+        $db->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, username VARCHAR(30), password TEXT)');
+        $db->exec('INSERT INTO users (username, password) VALUES ("admin", ' . $db->quote(password_hash('admin', PASSWORD_DEFAULT)) . ')');
     }
 
     // Sets the Database connection to be on read/write or only in read mode.
@@ -125,16 +162,7 @@ $app->session = function () {
     return new SessionManager();
 };
 
-
-$app->eventProvider->addListener(AfterConnect::class, function (AfterConnect $event) use ($app) {
-    $dsn = $event->getDsn();
-    $db = $event->getPdo();
-    if ($dsn === 'sqlite::memory:') {
-        $app->logger->debug('Creating SQLite in-memory database');
-        $db->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, username VARCHAR(30), password TEXT)');
-        $db->exec('INSERT INTO users (username, password) VALUES ("admin", ' . $db->quote(password_hash('admin', PASSWORD_DEFAULT)) . ')');
-    }
-});
+// Events
 $app->eventProvider->addListener(LoginFailEvent::class, function (LoginFailEvent $event) use ($app) {
     // After some failed login attempts, you can block the user's IP address, send an email to the user or to admin, etc.
     $app->logger->warning('Login failed for {username}', ['username' => $event->getUsername()]);
