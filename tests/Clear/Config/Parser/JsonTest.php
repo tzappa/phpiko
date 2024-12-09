@@ -23,7 +23,7 @@ class JsonTest extends TestCase
         $this->assertInstanceOf(ParserInterface::class, new Json);
     }
 
-    # [Depends('testJsonParser')]
+    #[Depends('testJsonParser')]
     public function testJsonFromString()
     {
         $parser = new Json();
@@ -42,7 +42,7 @@ class JsonTest extends TestCase
         $this->assertSame(true, $arr['api']['log']['enabled']);
     }
 
-    # [Depends('testJsonFromString')]
+    #[Depends('testJsonFromString')]
     public function testParserLoadsFile()
     {
         $parser = new Json();
@@ -51,7 +51,7 @@ class JsonTest extends TestCase
         $this->assertNotEmpty($arr['key']);
     }
 
-    # [Depends('testParserLoadsFile')]
+    #[Depends('testParserLoadsFile')]
     public function testParserReturnsSameFromFileAndFromLoadedFile()
     {
         $filename = __DIR__.'/test.json';
@@ -66,7 +66,7 @@ class JsonTest extends TestCase
         $this->assertEquals($arr, $arr2);
     }
 
-    # [Depends('testJsonFromString')]
+    #[Depends('testJsonFromString')]
     public function testJsonFromStringErrorTrailingComma()
     {
         $parser = new Json();
@@ -74,7 +74,7 @@ class JsonTest extends TestCase
         $parser->fromString('{ "key": "value", }');
     }
 
-    # [Depends('testJsonFromString')]
+    #[Depends('testJsonFromString')]
     public function testJsonFromStringErrorNotObject()
     {
         $parser = new Json();
@@ -82,7 +82,7 @@ class JsonTest extends TestCase
         $parser->fromString('"key": "value"');
     }
 
-    # [Depends('testJsonFromString')]
+    #[Depends('testJsonFromString')]
     public function testJsonFromEmptyString()
     {
         $parser = new Json();
