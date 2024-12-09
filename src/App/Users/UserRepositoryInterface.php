@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\RegUsers;
+namespace App\Users;
 
 /**
  * User provider interface describes methods to fetch and store
@@ -25,9 +25,9 @@ interface UserRepositoryInterface
      * Saves a new user in the data storage.
      *
      * @param array $user
-     * @return bool Success or failure
+     * @return array Updated user data
      */
-    public function add(array &$user): bool;
+    public function add(array $user): array;
 
     /**
      * Updates all the data in the storage.
@@ -35,9 +35,9 @@ interface UserRepositoryInterface
      * replaced with new data.
      *
      * @param array $user
-     * @return bool Success or failure
+     * @return array Updated user data
      */
-    public function update(array &$user): bool;
+    public function update(array $user): array;
 
     /**
      * Returns the count of users matching the given filter
@@ -50,14 +50,14 @@ interface UserRepositoryInterface
     /**
      * Returns list of users matching the given filter in particular order.
      *
-     * @param array $filter Filter criteria
+     * @param mixed $filter Filter criteria
      * @param mixed $order Return the users in specific order.
      * @param int $limit Limit result to this number of users.
      * @param int $offset The offset
      *        examples:
      *            'id' - sorts ascending by ID field
-     *            '!id' - negative sorting by ID field
-     *            ['state', '!created_at'] - ascending state, then descending by created_at
+     *            '-id' - negative sorting by ID field
+     *            ['state', '-created_at'] - ascending state, then descending by created_at
      *
      *
      * @return array List of users

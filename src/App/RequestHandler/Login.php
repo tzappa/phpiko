@@ -6,7 +6,7 @@ namespace App\RequestHandler;
 
 use App\Event\LoginEvent;
 use App\Event\LoginFailEvent;
-use App\RegUsers\UserRepositoryInterface;
+use App\Users\UserRepositoryInterface;
 
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;

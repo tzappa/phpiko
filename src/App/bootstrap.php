@@ -6,12 +6,14 @@ namespace App;
 
 use App\Event\LoginFailEvent;
 use App\Middleware\AuthMiddleware;
-use App\RequestHandler\Home;
-use App\RequestHandler\Hello;
-use App\RequestHandler\Login;
-use App\RequestHandler\Logout;
-use App\RegUsers\UserRepositoryInterface;
-use App\RegUsers\UserRepositoryPdo;
+use App\RequestHandler\{
+    Home,
+    Hello,
+    Login,
+    Logout
+};
+use App\Users\UserRepositoryInterface;
+use App\Users\UserRepositoryPdo;
 
 use Clear\Config\Factory as ConfigFactory;
 use Clear\Config\ConfigInterface;
@@ -19,7 +21,6 @@ use Clear\Container\Container;
 use Clear\Database\PdoExt as PDO;
 use Clear\Database\PdoInterface;
 use Clear\Database\Event\{
-    AfterConnect,
     AfterExec,
     AfterExecute,
     AfterQuery,
@@ -138,7 +139,7 @@ $app->database = function () use ($app): PdoInterface {
         exit;
     }
     if ($dsn === 'sqlite::memory:') {
-        $sql = file_get_contents(__DIR__ . '/RegUsers/schema-sqlite.sql');
+        $sql = file_get_contents(__DIR__ . '/Users/schema-sqlite.sql');
         $db->exec($sql);
         $db->exec("INSERT INTO users (username, password, created_at, updated_at) VALUES ('admin', '" . password_hash('admin', PASSWORD_DEFAULT) . "', '2024-12-01 00:00:00', '2024-12-01 00:00:00')");
     }
