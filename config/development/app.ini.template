@@ -15,11 +15,15 @@ removeInterpolatedContext = on
 driver = sqlite
 dbname = ../tmp/phpiko.sqlite
 ;host = localhost
-;port = 
-;user = 
-;pass = 
+;port =
+;user =
+;pass =
 ; Set the database in read-only (r) / read-write (rw) or in unavailable mode (-). Default is rw
 state = rw
+; Enable or disable profiling. Default is disabled (0)
+log_enabled = On
+; The level at which to log profile messages. Default level is debug
+log_level = debug
 
 [twig]
 debug = on
