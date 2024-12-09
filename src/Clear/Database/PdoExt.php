@@ -31,7 +31,7 @@ class PdoExt extends PDO implements PdoInterface
         }
         parent::__construct($dsn, $username, $passwd, $options);
         $this->setEventDispatcher($dispatcher);
-        $this->dispatch(new AfterConnect($dsn, $username, $options));
+        $this->dispatch(new AfterConnect($dsn, $username, $options, $this));
     }
 
     /**

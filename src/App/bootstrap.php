@@ -1,20 +1,21 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
 namespace App;
 
+use App\Event\LoginFailEvent;
 use App\Middleware\AuthMiddleware;
 use App\RequestHandler\Home;
 use App\RequestHandler\Hello;
 use App\RequestHandler\Login;
 use App\RequestHandler\Logout;
-use App\Event\LoginFailEvent;
 
 use Clear\Config\Factory as ConfigFactory;
 use Clear\Config\ConfigInterface;
 use Clear\Container\Container;
 use Clear\Database\Pdo as PDO;
+use Clear\Database\Event\AfterConnect;
 use Clear\Events\Dispatcher;
 use Clear\Events\Provider;
 use Clear\Http\Router;
@@ -91,7 +92,8 @@ $app->database = function () use ($app): PDO {
     }
     $options = [
         PDO::ATTR_TIMEOUT => 1, // in seconds - for pgsql driver 2s. is the minimum value.
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        'dispatcher' => $app->eventDispatcher,
     ];
     try {
         $db = new PDO($dsn, $app->config->get('database.user', ''), $app->config->get('database.pass', ''), $options);
@@ -99,10 +101,7 @@ $app->database = function () use ($app): PDO {
         $app->logger->log('emergency', 'PDOException: ' . $e->getMessage());
         exit;
     }
-    if ($dsn === 'sqlite::memory:') {
-        $db->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, username VARCHAR(30), password TEXT)');
-        $db->exec('INSERT INTO users (username, password) VALUES ("admin", ' . $db->quote(password_hash('admin', PASSWORD_DEFAULT)) . ')');
-    }
+
     // Sets the Database connection to be on read/write or only in read mode.
     $db->setState($app->config->get('database.state', 'rw'));
 
@@ -127,6 +126,15 @@ $app->session = function () {
 };
 
 
+$app->eventProvider->addListener(AfterConnect::class, function (AfterConnect $event) use ($app) {
+    $dsn = $event->getDsn();
+    $db = $event->getPdo();
+    if ($dsn === 'sqlite::memory:') {
+        $app->logger->debug('Creating SQLite in-memory database');
+        $db->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, username VARCHAR(30), password TEXT)');
+        $db->exec('INSERT INTO users (username, password) VALUES ("admin", ' . $db->quote(password_hash('admin', PASSWORD_DEFAULT)) . ')');
+    }
+});
 $app->eventProvider->addListener(LoginFailEvent::class, function (LoginFailEvent $event) use ($app) {
     // After some failed login attempts, you can block the user's IP address, send an email to the user or to admin, etc.
     $app->logger->warning('Login failed for {username}', ['username' => $event->getUsername()]);
