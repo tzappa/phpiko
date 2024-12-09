@@ -44,14 +44,25 @@ final class Login implements RequestHandlerInterface
                 $username = $data['username'] ?? '';
                 $password = $data['password'] ?? '';
                 $user = $this->users->find('username', $username);
-                if ($user && password_verify($password, $user['password'])) {
-                    $this->session->set('username', $username);
-                    $this->info('User logged in', ['username' => $username]);
-                    $this->dispatch(new LoginEvent($username));
+                if (!$user) {
+                    $error = 'Invalid username or password';
+                    $this->warning('Invalid login attempt - user does not exists', ['username' => $username]);
+                } elseif ($user['state'] === 'blocked') {
+                    $error = 'User account is blocked';
+                    $this->warning('Invalid login attempt - user is blocked', ['username' => $username]);
+                } elseif ($user['state'] !== 'active') {
+                    $error = 'User account is not active';
+                    $this->warning('Invalid login attempt - user is not in active state', ['username' => $username, 'state' => $user['state']]);
+                } elseif (password_verify($password, $user['password'])) {
+                    unset($user['password']);
+                    $this->session->set('user', $user);
+                    $this->info('User {username} logged in', $user);
+                    $this->dispatch(new LoginEvent($user));
                     return new RedirectResponse('/private/hello');
+                } else {
+                    $error = 'Invalid username or password';
+                    $this->warning('Invalid login attempt: wrong password', ['username' => $username]);
                 }
-                $error = 'Invalid username or password';
-                $this->warning('Invalid login attempt', ['username' => $username]);
                 $this->dispatch(new LoginFailEvent($username));
             }
         }

@@ -141,7 +141,6 @@ $app->database = function () use ($app): PdoInterface {
     if ($dsn === 'sqlite::memory:') {
         $sql = file_get_contents(__DIR__ . '/Users/schema-sqlite.sql');
         $db->exec($sql);
-        $db->exec("INSERT INTO users (username, password, created_at, updated_at) VALUES ('admin', '" . password_hash('admin', PASSWORD_DEFAULT) . "', '2024-12-01 00:00:00', '2024-12-01 00:00:00')");
     }
 
     // Sets the Database connection to be on read/write or only in read mode.
@@ -169,7 +168,12 @@ $app->session = function () {
 
 // User Repository
 $app->users = function () use ($app): UserRepositoryInterface {
-    return new UserRepositoryPdo($app->database);
+    $users = new UserRepositoryPdo($app->database);
+    if ($users->count() < 1) {
+        $users->add(['username' => 'admin', 'password' => password_hash('admin', PASSWORD_DEFAULT), 'state' => 'active']);
+    }
+
+    return $users;
 };
 
 // Events

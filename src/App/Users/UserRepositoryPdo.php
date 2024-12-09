@@ -10,9 +10,24 @@ use PDOException;
 
 final class UserRepositoryPdo implements UserRepositoryInterface
 {
-    private $fields = ['id', 'username', 'password', 'created_at', 'updated_at'];
+    private array $fields = ['id', 'username', 'password', 'state', 'created_at', 'updated_at'];
+    private string $table = 'users';
 
     public function __construct(private PDO $db) {}
+
+    /**
+     * Change the DB table name for users
+     *
+     * @param string $table
+     */
+    public function setTableName(string $table)
+    {
+        // start with letter then letter, number or underscore
+        if (!preg_match('/\G[a-zA-Z]+[a-zA-Z0-9_]*\Z/', $table)) {
+            throw new \Exception("Invalid table name {$table}");
+        }
+        $this->table = $table;
+    }
 
     /**
      * {@inheritDoc}
@@ -25,11 +40,11 @@ final class UserRepositoryPdo implements UserRepositoryInterface
         if (!in_array($key, $this->fields)) {
             throw new InvalidArgumentException("Invalid key: {$key}");
         }
-        $sql = "SELECT * FROM users WHERE {$key} = :value";
+        $sql = "SELECT * FROM {$this->table} WHERE {$key} = :value ORDER BY id DESC LIMIT 1";
         $sth = $this->db->prepare($sql);
         $sth->execute(['value' => $value]);
 
-        return $sth->fetch(PDO::FETCH_ASSOC);
+        return $sth->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
     /**
@@ -46,12 +61,14 @@ final class UserRepositoryPdo implements UserRepositoryInterface
         $user = array_intersect_key($user, array_flip($this->fields));
         $user['created_at'] = date('Y-m-d H:i:s');
         $user['updated_at'] = date('Y-m-d H:i:s');
-        $sql = "INSERT INTO users (username, password, created_at, updated_at)
-                VALUES (:username, :password, :created_at, :updated_at) RETURNING *";
+        $sql = "INSERT INTO {$this->table} (username, password, state, created_at, updated_at) VALUES (:username, :password, :state, :created_at, :updated_at)";
+        if ($this->getDriverName() === 'pgsql') {
+            $sql .= ' RETURNING id';
+        }
         $sth = $this->db->prepare($sql);
         $sth->execute($user);
 
-        return $sth->fetch(PDO::FETCH_ASSOC);
+        return $this->find('id', ($this->getDriverName() === 'pgsql') ? $sth->fetchColumn() : $this->db->lastInsertId());
     }
 
     /**
@@ -65,19 +82,22 @@ final class UserRepositoryPdo implements UserRepositoryInterface
         if (empty($user['id'])) {
             throw new InvalidArgumentException('User ID is required');
         }
-        $user = array_intersect_key($user, array_flip($this->fields));
-        $user['updated_at'] = date('Y-m-d H:i:s');
-        $sql = "UPDATE users SET username = :username, password = :password, updated_at = :updated_at
-                WHERE id = :id RETURNING *";
+        $sql = "UPDATE {$this->table} SET username = :username, password = :password, state = :state updated_at = :updated_at WHERE id = :id";
         $sth = $this->db->prepare($sql);
-        $sth->execute($user);
+        $sth->execute([
+            'id' => $user['id'],
+            'username' => $user['username'],
+            'password' => $user['password'],
+            'state' => $user['state'],
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
 
-        return $sth->fetch(PDO::FETCH_ASSOC);
+        return $this->find('id', $user['id']);
     }
 
     public function count($filter = []): int
     {
-        $sql = "SELECT COUNT(*) FROM users";
+        $sql = "SELECT COUNT(*) FROM {$this->table}";
         $sth = $this->db->prepare($sql);
         $sth->execute();
 
@@ -92,7 +112,7 @@ final class UserRepositoryPdo implements UserRepositoryInterface
         if (!in_array($order, $this->fields)) {
             throw new InvalidArgumentException("Invalid key: {$order}");
         }
-        $sql = "SELECT * FROM users ORDER BY {$order}";
+        $sql = "SELECT * FROM {$this->table} ORDER BY {$order}";
         if ($limit > 0) {
             $sql .= " LIMIT {$limit}";
         }
@@ -110,10 +130,15 @@ final class UserRepositoryPdo implements UserRepositoryInterface
         if (!isset($user['id'])) {
             throw new InvalidArgumentException('User ID is required');
         }
-        $sql = "DELETE FROM users WHERE id = :id";
+        $sql = "DELETE FROM {$this->table} WHERE id = :id";
         $sth = $this->db->prepare($sql);
         $sth->execute(['id' => $user['id']]);
 
         return $sth->rowCount() === 1;
+    }
+
+    private function getDriverName(): string
+    {
+        return $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
     }
 }
