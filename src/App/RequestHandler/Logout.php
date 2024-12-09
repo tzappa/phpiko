@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -29,7 +29,7 @@ final class Logout implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $this->dispatch(new LogoutEvent($this->session->get('username')));
+        $this->dispatch(new LogoutEvent($this->session->get('username', '')));
         $this->session->clear();
         return new RedirectResponse('/');
     }
