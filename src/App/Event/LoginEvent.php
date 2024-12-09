@@ -12,13 +12,18 @@ namespace App\Event;
  */
 final class LoginEvent
 {
-    public function __construct(private readonly string $username)
+    public function __construct(private readonly array $user)
     {
 
     }
 
     public function getUsername(): string
     {
-        return $this->username;
+        return $this->user['username'];
+    }
+
+    public function getUser(): array
+    {
+        return $this->user;
     }
 }
