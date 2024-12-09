@@ -6,6 +6,7 @@ namespace App\RequestHandler;
 
 use App\Event\LoginEvent;
 use App\Event\LoginFailEvent;
+use App\RegUsers\UserRepositoryInterface;
 
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
@@ -16,7 +17,6 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use PDO;
 
 /**
  * Login Page
@@ -27,9 +27,9 @@ final class Login implements RequestHandlerInterface
     use EventDispatcherTrait;
 
     public function __construct(
-        private SessionInterface $session, 
-        private TemplateInterface $template, 
-        private PDO $db
+        private SessionInterface $session,
+        private TemplateInterface $template,
+        private UserRepositoryInterface $users
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -43,10 +43,7 @@ final class Login implements RequestHandlerInterface
             } else {
                 $username = $data['username'] ?? '';
                 $password = $data['password'] ?? '';
-                $sql = 'SELECT * FROM users WHERE username = :username';
-                $sth = $this->db->prepare($sql);
-                $sth->execute([':username' => $username]);
-                $user = $sth->fetch(PDO::FETCH_ASSOC);
+                $user = $this->users->find('username', $username);
                 if ($user && password_verify($password, $user['password'])) {
                     $this->session->set('username', $username);
                     $this->info('User logged in', ['username' => $username]);

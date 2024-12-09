@@ -10,6 +10,8 @@ use App\RequestHandler\Home;
 use App\RequestHandler\Hello;
 use App\RequestHandler\Login;
 use App\RequestHandler\Logout;
+use App\RegUsers\UserRepositoryInterface;
+use App\RegUsers\UserRepositoryPdo;
 
 use Clear\Config\Factory as ConfigFactory;
 use Clear\Config\ConfigInterface;
@@ -136,8 +138,9 @@ $app->database = function () use ($app): PdoInterface {
         exit;
     }
     if ($dsn === 'sqlite::memory:') {
-        $db->exec('CREATE TABLE users (id INTEGER PRIMARY KEY, username VARCHAR(30), password TEXT)');
-        $db->exec('INSERT INTO users (username, password) VALUES ("admin", ' . $db->quote(password_hash('admin', PASSWORD_DEFAULT)) . ')');
+        $sql = file_get_contents(__DIR__ . '/RegUsers/schema-sqlite.sql');
+        $db->exec($sql);
+        $db->exec("INSERT INTO users (username, password, created_at, updated_at) VALUES ('admin', '" . password_hash('admin', PASSWORD_DEFAULT) . "', '2024-12-01 00:00:00', '2024-12-01 00:00:00')");
     }
 
     // Sets the Database connection to be on read/write or only in read mode.
@@ -163,6 +166,11 @@ $app->session = function () {
     return new SessionManager();
 };
 
+// User Repository
+$app->users = function () use ($app): UserRepositoryInterface {
+    return new UserRepositoryPdo($app->database);
+};
+
 // Events
 $app->eventProvider->addListener(LoginFailEvent::class, function (LoginFailEvent $event) use ($app) {
     // After some failed login attempts, you can block the user's IP address, send an email to the user or to admin, etc.
@@ -177,7 +185,7 @@ $router->map('GET', '/', function ($request) use ($app) {
     return $requestHandler->handle($request);
 });
 $router->map('*', '/login', function ($request) use ($app) {
-    $requestHandler = new Login($app->session, $app->template, $app->database);
+    $requestHandler = new Login($app->session, $app->template, $app->users);
     $requestHandler->setLogger($app->logger);
     $requestHandler->setEventDispatcher($app->eventDispatcher);
     return $requestHandler->handle($request);
