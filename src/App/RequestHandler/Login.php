@@ -56,7 +56,7 @@ final class Login implements RequestHandlerInterface
                 } elseif ($user['state'] === 'blocked') {
                     $error = 'User account is blocked';
                     $this->warning('Invalid login attempt - user is blocked', ['username' => $username]);
-                } elseif ($user['state'] !== 'inactive') {
+                } elseif ($user['state'] === 'inactive') {
                     $error = 'You need to activate your account first. Please check your email.';
                     $this->warning('Invalid login attempt - user is in inactive state', ['username' => $username, 'state' => $user['state'], 'email' => $user['email']]);
                 } else {
