@@ -6,6 +6,7 @@ namespace App\RequestHandler;
 
 use App\Event\LoginEvent;
 use App\Event\LoginFailEvent;
+use App\Users\UserRepositoryInterface;
 
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
@@ -16,7 +17,6 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use PDO;
 
 /**
  * Login Page
@@ -27,9 +27,9 @@ final class Login implements RequestHandlerInterface
     use EventDispatcherTrait;
 
     public function __construct(
-        private SessionInterface $session, 
-        private TemplateInterface $template, 
-        private PDO $db
+        private SessionInterface $session,
+        private TemplateInterface $template,
+        private UserRepositoryInterface $users
     ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -43,18 +43,26 @@ final class Login implements RequestHandlerInterface
             } else {
                 $username = $data['username'] ?? '';
                 $password = $data['password'] ?? '';
-                $sql = 'SELECT * FROM users WHERE username = :username';
-                $sth = $this->db->prepare($sql);
-                $sth->execute([':username' => $username]);
-                $user = $sth->fetch(PDO::FETCH_ASSOC);
-                if ($user && password_verify($password, $user['password'])) {
-                    $this->session->set('username', $username);
-                    $this->info('User logged in', ['username' => $username]);
-                    $this->dispatch(new LoginEvent($username));
+                $user = $this->users->find('username', $username);
+                if (!$user) {
+                    $error = 'Invalid username or password';
+                    $this->warning('Invalid login attempt - user does not exists', ['username' => $username]);
+                } elseif (password_verify($password, $user['password'])) {
+                    unset($user['password']);
+                    $this->session->set('user', $user);
+                    $this->info('User {username} logged in', $user);
+                    $this->dispatch(new LoginEvent($user));
                     return new RedirectResponse('/private/hello');
+                } elseif ($user['state'] === 'blocked') {
+                    $error = 'User account is blocked';
+                    $this->warning('Invalid login attempt - user is blocked', ['username' => $username]);
+                } elseif ($user['state'] === 'inactive') {
+                    $error = 'You need to activate your account first. Please check your email.';
+                    $this->warning('Invalid login attempt - user is in inactive state', ['username' => $username, 'state' => $user['state'], 'email' => $user['email']]);
+                } else {
+                    $error = 'Invalid username or password'; // same error as when user does not exist to avoid user enumeration
+                    $this->warning('Invalid login attempt: wrong password', ['username' => $username]);
                 }
-                $error = 'Invalid username or password';
-                $this->warning('Invalid login attempt', ['username' => $username]);
                 $this->dispatch(new LoginFailEvent($username));
             }
         }

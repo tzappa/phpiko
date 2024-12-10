@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -24,7 +24,7 @@ final class AuthMiddleware implements MiddlewareInterface
      * @var \App\Session\SessionInterface
      */
     private SessionInterface $session;
-    
+
     /**
      * Logger instance.
      */
@@ -41,14 +41,14 @@ final class AuthMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $username = $this->session->get('username');
-        if ($username === null) {
-            $this->logger->notice('Unauthorized access blocked to {uri}', ['uri' => (string) $request->getUri()]);
+        $user = $this->session->get('user');
+        if ($user === null) {
+            $this->logger->notice('Unauthorized access blocked to {path}', ['path' => $request->getUri()->getPath()]);
             throw new UnauthorizedException('You are not authorized to access this page');
         }
-        
+
         // attach user to the request
-        $request = $request->withAttribute('user', ['username' => $username]);
+        $request = $request->withAttribute('user', $user);
 
         return $handler->handle($request);
     }
