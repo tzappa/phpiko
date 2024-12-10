@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS users -- Users of the application (e.g. readers)
+CREATE TABLE IF NOT EXISTS users -- Users of the application
 (
     id                 INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     email              VARCHAR(255) UNIQUE,                                       -- Email address of the user (used for notifications/lost password/etc)
