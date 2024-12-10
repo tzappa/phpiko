@@ -25,19 +25,26 @@ interface UserRepositoryInterface
      * Saves a new user in the data storage.
      *
      * @param array $user
-     * @return array Updated user data
+     * @return array|null New user data
      */
     public function add(array $user): array;
 
     /**
      * Updates all the data in the storage.
-     * If the update succeeds the user data will be
-     * replaced with new data.
+     * Updates to the user's password is done separately @see updatePassword()
      *
      * @param array $user
-     * @return array Updated user data
+     * @return array|null Updated user data or null if user not found
      */
-    public function update(array $user): array;
+    public function update(array $user): array|null;
+
+    /**
+     * Updates the user's password.
+     *
+     * @param array $user
+     * @return array|null Updated user data or null if user not found
+     */
+    public function updatePassword(array $user, string $newPassword): array|null;
 
     /**
      * Returns the count of users matching the given filter
@@ -52,17 +59,17 @@ interface UserRepositoryInterface
      *
      * @param mixed $filter Filter criteria
      * @param mixed $order Return the users in specific order.
-     * @param int $limit Limit result to this number of users.
-     * @param int $offset The offset
      *        examples:
      *            'id' - sorts ascending by ID field
      *            '-id' - negative sorting by ID field
      *            ['state', '-created_at'] - ascending state, then descending by created_at
+     * @param int $limit Limit result to this number of users.
+     * @param int $offset The offset
      *
      *
      * @return array List of users
      */
-    public function filter(array $filter = [], $order = '', int $limit = 0, int $offset = 0): array;
+    public function filter(array $filter = [], array|string $order = '', int $limit = 0, int $offset = 0): array;
 
     /**
      * Deletes a user.

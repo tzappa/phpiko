@@ -10,7 +10,7 @@ use PDOException;
 
 final class UserRepositoryPdo implements UserRepositoryInterface
 {
-    private array $fields = ['id', 'username', 'password', 'state', 'created_at', 'updated_at'];
+    private array $fields = ['id', 'email', 'username', 'password', 'state', 'created_at', 'updated_at'];
     private string $table = 'users';
 
     public function __construct(private PDO $db) {}
@@ -60,8 +60,8 @@ final class UserRepositoryPdo implements UserRepositoryInterface
         }
         $user = array_intersect_key($user, array_flip($this->fields));
         $user['created_at'] = date('Y-m-d H:i:s');
-        $user['updated_at'] = date('Y-m-d H:i:s');
-        $sql = "INSERT INTO {$this->table} (username, password, state, created_at, updated_at) VALUES (:username, :password, :state, :created_at, :updated_at)";
+        $user['updated_at'] = $user['created_at'];
+        $sql = "INSERT INTO {$this->table} (email, username, password, state, created_at, updated_at) VALUES (:email, :username, :password, :state, :created_at, :updated_at)";
         if ($this->getDriverName() === 'pgsql') {
             $sql .= ' RETURNING id';
         }
@@ -74,57 +74,84 @@ final class UserRepositoryPdo implements UserRepositoryInterface
     /**
      * {@inheritDoc}
      *
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException if the user ID is missing
      * @throws PDOException
      */
-    public function update(array $user): array
+    public function update(array $user): array|null
     {
         if (empty($user['id'])) {
             throw new InvalidArgumentException('User ID is required');
         }
-        $sql = "UPDATE {$this->table} SET username = :username, password = :password, state = :state updated_at = :updated_at WHERE id = :id";
+        $sql = "UPDATE {$this->table} SET email = :email, username = :username, state = :state, updated_at = :updated_at WHERE id = :id";
         $sth = $this->db->prepare($sql);
         $sth->execute([
-            'id' => $user['id'],
-            'username' => $user['username'],
-            'password' => $user['password'],
-            'state' => $user['state'],
+            'id'         => $user['id'],
+            'username'   => $user['username'],
+            'email'      => $user['email'],
+            'state'      => $user['state'],
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
 
         return $this->find('id', $user['id']);
     }
 
-    public function count($filter = []): int
+    /**
+     * {@inheritDoc}
+     *
+     * @throws InvalidArgumentException if the user ID is missing
+     * @throws PDOException
+     */
+    public function updatePassword(array $user, string $newPassword): array|null
     {
-        $sql = "SELECT COUNT(*) FROM {$this->table}";
+        if (empty($user['id'])) {
+            throw new InvalidArgumentException('User ID is required');
+        }
+        $sql = "UPDATE {$this->table} SET password = :password, updated_at = :updated_at WHERE id = :id";
         $sth = $this->db->prepare($sql);
-        $sth->execute();
+        $sth->execute([
+            'id'         => $user['id'],
+            'password'   => password_hash($newPassword, PASSWORD_DEFAULT),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+        if ($sth->rowCount() !== 1) {
+            return null;
+        }
 
-        return $sth->fetchColumn();
+        return $this->find('id', $user['id']);
     }
 
-    public function filter($filter = [], $order = '', int $limit = 10, int $offset = 0): array
+    /**
+     * {@inheritDoc}
+     */
+    public function count($filter = []): int
     {
-        if (empty($order)) {
-            $order = 'id';
-        }
-        if (!in_array($order, $this->fields)) {
-            throw new InvalidArgumentException("Invalid key: {$order}");
-        }
-        $sql = "SELECT * FROM {$this->table} ORDER BY {$order}";
-        if ($limit > 0) {
-            $sql .= " LIMIT {$limit}";
-        }
-        if ($offset > 0) {
-            $sql .= " OFFSET {$offset}";
-        }
+        list($where, $params) = $this->where($filter);
+        $sql = "SELECT COUNT(*) FROM {$this->table} {$where}";
         $sth = $this->db->prepare($sql);
-        $sth->execute();
+        $sth->execute($params);
+
+        return (int) $sth->fetchColumn();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function filter($filter = [], array|string $order = '', int $limit = 0, int $offset = 0): array
+    {
+        list($where, $params) = $this->where($filter);
+        $sql = "SELECT * FROM {$this->table} {$where} ORDER BY {$this->orderBy($order)} {$this->limit($limit, $offset)}";
+        $sth = $this->db->prepare($sql);
+        $sth->execute($params);
 
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws InvalidArgumentException if the user ID is missing
+     * @throws PDOException
+     */
     public function delete(array $user): bool
     {
         if (!isset($user['id'])) {
@@ -140,5 +167,48 @@ final class UserRepositoryPdo implements UserRepositoryInterface
     private function getDriverName(): string
     {
         return $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+    }
+
+    private function where(array $filter = []): array
+    {
+        if (empty($filter)) {
+            return ['', null];
+        }
+
+        $where = $values = [];
+        foreach ($filter as $key => $value) {
+            $where[] = "{$key} = ?";
+            $values[] = $value;
+        }
+
+        return ['WHERE ' . implode(' AND ', $where), $values];
+    }
+
+    private function orderBy(array|string $order): string
+    {
+        if (empty($order)) {
+            return 'id';
+        }
+        if (!is_array($order)) {
+            $order = [$order];
+        }
+        $ordFields = [];
+        foreach ($order as $field) {
+            $dir = ' ASC';
+            if (str_starts_with($field, '-')) {
+                $field = trim(substr($field, 1));
+                $dir = ' DESC';
+            }
+            if (!in_array($field, $this->fields)) {
+                throw new InvalidArgumentException("Invalid key: {$field}");
+            }
+            $ordFields[] = $field . $dir;
+        }
+        return implode(', ', $ordFields);
+    }
+
+    private function limit(int $limit, int $offset): string
+    {
+        return ($limit > 0) && ($offset >= 0) ? " LIMIT {$limit} OFFSET {$offset} " : '';
     }
 }
