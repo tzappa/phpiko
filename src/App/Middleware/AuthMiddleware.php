@@ -43,7 +43,7 @@ final class AuthMiddleware implements MiddlewareInterface
     {
         $user = $this->session->get('user');
         if ($user === null) {
-            $this->logger->notice('Unauthorized access blocked to {uri}', ['uri' => (string) $request->getUri()]);
+            $this->logger->notice('Unauthorized access blocked to {path}', ['path' => $request->getUri()->getPath()]);
             throw new UnauthorizedException('You are not authorized to access this page');
         }
 

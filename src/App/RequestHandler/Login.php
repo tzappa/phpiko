@@ -47,20 +47,20 @@ final class Login implements RequestHandlerInterface
                 if (!$user) {
                     $error = 'Invalid username or password';
                     $this->warning('Invalid login attempt - user does not exists', ['username' => $username]);
-                } elseif ($user['state'] === 'blocked') {
-                    $error = 'User account is blocked';
-                    $this->warning('Invalid login attempt - user is blocked', ['username' => $username]);
-                } elseif ($user['state'] !== 'active') {
-                    $error = 'User account is not active';
-                    $this->warning('Invalid login attempt - user is not in active state', ['username' => $username, 'state' => $user['state']]);
                 } elseif (password_verify($password, $user['password'])) {
                     unset($user['password']);
                     $this->session->set('user', $user);
                     $this->info('User {username} logged in', $user);
                     $this->dispatch(new LoginEvent($user));
                     return new RedirectResponse('/private/hello');
+                } elseif ($user['state'] === 'blocked') {
+                    $error = 'User account is blocked';
+                    $this->warning('Invalid login attempt - user is blocked', ['username' => $username]);
+                } elseif ($user['state'] !== 'inactive') {
+                    $error = 'You need to activate your account first. Please check your email.';
+                    $this->warning('Invalid login attempt - user is in inactive state', ['username' => $username, 'state' => $user['state'], 'email' => $user['email']]);
                 } else {
-                    $error = 'Invalid username or password';
+                    $error = 'Invalid username or password'; // same error as when user does not exist to avoid user enumeration
                     $this->warning('Invalid login attempt: wrong password', ['username' => $username]);
                 }
                 $this->dispatch(new LoginFailEvent($username));
