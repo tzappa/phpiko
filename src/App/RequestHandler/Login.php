@@ -25,6 +25,7 @@ final class Login implements RequestHandlerInterface
 {
     use LoggerTrait;
     use EventDispatcherTrait;
+    use CsrfTrait;
 
     public function __construct(
         private SessionInterface $session,
@@ -68,31 +69,10 @@ final class Login implements RequestHandlerInterface
         }
 
         $tpl = $this->template->load('login.twig');
-        $tpl->assign('csrf', $this->csrfToken());
+        $tpl->assign('csrf', $this->generateCsrfToken());
         $tpl->assign('error', $error);
         $html = $tpl->parse();
 
         return new HtmlResponse($html);
-    }
-
-    private function csrfToken(): string
-    {
-        // Check if a token is already set (e.g. when several forms are on the same page, or when the user has multiple tabs open)
-        if ($this->session->has('csrf')) {
-            return $this->session->get('csrf');
-        }
-        $token = bin2hex(random_bytes(32));
-        $this->session->set('csrf', $token);
-        return $token;
-    }
-
-    private function checkCsrfToken(string $token): bool
-    {
-        $res = $this->session->has('csrf') && hash_equals($token, $this->session->get('csrf'));
-        if (!$res) {
-            $this->warning('CSRF token mismatch');
-        }
-        $this->session->remove('csrf');
-        return $res;
     }
 }
