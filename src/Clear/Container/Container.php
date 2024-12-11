@@ -1,9 +1,6 @@
-<?php declare(strict_types=1);
-/**
- * Container that implements PSR-11 ContainerInterface
- *
- * @package Clear
- */
+<?php
+
+declare(strict_types=1);
 
 namespace Clear\Container;
 
@@ -11,6 +8,9 @@ use ArrayAccess;
 use SplObjectStorage;
 use Psr\Container\ContainerInterface;
 
+/**
+ * Container that implements PSR-11 ContainerInterface
+ */
 final class Container implements ArrayAccess, ContainerInterface
 {
     /**

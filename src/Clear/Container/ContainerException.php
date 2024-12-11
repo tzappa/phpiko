@@ -1,15 +1,15 @@
-<?php declare(strict_types=1);
-/**
- * Container Exception that implements PSR-11 Container Exception Interface
- *
- * @package Clear
- */
+<?php
+
+declare(strict_types=1);
 
 namespace Clear\Container;
 
 use Psr\Container\ContainerExceptionInterface;
 use Exception;
 
+/**
+ * Container Exception that implements PSR-11 Container Exception Interface
+ */
 class ContainerException extends Exception implements ContainerExceptionInterface
 {
 }
