@@ -13,7 +13,7 @@ use Stringable;
 /**
  * Logger that implements PSR-3 LoggerInterface
  */
-final class FileLogger extends AbstractLogger implements LoggerInterface
+final class StdoutLogger extends AbstractLogger implements LoggerInterface
 {
     protected static $levels = [
         LogLevel::EMERGENCY, // 0
@@ -27,19 +27,11 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
     ];
 
     /**
-     * The filename usually with the path and the extension.
-     * Set to empty to send logs into default error log (default)
-     *
-     * @var string
-     */
-    private $filename = ''; // default is standard error log
-
-    /**
      * Log line format.
      *
      * @var string
      */
-    private $logFormat = '[{datetime}] [{level}] {message} {context}';
+    private $logFormat = '[{level}] {message} {context}';
 
     /**
      * Level threshold. Default level is "debug", which means to log everything.
@@ -49,23 +41,17 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
     private $logLevel = 'debug';
 
     /**
-     * Date format used when formating line with {datetime} parameter.
+     * End Of Line when saving to file. This is omitted in error_log.
      *
      * @var string
      */
-    private $dateFormat = 'Y-m-d H:i:s';
-
-    /**
-     * Opened file handler.
-     */
-    private $file;
+    private $eol = PHP_EOL;
 
     /**
      * Interpolate placeholders in the message.
      * Placeholders are {key} and will be replaced with the value from the context.
      * If the key is not found in the context, the placeholder will be left as is.
      * If the value is an array, it will be converted to a JSON.
-     * If the value is an DateTime object, it will be converted to a string with `dateFormat` format.
      * If the `removeInterpolatedContext` is set to true, the interpolated context will be removed from the context.
      *
      * @var bool
@@ -85,9 +71,9 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
      * Config settings can be passed as an array:
      * $config = [
      *    'filename' => 'path/to/file.log',
-     *    'format' => '[{datetime}] [{level}] {message} {context}',
-     *    'dateFormat' => 'Y-m-d H:i:s',
+     *    'format' => '[{level}] {message} {context}',
      *    'level' => 'debug',
+     *    'eol' => "\n",
      *    'interpolatePlaceholders' => true,
      *    'removeInterpolatedContext' => true,
      * ];
@@ -96,30 +82,20 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
      */
     public function __construct(array $config = array())
     {
-        if (isset($config['filename'])) {
-            $this->setFileName($config['filename']);
-        }
         if (isset($config['format'])) {
             $this->setFormat($config['format']);
         }
-        if (isset($config['dateFormat'])) {
-            $this->setDateFormat($config['dateFormat']);
-        }
         if (isset($config['level'])) {
             $this->setLevel($config['level']);
+        }
+        if (isset($config['eol'])) {
+            $this->setEol($config['eol']);
         }
         if (isset($config['interpolatePlaceholders'])) {
             $this->setInterpolatePlaceholders(boolval($config['interpolatePlaceholders']));
         }
         if (isset($config['removeInterpolatedContext'])) {
             $this->setRemoveInterpolatedContext(boolval($config['removeInterpolatedContext']));
-        }
-    }
-
-    public function __destruct()
-    {
-        if ($this->file) {
-            fclose($this->file);
         }
     }
 
@@ -141,63 +117,8 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
         }
 
         $formattedMessage = $this->formatMessage($level, $message, $context);
-        $filename = $this->getFileName();
-        if (!$filename) {
-            error_log($formattedMessage);
-            return ;
-        }
 
-        // if the file has never been opened
-        if (is_null($this->file)) {
-            set_error_handler(function () use ($filename) {
-                // mark as not available
-                $this->file = false;
-                // Log that we cannot open the file
-                error_log("The log file {$filename} cannot be opened!");
-            }, E_WARNING);
-            $this->file = fopen($filename, 'a');
-            restore_error_handler();
-        }
-
-        // if the log file is not available
-        if (!$this->file) {
-            // log to the standard log end exit
-            error_log($formattedMessage);
-            return ;
-        }
-
-        $res = fwrite($this->file, $formattedMessage . "\n");
-        if (false === $res) {
-            // log to the standard log
-            error_log("Could not write to log {$filename} message: {$formattedMessage}");
-        }
-    }
-
-    /**
-     * Returns the filename of the log file.
-     * Empty means standard error log.
-     *
-     * @return string
-     */
-    public function getFileName()
-    {
-        return $this->filename;
-    }
-
-    /**
-     * Sets the name of the file optionally with the full path and the extension.
-     * When the parameter is empty or missing the default error log will be used.
-     *
-     * @param string $filename
-     */
-    public function setFileName($filename = '')
-    {
-        if ($this->file) {
-            fclose($this->file);
-            unset($this->file);
-        }
-
-        $this->filename = (string) $filename;
+        echo $formattedMessage . $this->eol;
     }
 
     /**
@@ -247,29 +168,23 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
     }
 
     /**
-     * Sets date format that will be used when formating message ({datetime} parameter)
+     * Sets the line endings when writing message.
      *
-     * @param string $format
-     *
-     * @throws InvalidArgumentException On empty format
+     * @param string $eol
      */
-    public function setDateFormat($format)
+    public function setEol($eol)
     {
-        if (!$format) {
-            throw new InvalidArgumentException('Date format cannot be empty');
-        }
-
-        $this->dateFormat = $format;
+        $this->eol = $eol;
     }
 
     /**
-     * Returns the date format that will be used when formating message ({datetime} parameter)
+     * Returns line ending.
      *
      * @return string
      */
-    public function getDateFormat()
+    public function getEol()
     {
-        return $this->dateFormat;
+        return $this->eol;
     }
 
     /**
@@ -353,7 +268,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
             }
             unset($unprocessedContext[$matches[1]]);
             if ($context[$matches[1]] instanceof \DateTime) {
-                return $context[$matches[1]]->format($this->getDateFormat());
+                return $context[$matches[1]]->format('Y-m-d H:i:s');
             }
             if (is_array($context[$matches[1]])) {
                 return json_encode($context[$matches[1]]);
@@ -378,7 +293,6 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
 
     private function formatMessage($level, $message, array $context)
     {
-        $unprocessedContext = [];
         if ($this->interpolatePlaceholders && (count($context) > 0) && (strpos($message, '{') !== false)) {
             $message = $this->interpolate($message, $context, $unprocessedContext);
             if ($this->removeInterpolatedContext) {
@@ -389,14 +303,12 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
         $msg = $this->logFormat;
         $msg = str_replace(
             array(
-                '{datetime}',
                 '{level}',
                 '{LEVEL}',
                 '{message}',
                 '{context}'
             ),
             array(
-                date($this->getDateFormat()),
                 $level,
                 strtoupper($level),
                 (string) $message,
