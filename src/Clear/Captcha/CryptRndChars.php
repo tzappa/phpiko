@@ -99,7 +99,7 @@ final class CryptRndChars implements CaptchaInterface
         $cnt = mb_strlen($charset, 'UTF-8');
 
         for ($i = 0; $i < $this->config['length']; $i++) {
-            $code .= mb_substr($charset, mt_rand(0, $cnt - 1), 1, 'UTF-8');
+            $code .= mb_substr($charset, random_int(0, $cnt - 1), 1, 'UTF-8');
         }
 
         $this->code = $code;
