@@ -1,6 +1,7 @@
 name = "PHPiko"
 timezone = "UTC"
 
+
 [logger]
 ; Log levels: debug, info, notice, warning, error, critical, alert, emergency
 level = info
@@ -9,6 +10,7 @@ format = "[{datetime}] [{level}] {message} {context}"
 dateFormat = "Y-m-d H:i:s"
 interpolatePlaceholders = on
 removeInterpolatedContext = on
+
 
 [database]
 ; the type of the database - mysql, pgsql, sqlite, etc.
@@ -25,7 +27,13 @@ log_enabled = Off
 ; The level at which to log profile messages. Default level is debug
 log_level = debug
 
+
 [twig]
 debug = off
 ; template_path = "../templates"
 cache_path = "../tmp/twig"
+
+
+[captcha]
+secret = "change_me_with_some_random_string_like_3yqjv5qd3rsmqlafmwgmpwxn4ke1234i4fghl6bq377ollao5q55puzmzjartypj6j24rz34dt2098zyxwvutsrqponmlkjhgfedcba"
+length = 6

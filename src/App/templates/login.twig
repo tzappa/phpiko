@@ -26,6 +26,13 @@
 		<input type="text" id="username" name="username" required aria-required="true" />
 		<label for="password">Password:</label>
 		<input type="password" id="password" name="password" required aria-required="true" />
+
+		{% if captcha_image and captcha_checksum %}
+			<input type="hidden" name="checksum" value="{{ captcha_checksum }}"/>
+			<img src="{{ captcha_image }}"/>
+			<input type="text" name="code" class="auth-input" required inputmode="numeric" autocomplete="one-time-code" placeholder="Code from the image" value=""/>
+		{% endif %}
+
 		<button type="submit">Login</button>
 	</form>
 {% endblock %}

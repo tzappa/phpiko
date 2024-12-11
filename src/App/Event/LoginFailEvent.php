@@ -9,7 +9,7 @@ namespace App\Event;
  */
 final class LoginFailEvent
 {
-    public function __construct(private readonly string $username)
+    public function __construct(private readonly string $username, private readonly string $reason)
     {
 
     }
