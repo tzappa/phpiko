@@ -15,6 +15,9 @@ use App\RequestHandler\{
 use App\Users\UserRepositoryInterface;
 use App\Users\UserRepositoryPdo;
 
+use Clear\Captcha\CryptRndChars;
+use Clear\Captcha\UsedKeysProviderPdo;
+use Clear\Captcha\UsedKeysProviderCache;
 use Clear\Config\Factory as ConfigFactory;
 use Clear\Config\ConfigInterface;
 use Clear\Container\Container;
@@ -140,6 +143,7 @@ $app->database = function () use ($app): PdoInterface {
     }
     if ($dsn === 'sqlite::memory:') {
         $sql = file_get_contents(__DIR__ . '/Users/schema-sqlite.sql');
+        $sql .= file_get_contents(dirname(__DIR__) . '/Clear/Captcha/schema.sql');
         $db->exec($sql);
     }
 
@@ -182,6 +186,13 @@ $app->eventProvider->addListener(LoginFailEvent::class, function (LoginFailEvent
     $app->logger->warning('Login failed for {username}', ['username' => $event->getUsername()]);
 });
 
+$app->captcha = function () use ($app) {
+    $captchaSecret = $app->config->get('captcha.secret');
+    $captchaConfig = ['length' => $app->config->get('captcha.length', 6), 'quality' => $app->config->get('captcha.quality', 15)];
+    // $usedCaptchasProvider = new UsedKeysProviderCache($app->cachePool);
+    $usedCaptchasProvider = new UsedKeysProviderPdo($app->database);
+    return new CryptRndChars($usedCaptchasProvider, $captchaSecret, $captchaConfig);
+};
 // Router
 $router = new Router();
 // Public routes
@@ -193,6 +204,7 @@ $router->map('*', '/login', function ($request) use ($app) {
     $requestHandler = new Login($app->session, $app->template, $app->users);
     $requestHandler->setLogger($app->logger);
     $requestHandler->setEventDispatcher($app->eventDispatcher);
+    $requestHandler->setCaptcha($app->captcha);
     return $requestHandler->handle($request);
 });
 $router->map('*', '/logout', function ($request) use ($app) {
