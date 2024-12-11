@@ -82,8 +82,7 @@ final class Login implements RequestHandlerInterface
         if (!$this->checkCsrfToken($data['csrf'] ?? '')) {
             return 'Expired or invalid request. Please try again.';
         }
-        if (!empty($this->captcha) && (!$this->captcha->verify(@$data['code'], @$data['checksum'], false))) {
-
+        if (!empty($this->captcha) && (!$this->captcha->verify($data['code'] ?? '', $data['checksum'] ?? ''))) {
             return 'Wrong CAPTCHA';
         }
         if (empty($data['username']) || empty($data['password'])) {

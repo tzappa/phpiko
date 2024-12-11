@@ -188,7 +188,7 @@ $app->eventProvider->addListener(LoginFailEvent::class, function (LoginFailEvent
 
 $app->captcha = function () use ($app) {
     $captchaSecret = $app->config->get('captcha.secret');
-    $captchaConfig = ['length' => $app->config->get('captcha.length')];
+    $captchaConfig = ['length' => $app->config->get('captcha.length', 6)];
     // $usedCaptchasProvider = new UsedKeysProviderCache($app->cachePool);
     $usedCaptchasProvider = new UsedKeysProviderPdo($app->database);
     return new CryptRndChars($usedCaptchasProvider, $captchaSecret, $captchaConfig);

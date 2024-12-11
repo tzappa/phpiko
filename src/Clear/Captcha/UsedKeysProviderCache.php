@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Clear\Captcha;
 
 use Psr\Cache\CacheItemPoolInterface;
-use RuntimeException;
 
 final class UsedKeysProviderCache implements UsedKeysProviderInterface
 {

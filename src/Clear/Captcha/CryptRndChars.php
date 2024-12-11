@@ -44,6 +44,9 @@ final class CryptRndChars implements CaptchaInterface
 
     public function __construct(UsedKeysProviderInterface $provider, string $secret, array $config = array())
     {
+        if (!function_exists('imagettftext')) {
+            throw new RuntimeException('GD library with FreeType support is required.');
+        }
         // TODO: check the secret
         $this->secret = $secret;
 
@@ -122,7 +125,13 @@ final class CryptRndChars implements CaptchaInterface
 
         $ivlen = openssl_cipher_iv_length($this->config['cipher']);
         $iv = openssl_random_pseudo_bytes($ivlen);
+        if ($iv === false) {
+            throw new RuntimeException('Failed to generate initialization vector.');
+        }
         $ciphertext = openssl_encrypt($plaintext, $this->config['cipher'], $this->secret, $options=0, $iv);
+        if ($ciphertext === false) {
+            throw new RuntimeException('Encryption failed.');
+        }
 
         return $ciphertext . '.' . base64_encode($iv);
     }
@@ -140,12 +149,17 @@ final class CryptRndChars implements CaptchaInterface
             $this->lastErrorMessage = 'Checksum missing';
             return false;
         }
-        @list($ciphertext, $ivString) = explode('.', (string) $checksum);
+        $parts = explode('.', (string) $checksum, 2);
+        if (count($parts) !== 2) {
+            $this->lastErrorMessage = 'Checksum mismatch';
+            return false;
+        }
+        list($ciphertext, $ivString) = $parts;
         if (!$ivString || !$ciphertext) {
             $this->lastErrorMessage = 'Checksum mismatch';
             return false;
         }
-        $iv = @base64_decode($ivString);
+        $iv = base64_decode($ivString, true);
         if (!$iv) {
             $this->lastErrorMessage = 'Checksum mismatch';
             return false;
@@ -228,5 +242,10 @@ final class CryptRndChars implements CaptchaInterface
         }
 
         return $image;
+    }
+
+    public function getLastErrorMessage(): string
+    {
+        return $this->lastErrorMessage;
     }
 }
