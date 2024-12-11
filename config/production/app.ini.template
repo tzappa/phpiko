@@ -37,3 +37,5 @@ cache_path = "../tmp/twig"
 [captcha]
 secret = "change_me_with_some_random_string_like_3yqjv5qd3rsmqlafmwgmpwxn4ke1234i4fghl6bq377ollao5q55puzmzjartypj6j24rz34dt2098zyxwvutsrqponmlkjhgfedcba"
 length = 6
+; quality of the image 0 (low) -100 (hi)
+quality = 10

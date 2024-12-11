@@ -47,7 +47,10 @@ final class CryptRndChars implements CaptchaInterface
         if (!function_exists('imagettftext')) {
             throw new RuntimeException('GD library with FreeType support is required.');
         }
-        // TODO: check the secret
+
+        if (strlen($secret) < 32) {
+            throw new InvalidArgumentException('Secret key must be at least 32 characters long');
+        }
         $this->secret = $secret;
 
         $this->provider = $provider;
@@ -222,8 +225,11 @@ final class CryptRndChars implements CaptchaInterface
         $height = $this->config['height'];
         $font = $this->config['font'];
         $len = mb_strlen($code, 'UTF-8');
+        if ($len === 0) {
+            throw new RuntimeException('Code length cannot be zero');
+        }
+        $size = max(8, (int) ($width / $len) - mt_rand(1, 3)); // Ensure minimum font size of 8px
 
-        $size = (int) $width / $len - mt_rand(1, 3);
         $box = imagettfbbox($size, 0, $font, $code);
         $textWidth = $box[2] - $box[0];
         $textHeight = $box[1] - $box[7];
