@@ -1,4 +1,7 @@
 <?php
+/**
+ * App bootstrap file
+ */
 
 declare(strict_types=1);
 
@@ -189,8 +192,11 @@ $app->eventProvider->addListener(LoginFailEvent::class, function (LoginFailEvent
 $app->captcha = function () use ($app) {
     $captchaSecret = $app->config->get('captcha.secret');
     $captchaConfig = ['length' => $app->config->get('captcha.length', 6), 'quality' => $app->config->get('captcha.quality', 15)];
-    // $usedCaptchasProvider = new UsedKeysProviderCache($app->cachePool);
-    $usedCaptchasProvider = new UsedKeysProviderPdo($app->database);
+    if ($app->config->get('captcha.provider', 'database') === 'cache') {
+        $usedCaptchasProvider = new UsedKeysProviderCache($app->cachePool);
+    } else {
+        $usedCaptchasProvider = new UsedKeysProviderPdo($app->database);
+    }
     return new CryptRndChars($usedCaptchasProvider, $captchaSecret, $captchaConfig);
 };
 // Router

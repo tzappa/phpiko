@@ -39,3 +39,5 @@ secret = "change_me_with_some_random_string_like_3yqjv5qd3rsmqlafmwgmpwxn4ke1234
 length = 6
 ; quality of the image 0 (low) -100 (hi)
 quality = 10
+; provider - cache or database
+provider = database
