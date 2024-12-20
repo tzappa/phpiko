@@ -27,6 +27,11 @@
             "Clear\\": "src/Clear/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "scripts": {
         "test": [
             "phpunit"
