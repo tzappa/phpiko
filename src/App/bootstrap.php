@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Event\LoginFailEvent;
+use App\Event\LoginEvent;
 use App\Middleware\AuthMiddleware;
 use App\RequestHandler\{
     Home,
@@ -24,6 +25,8 @@ use Clear\Captcha\UsedKeysProviderCache;
 use Clear\Config\Factory as ConfigFactory;
 use Clear\Config\ConfigInterface;
 use Clear\Container\Container;
+use Clear\Counters\DatabaseProvider as CounterRepositoryPdo;
+use Clear\Counters\Service as CounterService;
 use Clear\Database\PdoExt as PDO;
 use Clear\Database\PdoInterface;
 use Clear\Database\Event\{
@@ -147,6 +150,7 @@ $app->database = function () use ($app): PdoInterface {
     if ($dsn === 'sqlite::memory:') {
         $sql = file_get_contents(__DIR__ . '/Users/schema-sqlite.sql');
         $sql .= file_get_contents(dirname(__DIR__) . '/Clear/Captcha/schema.sql');
+        $sql .= file_get_contents(dirname(__DIR__) . '/Clear/Counters/schema-sqlite.sql');
         $db->exec($sql);
     }
 
@@ -184,11 +188,38 @@ $app->users = function () use ($app): UserRepositoryInterface {
 };
 
 // Events
+// After some failed login attempts, we can block the user's IP address, send an email to the user or to admin, etc.
 $app->eventProvider->addListener(LoginFailEvent::class, function (LoginFailEvent $event) use ($app) {
-    // After some failed login attempts, you can block the user's IP address, send an email to the user or to admin, etc.
-    $app->logger->warning('Login failed for {username}', ['username' => $event->getUsername()]);
+    $user = $app->users->find('username', $event->getUsername());
+    if (!$user) {
+        $app->logger->warning('Login attempt for unknown username {username}', ['username' => $event->getUsername()]);
+        // TODO: user not found - block the IP address for some time after some failed attempts
+        return ;
+    }
+    // Count failed login attempts (+1)
+    $failedCount = $app->counters->inc('login_fail_' . $user['id']);
+    $app->logger->warning('Login failed for {username} ({count} times)', ['username' => $event->getUsername(), 'count' => $failedCount, 'user' => $user]);
+    // block the user after 5 failed attempts
+    if ($failedCount >= 5 && $user['state'] === 'active') {
+        $app->logger->alert('User {username} blocked after {count} failed login attempts', ['username' => $event->getUsername(), 'count' => $failedCount, 'user' => $user]);
+        $user['state'] = 'blocked';
+        $app->users->update($user);
+        // TODO: notify the user by email
+        // TODO: notify the admin by email
+    }
 });
+// reset the counter after a successful login
+$app->eventProvider->addListener(LoginEvent::class, function ($event) use ($app) {
+    $app->logger->debug('Login successful for {username}', ['username' => $event->getUser()['username']]);
+    $failedLoginAttempts = $app->counters->get('login_fail_' . $event->getUser()['id'], 0);
+    if ($failedLoginAttempts > 0) {
+        $app->logger->info('Resetting failed login attempts for {username}', ['username' => $event->getUser()['username']]);
+        $app->counters->set('login_fail_' . $event->getUser()['id'], 0);
+    }
+});
+// TODO: add a counter failed logins for IP addresses and block the IP address after some failed attempts
 
+// Captcha Service
 $app->captcha = function () use ($app) {
     $captchaSecret = $app->config->get('captcha.secret');
     $captchaConfig = ['length' => $app->config->get('captcha.length', 6), 'quality' => $app->config->get('captcha.quality', 15)];
@@ -199,6 +230,15 @@ $app->captcha = function () use ($app) {
     }
     return new CryptRndChars($usedCaptchasProvider, $captchaSecret, $captchaConfig);
 };
+
+// Couters Service
+$app->counters = function () use ($app) {
+    $pdo = new CounterRepositoryPdo($app->database);
+    $counters = new CounterService($pdo);
+
+    return $counters;
+};
+
 // Router
 $router = new Router();
 // Public routes

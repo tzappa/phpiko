@@ -64,4 +64,16 @@ final class Service
         $counter = $this->provider->set($id, $value);
         return $counter->getValue();
     }
+
+    /**
+     * Get the counter object identified by the given ID
+     *
+     * @param mixed $id
+     *
+     * @return \Clear\Counters\CounterInterface|null
+     */
+    public function getCounter($id): ?CounterInterface
+    {
+        return $this->provider->get($id);
+    }
 }
