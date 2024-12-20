@@ -2,6 +2,7 @@ log/*
 tmp/*
 reports/*
 vendor/*
+data/*
 config/development/*
 config/production/*
 !config/*/*.template
