@@ -14,7 +14,7 @@ class DatabaseProvider implements ProviderInterface
     /**
      * PDO handler
      */
-    private $db;
+    private PDO $db;
 
     private $tableName = 'counters';
 

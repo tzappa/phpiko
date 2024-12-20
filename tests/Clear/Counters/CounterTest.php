@@ -25,8 +25,8 @@ class CounterTest extends TestCase
         $counter = new Counter('1', 3, $created, $updated);
         $this->assertSame('1', $counter->getId());
         $this->assertSame(3, $counter->getValue());
-        $this->assertSame($created, $counter->getCreatedAt());
-        $this->assertSame($updated, $counter->getUpdatedAt());
+        $this->assertEquals($created, $counter->getCreatedAt());
+        $this->assertEquals($updated, $counter->getUpdatedAt());
     }
 
     #[Depends('testGetValues')]
@@ -39,4 +39,18 @@ class CounterTest extends TestCase
         $this->assertNotNull($counter->getUpdatedAt());
     }
 
+    public function testNegativeValueHandling()
+    {
+        $counter = new Counter('test', -1);
+        $this->assertSame(-1, $counter->getValue());
+    }
+
+    public function testBoundaryValues()
+    {
+        $counter1 = new Counter('max', PHP_INT_MAX);
+        $this->assertSame(PHP_INT_MAX, $counter1->getValue());
+
+        $counter2 = new Counter('min', PHP_INT_MIN);
+        $this->assertSame(PHP_INT_MIN, $counter2->getValue());
+    }
 }

@@ -100,4 +100,10 @@ class DatabaseProviderTest extends TestCase
         $this->assertSame('new-counter', $counter->getId());
         $this->assertSame(1, $counter->getValue());
     }
+    public function testIncrementWithNegativeValue()
+    {
+        $this->provider->set('negative', 10);
+        $counter = $this->provider->increment('negative', -5);
+        $this->assertSame(5, $counter->getValue());
+    }
 }

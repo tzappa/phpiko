@@ -7,12 +7,12 @@ namespace Clear\Counters;
 /**
  * Counters Service
  */
-class Service
+final class Service
 {
     /**
      * @var \Clear\Counters\ProviderInterface instance
      */
-    protected $provider;
+    private $provider;
 
     public function __construct(ProviderInterface $provider)
     {

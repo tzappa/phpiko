@@ -1,5 +1,9 @@
 # Counters
 
+Counters diagram:
+
+![Counters Diagram](Counters%20diagram.png)
+
 ```php
 <?php
 // Create an instance of the counter service

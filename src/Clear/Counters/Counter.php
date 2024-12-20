@@ -36,11 +36,11 @@ final class Counter implements CounterInterface
         if (is_null($createdAt)) {
             $createdAt = $now;
         }
-        $this->createdAt = $createdAt;
+        $this->createdAt = clone $createdAt;
         if (is_null($updatedAt)) {
             $updatedAt = $now;
         }
-        $this->updatedAt = $updatedAt;
+        $this->updatedAt = clone $updatedAt;
     }
 
     /**
@@ -64,7 +64,7 @@ final class Counter implements CounterInterface
      */
     public function getCreatedAt(): DateTime
     {
-        return $this->createdAt;
+        return clone $this->createdAt;
     }
 
     /**
@@ -72,6 +72,6 @@ final class Counter implements CounterInterface
      */
     public function getUpdatedAt(): DateTime
     {
-        return $this->updatedAt;
+        return clone $this->updatedAt;
     }
 }
