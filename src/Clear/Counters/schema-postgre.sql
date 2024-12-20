@@ -2,7 +2,7 @@
 
 CREATE TABLE IF NOT EXISTS counters
 (
-    id                 VARCHAR(32) NOT NULL PRIMARY KEY,
+    id                 VARCHAR(255) NOT NULL PRIMARY KEY,
     current            INTEGER NOT NULL DEFAULT 0,
     created_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP

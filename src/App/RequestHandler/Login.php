@@ -104,7 +104,7 @@ final class Login implements RequestHandlerInterface
         if ($user['state'] === 'blocked') {
             $this->warning('Invalid login attempt - user is blocked', ['username' => $username]);
             $this->dispatch(new LoginFailEvent($username, 'User is blocked'));
-            return 'User account is blocked';
+            return 'Invalid username or password'; // same message as for wrong password to hide that user the password is correct
         }
         if ($user['state'] === 'inactive') {
             $this->warning('Invalid login attempt - user is in inactive state', ['username' => $username, 'state' => $user['state'], 'email' => $user['email']]);

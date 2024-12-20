@@ -24,7 +24,7 @@ final class UserRepositoryPdo implements UserRepositoryInterface
     {
         // start with letter then letter, number or underscore
         if (!preg_match('/\G[a-zA-Z]+[a-zA-Z0-9_]*\Z/', $table)) {
-            throw new \Exception("Invalid table name {$table}");
+            throw new InvalidArgumentException("Invalid table name {$table}");
         }
         $this->table = $table;
     }
@@ -40,9 +40,9 @@ final class UserRepositoryPdo implements UserRepositoryInterface
         if (!in_array($key, $this->fields)) {
             throw new InvalidArgumentException("Invalid key: {$key}");
         }
-        $sql = "SELECT * FROM {$this->table} WHERE {$key} = :value ORDER BY id DESC LIMIT 1";
+        $sql = "SELECT * FROM {$this->table} WHERE {$key} = ? ORDER BY id DESC LIMIT 1";
         $sth = $this->db->prepare($sql);
-        $sth->execute(['value' => $value]);
+        $sth->execute([$value]);
 
         return $sth->fetch(PDO::FETCH_ASSOC) ?: null;
     }

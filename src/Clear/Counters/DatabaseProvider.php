@@ -4,23 +4,30 @@ declare(strict_types=1);
 
 namespace Clear\Counters;
 
-use PDO;
+use InvalidArgumentException;
 use DateTime;
+use PDO;
 
 use function date;
 
 class DatabaseProvider implements ProviderInterface
 {
+    private string $tableName = 'counters';
+
+    public function __construct(private PDO $db) {}
+
     /**
-     * PDO handler
+     * Change the DB table name for users
+     *
+     * @param string $table
      */
-    private PDO $db;
-
-    private $tableName = 'counters';
-
-    public function __construct(PDO $db)
+    public function setTableName(string $table)
     {
-        $this->db = $db;
+        // start with letter then letter, number or underscore
+        if (!preg_match('/\G[a-zA-Z]+[a-zA-Z0-9_]*\Z/', $table)) {
+            throw new InvalidArgumentException("Invalid table name {$table}");
+        }
+        $this->tableName = $table;
     }
 
     /**
