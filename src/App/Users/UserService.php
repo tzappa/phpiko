@@ -11,6 +11,7 @@ use App\Users\Events\{
 };
 use Psr\EventDispatcher\EventDispatcherInterface;
 use InvalidArgumentException;
+use RuntimeException;
 
 final class UserService
 {
@@ -108,5 +109,30 @@ final class UserService
     public function logout(User $user): void
     {
         $this->dispatcher->dispatch(new LogoutEvent($user));
+    }
+
+    /**
+     * Changes the user's password.
+     * 
+     * @param User $user
+     * @param string $password
+     * @return string|true Error message or true on success
+     */
+    public function changePassword(User $user, string $oldPassword, string $newPassword, string $newPassword2): string|true
+    {
+        if (!$user->checkPassword($oldPassword)) {
+            return 'Invalid current password';
+        }
+        if ($newPassword !== $newPassword2) {
+            return 'Passwords do not match';
+        }
+        try {
+            $user->setPassword($newPassword);
+        } catch (InvalidArgumentException $e) {
+            return $e->getMessage();
+        } catch (RuntimeException $e) {
+            return 'Failed to change password';
+        }
+        return true;
     }
 }

@@ -7,6 +7,9 @@ namespace App\Users;
 use InvalidArgumentException;
 use RuntimeException;
 
+/**
+ * User entity class
+ */
 class User
 {
     public const STATE_ACTIVE = 'active';
@@ -79,11 +82,20 @@ class User
 
     public function checkPassword(string $password): bool
     {
-        return password_verify($password, $this->user['password']);
+        $password = trim($password);
+        return isset($this->user['password']) && password_verify($password, $this->user['password']);
     }
 
-    public function changePassword(string $password): void
+    /**
+     * Sets a new password for the user.
+     * 
+     * @param string $password New password
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     */
+    public function setPassword(string $password): void
     {
+        $password = trim($password);
         if (strlen($password) < self::MIN_PASSWORD_LENGTH) {
             throw new InvalidArgumentException('Password must be at least ' . self::MIN_PASSWORD_LENGTH . ' characters');
         }
