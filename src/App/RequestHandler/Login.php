@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\RequestHandler;
 
-use App\Event\LoginEvent;
-use App\Event\LoginFailEvent;
-use App\Users\UserRepositoryInterface;
-
-use Clear\Events\EventDispatcherTrait;
+use App\Users\UserService;
+use App\Users\Events\LoginFailEvent;
+use App\Users\Events\LoginEvent;
 use Clear\Captcha\CaptchaInterface;
+use Clear\Counters\Service as Counters;
+use Clear\Events\Provider as EventProvider;
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
 use Clear\Template\TemplateInterface;
@@ -25,7 +25,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 final class Login implements RequestHandlerInterface
 {
     use LoggerTrait;
-    use EventDispatcherTrait;
     use CsrfTrait;
 
     /**
@@ -34,9 +33,11 @@ final class Login implements RequestHandlerInterface
     private $captcha = null;
 
     public function __construct(
-        private SessionInterface $session,
+        private UserService $users,
+        private EventProvider $eventProvider,
+        private Counters $counters,
         private TemplateInterface $template,
-        private UserRepositoryInterface $users
+        private SessionInterface $session,
     ) {}
 
     public function setCaptcha(CaptchaInterface $captcha): self
@@ -51,22 +52,21 @@ final class Login implements RequestHandlerInterface
         $error = '';
         $method = $request->getMethod();
         if ($method === 'POST') {
+            $this->addEventListeners();
             $data = $request->getParsedBody();
-            $check = $this->checkForError($data);
-            if (is_array($check)) { // USER
-                $user = $check;
-                unset($user['password']);
-                $this->session->set('user', $user);
-                $this->info('User {username} logged in', $user);
-                $this->dispatch(new LoginEvent($user));
+            if (!$this->checkCsrfToken($data['csrf'] ?? '')) {
+                $error = 'Expired or invalid request. Please try again.';
+            } elseif (!empty($this->captcha) && (!$this->captcha->verify($data['code'] ?? '', $data['checksum'] ?? ''))) {
+                $error = 'Wrong CAPTCHA';
+            } elseif ($user = $this->users->login($data['username'] ?? '', $data['password'] ?? '', $error)) {
+                $this->session->set('user_id', $user->id);
+                $this->info('User {username} logged in', $user->toArray());
                 return new RedirectResponse('/private/hello');
             }
-            $error = $check;
         }
         $tpl = $this->template->load('login.twig');
         $tpl->assign('csrf', $this->generateCsrfToken());
         $tpl->assign('error', $error);
-
         if (!empty($this->captcha)) {
             $this->captcha->create();
             $tpl->assign('captcha_image', 'data:image/jpeg;base64,' . base64_encode($this->captcha->getImage()));
@@ -77,40 +77,37 @@ final class Login implements RequestHandlerInterface
         return new HtmlResponse($html);
     }
 
-    private function checkForError($data): string|array
+    private function addEventListeners(): void
     {
-        if (!$this->checkCsrfToken($data['csrf'] ?? '')) {
-            return 'Expired or invalid request. Please try again.';
-        }
-        if (!empty($this->captcha) && (!$this->captcha->verify($data['code'] ?? '', $data['checksum'] ?? ''))) {
-            return 'Wrong CAPTCHA';
-        }
-        if (empty($data['username']) || empty($data['password'])) {
-            return 'Enter username and password';
-        }
-        $username = $data['username'];
-        $password = $data['password'];
-        $user = $this->users->find('username', $username);
-        if (!$user) {
-            $this->warning('Invalid login attempt - user does not exists', ['username' => $username]);
-            $this->dispatch(new LoginFailEvent($username, 'User does not exists'));
-            return 'Invalid username or password';
-        }
-        if (!password_verify($password, $user['password'])) {
-            $this->warning('Invalid login attempt - wrong password', ['username' => $username]);
-            $this->dispatch(new LoginFailEvent($username, 'Wrong password'));
-            return 'Invalid username or password';
-        }
-        if ($user['state'] === 'blocked') {
-            $this->warning('Invalid login attempt - user is blocked', ['username' => $username]);
-            $this->dispatch(new LoginFailEvent($username, 'User is blocked'));
-            return 'Invalid username or password'; // same message as for wrong password to hide that user the password is correct
-        }
-        if ($user['state'] === 'inactive') {
-            $this->warning('Invalid login attempt - user is in inactive state', ['username' => $username, 'state' => $user['state'], 'email' => $user['email']]);
-            $this->dispatch(new LoginFailEvent($username, 'User is inactive'));
-            return 'You need to activate your account first. Please check your email.';
-        }
-        return $user;
+        // After some failed login attempts, we can block the user's IP address, send an email to the user or to admin, etc.
+        $this->eventProvider->addListener(LoginFailEvent::class, function (LoginFailEvent $event) {
+            $user = $event->user;
+            if (!$user->id) {
+                $this->log('warning', 'Login attempt for unknown username {username}', ['username' => $user->username]);
+                // TODO: user not found - block the IP address for some time after some failed attempts
+                return ;
+            }
+            // Count failed login attempts (+1)
+            $failedCount = $this->counters->inc('login_fail_' . $user->id);
+            $this->log('warning', 'Login failed for {username} ({count} times)', ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]);
+            // block the user after 5 failed attempts
+            if ($failedCount >= 5 && $user->state === 'active') {
+                $this->log('alert', 'User {username} blocked after {count} failed login attempts', ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]);
+                $user->changeState('nologin');
+                // TODO: notify the user by email with a link to reset the password and change the state to 'active'
+                // TODO: notify the admin by email
+            }
+        });
+        // reset the counter after a successful login
+        $this->eventProvider->addListener(LoginEvent::class, function ($event) {
+            $user = $event->user;
+            $this->log('debug', 'Login successful for {username}', ['username' => $user->username]);
+            $failedLoginAttempts = $this->counters->get('login_fail_' . $user->id, 0);
+            if ($failedLoginAttempts > 0) {
+                $this->log('info', 'Resetting failed login attempts for {username}', ['username' => $user->username]);
+                $this->counters->set('login_fail_' . $user->id, 0);
+            }
+        });
+        // TODO: add a counter failed logins for IP addresses and block the IP address after some failed attempts
     }
 }

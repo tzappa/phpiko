@@ -24,7 +24,7 @@ final class Hello implements RequestHandlerInterface
     {
         $user = $request->getAttribute('user');
         // we are sure that the user is authenticated, but we still set a default value
-        $username = $user['username'] ?? 'Guest';
+        $username = $user->username ?? 'Guest';
 
         $tpl = $this->template->load('hello.twig');
         $tpl->assign('username', $username);
