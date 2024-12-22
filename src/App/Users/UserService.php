@@ -52,21 +52,21 @@ final class UserService
         }
         $user = new User($user, $this->repository);
         if (!$user->checkPassword($password)) {
-            $this->dispatcher->dispatch(new LoginFailEvent($user, 'Wrong password'));
+            $this->dispatcher->dispatch(new LoginFailEvent($user, 'Invalid password'));
             $error = 'Invalid username or password';
             return null;
         }
-        if ($user->state === 'blocked') {
+        if ($user->state === User::STATE_BLOCKED) {
             $this->dispatcher->dispatch(new LoginFailEvent($user, 'User is blocked'));
             $error = 'Invalid username or password'; // same message as for wrong password to hide that user the password is correct
             return null;
         }
-        if ($user->state === 'nologin') {
-            $this->dispatcher->dispatch(new LoginFailEvent($user, 'User is not allowed to login'));
+        if ($user->state === User::STATE_NOLOGIN) {
+            $this->dispatcher->dispatch(new LoginFailEvent($user, 'Account locked'));
             $error = 'Invalid username or password'; // same message as for wrong password to hide that user the password is correct
             return null;
         }
-        if ($user->state === 'inactive') {
+        if ($user->state === User::STATE_INACTIVE) {
             $this->dispatcher->dispatch(new LoginFailEvent($user, 'User is inactive'));
             $error = 'You need to activate your account first. Please check your email.';
             return null;
@@ -90,10 +90,10 @@ final class UserService
         if ($user === null) {
             return null;
         }
-        if ($user['state'] === 'blocked') {
+        if ($user['state'] === User::STATE_BLOCKED) {
             return null;
         }
-        if ($user['state'] === 'inactive') {
+        if ($user['state'] === User::STATE_NOLOGIN) {
             return null;
         }
 

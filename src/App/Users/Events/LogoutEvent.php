@@ -11,6 +11,8 @@ use App\Users\User;
  *
  * This event is typically dispatched by the Logout request handler
  * after the user clicks the logout button.
+ * 
+ * @param User $user The user that is logging out
  */
 final class LogoutEvent
 {

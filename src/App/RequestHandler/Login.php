@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\RequestHandler;
 
 use App\Users\UserService;
+use App\Users\User;
 use App\Users\Events\LoginFailEvent;
 use App\Users\Events\LoginEvent;
 use Clear\Captcha\CaptchaInterface;
@@ -24,6 +25,9 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 final class Login implements RequestHandlerInterface
 {
+    // Lock the account after 5 failed login attempts
+    private const LOCK_ACCOUNT_AFTER = 5;
+
     use LoggerTrait;
     use CsrfTrait;
 
@@ -90,10 +94,10 @@ final class Login implements RequestHandlerInterface
             // Count failed login attempts (+1)
             $failedCount = $this->counters->inc('login_fail_' . $user->id);
             $this->log('warning', 'Login failed for {username} ({count} times)', ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]);
-            // block the user after 5 failed attempts
-            if ($failedCount >= 5 && $user->state === 'active') {
+            // Lock the user after some failed attempts
+            if ($failedCount >= self::LOCK_ACCOUNT_AFTER && $user->state === User::STATE_ACTIVE) {
                 $this->log('alert', 'User {username} blocked after {count} failed login attempts', ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]);
-                $user->changeState('nologin');
+                $user->changeState(User::STATE_NOLOGIN);
                 // TODO: notify the user by email with a link to reset the password and change the state to 'active'
                 // TODO: notify the admin by email
             }
