@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Users;
 
 use App\Users\Events\{
+    InvalidPasswordEvent,
     LoginFailEvent,
     LoginEvent,
     LogoutEvent
@@ -17,7 +18,7 @@ final class UserService
 {
     private EventDispatcherInterface $dispatcher;
 
-    public function __construct(private UserRepositoryInterface $repository, ?EventDispatcherInterface $dispatcher = null) 
+    public function __construct(private UserRepositoryInterface $repository, ?EventDispatcherInterface $dispatcher = null)
     {
         $this->dispatcher = $dispatcher ?? new NullDispatcher();
     }
@@ -25,7 +26,7 @@ final class UserService
     /**
      * Logs in the user.
      * If there is an login error the error message is passed in the $error variable.
-     * 
+     *
      * @param string $username
      * @param string $password
      * @param string $error
@@ -44,16 +45,17 @@ final class UserService
             $user = new User([
                 'id' => null,
                 'username' => $username,
-                'password' => null,
+                'password' => password_hash('dummy', PASSWORD_DEFAULT), // dummy password to prevent timing attacks
                 'state' => null,
             ]);
-            $this->dispatcher->dispatch(new LoginFailEvent($user, 'User does not exists'));
+            $user->checkPassword($password); // dummy check to prevent timing attacks
+            $this->dispatcher->dispatch(new LoginFailEvent($user, 'Invalid credentials'));
             $error = 'Invalid username or password';
             return null;
         }
         $user = new User($user, $this->repository);
         if (!$user->checkPassword($password)) {
-            $this->dispatcher->dispatch(new LoginFailEvent($user, 'Invalid password'));
+            $this->dispatcher->dispatch(new InvalidPasswordEvent($user, 'Invalid password'));
             $error = 'Invalid username or password';
             return null;
         }
@@ -76,11 +78,12 @@ final class UserService
 
         return $user;
     }
-    
+
     /**
-     * Checks the logged in user' status. 
+     * Checks the logged in user' status.
      * Used to check if the user is still active, blocked or deleted.
-     * 
+     * Users in NOLOGIN state can stay logged in.
+     *
      * @param int $id
      * @return User|null The user object or null if the user does not exists or is blocked or inactive
      * @throws InvalidArgumentException
@@ -94,7 +97,7 @@ final class UserService
         if ($user['state'] === User::STATE_BLOCKED) {
             return null;
         }
-        if ($user['state'] === User::STATE_NOLOGIN) {
+        if ($user['state'] === User::STATE_INACTIVE) {
             return null;
         }
 
@@ -103,7 +106,7 @@ final class UserService
 
     /**
      * Logs out the user.
-     * 
+     *
      * @param User $user
      */
     public function logout(User $user): void
@@ -113,18 +116,19 @@ final class UserService
 
     /**
      * Changes the user's password.
-     * 
+     *
      * @param User $user
      * @param string $password
      * @return string|true Error message or true on success
      */
     public function changePassword(User $user, string $oldPassword, string $newPassword, string $newPassword2): string|true
     {
-        if (!$user->checkPassword($oldPassword)) {
-            return 'Invalid current password';
-        }
         if ($newPassword !== $newPassword2) {
-            return 'Passwords do not match';
+            return 'New passwords do not match';
+        }
+        if (!$user->checkPassword($oldPassword)) {
+            $this->dispatcher->dispatch(new InvalidPasswordEvent($user, 'Invalid current password'));
+            return 'Invalid current password';
         }
         try {
             $user->setPassword($newPassword);

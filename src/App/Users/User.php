@@ -65,7 +65,8 @@ class User
 
     public function toArray(): array
     {
-        return $this->user;
+        // removing sensitive data
+        return array_diff_key($this->user, ['password' => '']);
     }
 
     public function changeState(string $state): void
@@ -88,7 +89,7 @@ class User
 
     /**
      * Sets a new password for the user.
-     * 
+     *
      * @param string $password New password
      * @throws InvalidArgumentException
      * @throws RuntimeException
@@ -98,6 +99,9 @@ class User
         $password = trim($password);
         if (strlen($password) < self::MIN_PASSWORD_LENGTH) {
             throw new InvalidArgumentException('Password must be at least ' . self::MIN_PASSWORD_LENGTH . ' characters');
+        }
+        if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password) || !preg_match('/[^A-Za-z0-9]/', $password)) {
+            throw new InvalidArgumentException('Password must contain uppercase, lowercase, numbers, and special characters');
         }
         if ($this->repository === null) {
             throw new RuntimeException('Repository is required for state changes');

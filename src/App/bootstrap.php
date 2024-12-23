@@ -216,10 +216,10 @@ $router->map('GET', '/', function ($request) use ($app) {
 });
 $router->map('*', '/login', function ($request) use ($app) {
     $requestHandler = new Login(
-        $app->users, 
-        $app->eventProvider, 
-        $app->counters, 
-        $app->template, 
+        $app->users,
+        $app->eventProvider,
+        $app->counters,
+        $app->template,
         $app->session
     );
     $requestHandler->setLogger($app->logger);
