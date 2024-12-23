@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\RequestHandler;
 
-use App\Event\LogoutEvent;
-
+use App\Users\UserService;
 use Clear\Session\SessionInterface;
 use Clear\Events\EventDispatcherTrait;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -20,16 +19,14 @@ final class Logout implements RequestHandlerInterface
 {
     use EventDispatcherTrait;
 
-    private SessionInterface $session;
-
-    public function __construct(SessionInterface $session)
-    {
-        $this->session = $session;
-    }
+    public function __construct(private UserService $users, private SessionInterface $session) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $this->dispatch(new LogoutEvent($this->session->get('username', '')));
+        $user = $request->getAttribute('user');
+        if ($user) {
+            $this->users->logout($user);
+        }
         $this->session->clear();
         return new RedirectResponse('/');
     }

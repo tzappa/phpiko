@@ -7,8 +7,6 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Event\LoginFailEvent;
-use App\Event\LoginEvent;
 use App\Middleware\AuthMiddleware;
 use App\RequestHandler\{
     Home,
@@ -16,9 +14,10 @@ use App\RequestHandler\{
     Login,
     Logout
 };
-use App\Users\UserRepositoryInterface;
-use App\Users\UserRepositoryPdo;
-
+use App\Users\{
+    UserRepositoryPdo,
+    UserService
+};
 use Clear\Captcha\CryptRndChars;
 use Clear\Captcha\UsedKeysProviderPdo;
 use Clear\Captcha\UsedKeysProviderCache;
@@ -178,46 +177,15 @@ $app->session = function () {
 };
 
 // User Repository
-$app->users = function () use ($app): UserRepositoryInterface {
-    $users = new UserRepositoryPdo($app->database);
-    if ($users->count() < 1) {
-        $users->add(['username' => 'admin', 'password' => password_hash('admin', PASSWORD_DEFAULT), 'state' => 'active']);
+$app->users = function () use ($app): UserService {
+    $repository = new UserRepositoryPdo($app->database);
+    $users = new UserService($repository, $app->eventDispatcher);
+    if ($repository->count() < 1) {
+        $repository->add(['username' => 'admin', 'password' => password_hash('admin', PASSWORD_DEFAULT), 'state' => 'active']);
     }
 
     return $users;
 };
-
-// Events
-// After some failed login attempts, we can block the user's IP address, send an email to the user or to admin, etc.
-$app->eventProvider->addListener(LoginFailEvent::class, function (LoginFailEvent $event) use ($app) {
-    $user = $app->users->find('username', $event->getUsername());
-    if (!$user) {
-        $app->logger->warning('Login attempt for unknown username {username}', ['username' => $event->getUsername()]);
-        // TODO: user not found - block the IP address for some time after some failed attempts
-        return ;
-    }
-    // Count failed login attempts (+1)
-    $failedCount = $app->counters->inc('login_fail_' . $user['id']);
-    $app->logger->warning('Login failed for {username} ({count} times)', ['username' => $event->getUsername(), 'count' => $failedCount, 'user' => $user]);
-    // block the user after 5 failed attempts
-    if ($failedCount >= 5 && $user['state'] === 'active') {
-        $app->logger->alert('User {username} blocked after {count} failed login attempts', ['username' => $event->getUsername(), 'count' => $failedCount, 'user' => $user]);
-        $user['state'] = 'blocked';
-        $app->users->update($user);
-        // TODO: notify the user by email
-        // TODO: notify the admin by email
-    }
-});
-// reset the counter after a successful login
-$app->eventProvider->addListener(LoginEvent::class, function ($event) use ($app) {
-    $app->logger->debug('Login successful for {username}', ['username' => $event->getUser()['username']]);
-    $failedLoginAttempts = $app->counters->get('login_fail_' . $event->getUser()['id'], 0);
-    if ($failedLoginAttempts > 0) {
-        $app->logger->info('Resetting failed login attempts for {username}', ['username' => $event->getUser()['username']]);
-        $app->counters->set('login_fail_' . $event->getUser()['id'], 0);
-    }
-});
-// TODO: add a counter failed logins for IP addresses and block the IP address after some failed attempts
 
 // Captcha Service
 $app->captcha = function () use ($app) {
@@ -247,20 +215,25 @@ $router->map('GET', '/', function ($request) use ($app) {
     return $requestHandler->handle($request);
 });
 $router->map('*', '/login', function ($request) use ($app) {
-    $requestHandler = new Login($app->session, $app->template, $app->users);
+    $requestHandler = new Login(
+        $app->users,
+        $app->eventProvider,
+        $app->counters,
+        $app->template,
+        $app->session
+    );
     $requestHandler->setLogger($app->logger);
-    $requestHandler->setEventDispatcher($app->eventDispatcher);
-    $requestHandler->setCaptcha($app->captcha);
+    // $requestHandler->setCaptcha($app->captcha);
     return $requestHandler->handle($request);
 });
 $router->map('*', '/logout', function ($request) use ($app) {
-    $requestHandler = new Logout($app->session);
+    $requestHandler = new Logout($app->users, $app->session);
     $requestHandler->setEventDispatcher($app->eventDispatcher);
     return $requestHandler->handle($request);
 });
 // Private routes
 $private = $router->group('/private')->middleware(new LazyMiddleware(function () use ($app) {
-    return new AuthMiddleware($app->session, $app->logger);
+    return new AuthMiddleware($app->users, $app->session, $app->logger);
 }));
 $private->map('GET', '/hello', function ($request) use ($app) {
     $requestHandler = new Hello($app->template);

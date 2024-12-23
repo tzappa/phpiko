@@ -97,31 +97,6 @@ final class UserRepositoryPdo implements UserRepositoryInterface
 
     /**
      * {@inheritDoc}
-     *
-     * @throws InvalidArgumentException if the user ID is missing
-     * @throws PDOException
-     */
-    public function updatePassword(array $user, string $newPassword): array|null
-    {
-        if (empty($user['id'])) {
-            throw new InvalidArgumentException('User ID is required');
-        }
-        $sql = "UPDATE {$this->table} SET password = :password, updated_at = :updated_at WHERE id = :id";
-        $sth = $this->db->prepare($sql);
-        $sth->execute([
-            'id'         => $user['id'],
-            'password'   => password_hash($newPassword, PASSWORD_DEFAULT),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ]);
-        if ($sth->rowCount() !== 1) {
-            return null;
-        }
-
-        return $this->find('id', $user['id']);
-    }
-
-    /**
-     * {@inheritDoc}
      */
     public function count($filter = []): int
     {
