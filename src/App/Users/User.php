@@ -84,7 +84,7 @@ class User
     public function checkPassword(string $password): bool
     {
         $password = trim($password);
-        return isset($this->user['password']) && password_verify($password, $this->user['password']);
+        return !empty($this->user['password']) && password_verify($password, $this->user['password']);
     }
 
     /**
@@ -106,7 +106,7 @@ class User
         if ($this->repository === null) {
             throw new RuntimeException('Repository is required for state changes');
         }
-        $this->user['password'] = password_hash($password, PASSWORD_DEFAULT);
-        $this->repository->update($this->user);
+        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $this->repository->updatePassword($this->user, $passwordHash);
     }
 }

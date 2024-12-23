@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Users;
 
 use App\Users\Events\{
+    ChangePasswordEvent,
     InvalidPasswordEvent,
     LoginFailEvent,
     LoginEvent,
@@ -118,15 +119,17 @@ final class UserService
      * Changes the user's password.
      *
      * @param User $user
-     * @param string $password
-     * @return string|true Error message or true on success
+     * @param string $currentPassword Current password
+     * @param string $newPassword New password
+     * @param string $newPassword2 New password repeated
+     * @return string|null Error message or null on success
      */
-    public function changePassword(User $user, string $oldPassword, string $newPassword, string $newPassword2): string|true
+    public function changePassword(User $user, string $currentPassword, string $newPassword, string $newPassword2): string|null
     {
         if ($newPassword !== $newPassword2) {
             return 'New passwords do not match';
         }
-        if (!$user->checkPassword($oldPassword)) {
+        if (!$user->checkPassword($currentPassword)) {
             $this->dispatcher->dispatch(new InvalidPasswordEvent($user, 'Invalid current password'));
             return 'Invalid current password';
         }
@@ -137,6 +140,7 @@ final class UserService
         } catch (RuntimeException $e) {
             return 'Failed to change password';
         }
-        return true;
+        $this->dispatcher->dispatch(new ChangePasswordEvent($user));
+        return null;
     }
 }

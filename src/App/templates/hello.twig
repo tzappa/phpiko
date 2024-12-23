@@ -4,5 +4,8 @@
 
 {% block content %}
 	<h1>Hello, {{ username }}!</h1>
-	<p><a href="/logout">Logout</a></p>
+	<p>
+		<a href="{{ route('change-password') }}">Change Password</a> |
+		<a href="{{ route('logout') }}">Logout</a>
+	</p>
 {% endblock %}
