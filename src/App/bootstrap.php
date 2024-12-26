@@ -12,7 +12,8 @@ use App\RequestHandler\{
     Home,
     Hello,
     Login,
-    Logout
+    ChangePassword,
+    Logout,
 };
 use App\Users\{
     UserRepositoryPdo,
@@ -167,7 +168,10 @@ $app->template = function () use ($app): TemplateInterface {
     $tpl = new TwigTemplate($templatePath, $cachePath, $debug);
     // use .revision file modification time on server or something else - current timestamp for development and no cache
     $tpl->assign('assets_revision', '?rev=' . (@filemtime(dirname(__DIR__, 2) . '/.revision') ?: time()));
-
+    // Registering the route function for generating URLs
+    $tpl->registerFunction('route', function (string $name, array $replacements = []) use ($app) {
+        return $app->router->buildPath($name, $replacements);
+    });
     return $tpl;
 };
 
@@ -209,11 +213,12 @@ $app->counters = function () use ($app) {
 
 // Router
 $router = new Router();
+$app->router = $router;
 // Public routes
 $router->map('GET', '/', function ($request) use ($app) {
     $requestHandler = new Home($app->template);
     return $requestHandler->handle($request);
-});
+}, 'home');
 $router->map('*', '/login', function ($request) use ($app) {
     $requestHandler = new Login(
         $app->users,
@@ -225,12 +230,12 @@ $router->map('*', '/login', function ($request) use ($app) {
     $requestHandler->setLogger($app->logger);
     // $requestHandler->setCaptcha($app->captcha);
     return $requestHandler->handle($request);
-});
+}, 'login');
 $router->map('*', '/logout', function ($request) use ($app) {
     $requestHandler = new Logout($app->users, $app->session);
     $requestHandler->setEventDispatcher($app->eventDispatcher);
     return $requestHandler->handle($request);
-});
+}, 'logout');
 // Private routes
 $private = $router->group('/private')->middleware(new LazyMiddleware(function () use ($app) {
     return new AuthMiddleware($app->users, $app->session, $app->logger);
@@ -239,6 +244,17 @@ $private->map('GET', '/hello', function ($request) use ($app) {
     $requestHandler = new Hello($app->template);
     return $requestHandler->handle($request);
 });
+$private->map('*', '/change-password', function ($request) use ($app) {
+    $requestHandler = new ChangePassword(
+        $app->users,
+        $app->eventProvider,
+        $app->counters,
+        $app->template,
+        $app->session
+    );
+    $requestHandler->setLogger($app->logger);
+    return $requestHandler->handle($request);
+}, 'change-password');
 
 // Dispatch the request
 $request = ServerRequestFactory::fromGlobals();

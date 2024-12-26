@@ -39,6 +39,15 @@ interface UserRepositoryInterface
     public function update(array $user): array|null;
 
     /**
+     * Updates the user's password.
+     *
+     * @param array $user
+     * @param string $password New Password
+     * @return array|null Updated user data or null if user not found
+     */
+    public function updatePassword(array $user, string $password): array|null;
+
+    /**
      * Returns the count of users matching the given filter
      *
      * @param array $filter Filter criteria

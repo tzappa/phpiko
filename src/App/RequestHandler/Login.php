@@ -96,7 +96,7 @@ final class Login implements RequestHandlerInterface
             $this->log('warning', 'Login failed for {username} ({count} times)', ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]);
             // Lock the user after some failed attempts
             if ($failedCount >= self::LOCK_ACCOUNT_AFTER && $user->state === User::STATE_ACTIVE) {
-                $this->log('alert', 'User {username} blocked after {count} failed login attempts', ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]);
+                $this->log('alert', 'User {username} locked after {count} failed login attempts', ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]);
                 $user->changeState(User::STATE_NOLOGIN);
                 // TODO: notify the user by email with a link to reset the password and change the state to 'active'
                 // TODO: notify the admin by email

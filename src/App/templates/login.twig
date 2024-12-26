@@ -27,7 +27,7 @@
 
 {% block content %}
 	<h1>Login</h1>
-	<form action="/login" method="POST">
+	<form action="{{ route('login') }}" method="POST">
 		<input type="hidden" name="csrf" value="{{ csrf }}" />
 		{% if error %}
 			<p class="error-message">{{ error }}</p>
