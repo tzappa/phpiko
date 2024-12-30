@@ -10,7 +10,7 @@ use App\Users\Events\LoginFailEvent;
 use App\Users\Events\LoginEvent;
 use Clear\Captcha\CaptchaInterface;
 use Clear\Counters\Service as Counters;
-use Clear\Events\Provider as EventProvider;
+use Clear\Events\ListenerProvider;
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
 use Clear\Template\TemplateInterface;
@@ -38,7 +38,7 @@ final class Login implements RequestHandlerInterface
 
     public function __construct(
         private UserService $users,
-        private EventProvider $eventProvider,
+        private ListenerProvider $listener,
         private Counters $counters,
         private TemplateInterface $template,
         private SessionInterface $session,
@@ -84,7 +84,7 @@ final class Login implements RequestHandlerInterface
     private function addEventListeners(): void
     {
         // After some failed login attempts, we can block the user's IP address, send an email to the user or to admin, etc.
-        $this->eventProvider->addListener(LoginFailEvent::class, function (LoginFailEvent $event) {
+        $this->listener->addListener(LoginFailEvent::class, function (LoginFailEvent $event) {
             $user = $event->user;
             if (!$user->id) {
                 $this->log('warning', 'Login attempt for unknown username {username}', ['username' => $user->username]);
@@ -103,7 +103,7 @@ final class Login implements RequestHandlerInterface
             }
         });
         // reset the counter after a successful login
-        $this->eventProvider->addListener(LoginEvent::class, function ($event) {
+        $this->listener->addListener(LoginEvent::class, function ($event) {
             $user = $event->user;
             $this->log('debug', 'Login successful for {username}', ['username' => $user->username]);
             $failedLoginAttempts = $this->counters->get('login_fail_' . $user->id, 0);

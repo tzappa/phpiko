@@ -7,9 +7,8 @@ namespace App\RequestHandler;
 use App\Users\Events\ChangePasswordEvent;
 use App\Users\Events\InvalidPasswordEvent;
 use App\Users\UserService;
-use App\Users\User;
 use Clear\Counters\Service as Counters;
-use Clear\Events\Provider as EventProvider;
+use Clear\Events\ListenerProvider;
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
 use Clear\Template\TemplateInterface;
@@ -32,7 +31,7 @@ final class ChangePassword implements RequestHandlerInterface
 
     public function __construct(
         private UserService $users,
-        private EventProvider $eventProvider,
+        private ListenerProvider $listener,
         private Counters $counters,
         private TemplateInterface $template,
         private SessionInterface $session,
@@ -66,7 +65,7 @@ final class ChangePassword implements RequestHandlerInterface
     private function addEventListeners(): void
     {
         // After some failed password change attempts lock the account
-        $this->eventProvider->addListener(InvalidPasswordEvent::class, function (InvalidPasswordEvent $event) {
+        $this->listener->addListener(InvalidPasswordEvent::class, function (InvalidPasswordEvent $event) {
             $user = $event->user;
             // Count failed attempts (+1)
             $failedCount = $this->counters->inc('invalid_password_' . $user->id);
@@ -78,7 +77,7 @@ final class ChangePassword implements RequestHandlerInterface
             }
         });
         // reset the counter after a successful password change
-        $this->eventProvider->addListener(ChangePasswordEvent::class, function (ChangePasswordEvent $event) {
+        $this->listener->addListener(ChangePasswordEvent::class, function (ChangePasswordEvent $event) {
             $user = $event->user;
             $this->log('debug', 'Change password for {username}', ['username' => $user->username]);
             $failedLoginAttempts = $this->counters->get('invalid_password_' . $user->id, 0);
