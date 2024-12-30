@@ -38,7 +38,7 @@ use Clear\Database\Event\{
     BeforeQuery,
 };
 use Clear\Events\Dispatcher;
-use Clear\Events\Provider;
+use Clear\Events\ListenerProvider;
 use Clear\Http\Router;
 use Clear\Http\LazyMiddleware;
 use Clear\Http\Exception\NotFoundException;
@@ -91,9 +91,9 @@ $app->logger = function () use ($app): LoggerInterface {
 };
 
 // Events
-$app->eventProvider = new Provider();
+$app->eventListener = new ListenerProvider();
 $app->eventDispatcher = function () use ($app) {
-    return new Dispatcher($app->eventProvider, $app->logger);
+    return new Dispatcher($app->eventListener, $app->logger);
 };
 
 // Database connection
@@ -122,22 +122,22 @@ $app->database = function () use ($app): PdoInterface {
         $profiler = new LogProfiler($app->logger);
         $profiler->setLogLevel($app->config->get('database.log_level', 'debug'));
         // Registering events for profiling
-        $app->eventProvider->addListener(BeforeExec::class, function (BeforeExec $event) use ($profiler) {
+        $app->eventListener->addListener(BeforeExec::class, function (BeforeExec $event) use ($profiler) {
             $profiler->start('Exec');
         });
-        $app->eventProvider->addListener(AfterExec::class, function (AfterExec $event) use ($profiler) {
+        $app->eventListener->addListener(AfterExec::class, function (AfterExec $event) use ($profiler) {
             $profiler->finish('', ['sql' => $event->getQueryString(), 'rows' => $event->getResult()]);
         });
-        $app->eventProvider->addListener(BeforeQuery::class, function (BeforeQuery $event) use ($profiler) {
+        $app->eventListener->addListener(BeforeQuery::class, function (BeforeQuery $event) use ($profiler) {
             $profiler->start('Query');
         });
-        $app->eventProvider->addListener(AfterQuery::class, function (AfterQuery $event) use ($profiler) {
+        $app->eventListener->addListener(AfterQuery::class, function (AfterQuery $event) use ($profiler) {
             $profiler->finish('', ['sql' => $event->getQueryString()]);
         });
-        $app->eventProvider->addListener(BeforeExecute::class, function (BeforeExecute $event) use ($profiler) {
+        $app->eventListener->addListener(BeforeExecute::class, function (BeforeExecute $event) use ($profiler) {
             $profiler->start('Execute');
         });
-        $app->eventProvider->addListener(AfterExecute::class, function (AfterExecute $event) use ($profiler) {
+        $app->eventListener->addListener(AfterExecute::class, function (AfterExecute $event) use ($profiler) {
             $profiler->finish('', ['sql' => $event->getQueryString(), 'params' => $event->getParams(), 'result' => $event->getResult()]);
         });
     }
@@ -222,7 +222,7 @@ $router->map('GET', '/', function ($request) use ($app) {
 $router->map('*', '/login', function ($request) use ($app) {
     $requestHandler = new Login(
         $app->users,
-        $app->eventProvider,
+        $app->eventListener,
         $app->counters,
         $app->template,
         $app->session
@@ -247,7 +247,7 @@ $private->map('GET', '/hello', function ($request) use ($app) {
 $private->map('*', '/change-password', function ($request) use ($app) {
     $requestHandler = new ChangePassword(
         $app->users,
-        $app->eventProvider,
+        $app->eventListener,
         $app->counters,
         $app->template,
         $app->session

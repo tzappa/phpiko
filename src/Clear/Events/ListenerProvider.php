@@ -6,11 +6,19 @@ namespace Clear\Events;
 
 use Psr\EventDispatcher\ListenerProviderInterface;
 
-class Provider implements ListenerProviderInterface
+/**
+ * Mapper from an event to the listeners that are applicable to that event.
+ */
+class ListenerProvider implements ListenerProviderInterface
 {
     /** @var array<class-string, array<callable>> */
     private array $listeners = [];
 
+    /**
+     * @param object $event An event for which to return the relevant listeners.
+     * @return iterable<callable> An iterable (array, iterator, or generator) of callables.  Each
+     *   callable MUST be type-compatible with $event.
+     */
     public function getListenersForEvent(object $event): iterable
     {
         $eventType = get_class($event);
