@@ -1,10 +1,12 @@
-<?php declare(strict_types=1);
-/**
- * @package Clear
- */
+<?php
+
+declare(strict_types=1);
 
 namespace Clear\Transformations;
 
+/**
+ * Class Initials
+ */
 final class Initials
 {
     /**
