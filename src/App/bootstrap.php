@@ -9,6 +9,7 @@ namespace App;
 
 use App\Middleware\AuthMiddleware;
 use App\RequestHandler\{
+    Avatar,
     Home,
     Hello,
     Login,
@@ -255,6 +256,11 @@ $private->map('*', '/change-password', function ($request) use ($app) {
     $requestHandler->setLogger($app->logger);
     return $requestHandler->handle($request);
 }, 'change-password');
+// Avatar
+$router->map('GET', '/avatar', function ($request) {
+    return (new Avatar())->handle($request);
+}, 'avatar');
+
 
 // Dispatch the request
 $request = ServerRequestFactory::fromGlobals();

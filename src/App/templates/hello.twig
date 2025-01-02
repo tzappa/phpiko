@@ -2,8 +2,21 @@
 
 {% set head_title = 'Hello' %}
 
+{% block css %}
+	{{ parent() }}
+	<style>
+.avatar {
+	width: 42px;
+}
+.rounded-circle {
+	border-radius: 50%;
+}
+	</style>
+{% endblock %}
+
+
 {% block content %}
-	<h1>Hello, {{ username }}!</h1>
+	<h1>Hello, {{ username }}!<img src="{{ route('avatar') }}?name={{ username }}" class="avatar rounded-circle" /></h1>
 	<p>
 		<a href="{{ route('change-password') }}">Change Password</a> |
 		<a href="{{ route('logout') }}">Logout</a>
