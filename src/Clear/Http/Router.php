@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -79,7 +79,7 @@ class Router implements RouterInterface
                     // recursively dispatch the group
                     try {
                         return $route->dispatch($request);
-                    } catch (Exception\NotFoundException $e) {
+                    } catch (ContinueException $e) {
                         // if the group does not match the request path, continue with the next route
                         continue;
                     }
@@ -106,7 +106,7 @@ class Router implements RouterInterface
             }
         }
 
-        throw new Exception\NotFoundException();
+        throw new ContinueException();
     }
 
     /**

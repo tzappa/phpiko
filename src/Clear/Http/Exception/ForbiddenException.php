@@ -7,9 +7,9 @@ namespace Clear\Http\Exception;
 use Clear\Http\HttpException;
 use Exception;
 
-class MethodNotAllowedException extends HttpException
+class ForbiddenException extends HttpException
 {
-    public function __construct(string $message = 'Method Not Allowed', int $code = 405, Exception $previous = null)
+    public function __construct(string $message = 'Forbidden', int $code = 403, Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
