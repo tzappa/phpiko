@@ -56,9 +56,10 @@ use Laminas\Diactoros\Response\TextResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 use Psr\Log\LoggerInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
 use Exception;
 use PDOException;
-
 
 // Load Composer's autoloader
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
@@ -212,15 +213,22 @@ $app->counters = function () use ($app) {
     return $counters;
 };
 
+$request = ServerRequestFactory::fromGlobals();
+
+// Running from CLI? phpunit?
+if (!$request->getUri()->getHost()) {
+    return;
+};
+
 // Router
 $router = new Router();
 $app->router = $router;
 // Public routes
-$router->map('GET', '/', function ($request) use ($app) {
+$router->map('GET', '/', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new Home($app->template);
     return $requestHandler->handle($request);
 }, 'home');
-$router->map('*', '/login', function ($request) use ($app) {
+$router->map('*', '/login', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new Login(
         $app->users,
         $app->eventListener,
@@ -232,7 +240,7 @@ $router->map('*', '/login', function ($request) use ($app) {
     // $requestHandler->setCaptcha($app->captcha);
     return $requestHandler->handle($request);
 }, 'login');
-$router->map('*', '/logout', function ($request) use ($app) {
+$router->map('*', '/logout', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new Logout($app->users, $app->session);
     $requestHandler->setEventDispatcher($app->eventDispatcher);
     return $requestHandler->handle($request);
@@ -241,11 +249,11 @@ $router->map('*', '/logout', function ($request) use ($app) {
 $private = $router->group('/private')->middleware(new LazyMiddleware(function () use ($app) {
     return new AuthMiddleware($app->users, $app->session, $app->logger);
 }));
-$private->map('GET', '/hello', function ($request) use ($app) {
+$private->map('GET', '/hello', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new Hello($app->template);
     return $requestHandler->handle($request);
 });
-$private->map('*', '/change-password', function ($request) use ($app) {
+$private->map('*', '/change-password', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new ChangePassword(
         $app->users,
         $app->eventListener,
@@ -257,13 +265,12 @@ $private->map('*', '/change-password', function ($request) use ($app) {
     return $requestHandler->handle($request);
 }, 'change-password');
 // Avatar
-$router->map('GET', '/avatar', function ($request) {
+$router->map('GET', '/avatar', function (ServerRequestInterface $request) {
     return (new Avatar())->handle($request);
 }, 'avatar');
 
 
 // Dispatch the request
-$request = ServerRequestFactory::fromGlobals();
 try {
     $result = $router->dispatch($request);
 } catch (NotFoundException $e) {
