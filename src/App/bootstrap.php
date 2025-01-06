@@ -49,16 +49,14 @@ use Clear\Profiler\LogProfiler;
 use Clear\Session\SessionManager;
 use Clear\Template\TwigTemplate;
 use Clear\Template\TemplateInterface;
-
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Response\TextResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
-
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\ServerRequestInterface;
-
 use Exception;
 use PDOException;
+
 
 // Load Composer's autoloader
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
@@ -66,12 +64,8 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 // Application Container used as DI
 $app = new Container();
 $app->name = __NAMESPACE__;
-
 // Environment "production", "development", etc.
-$app->env = function () {
-    return getenv('APPLICATION_ENV') ?: 'production';
-};
-
+$app->env = getenv('APPLICATION_ENV') ?: 'production';
 // Configurations
 $app->config = ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . strtolower($app->name) . '.ini');
 
