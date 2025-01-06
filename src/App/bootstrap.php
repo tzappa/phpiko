@@ -24,7 +24,6 @@ use Clear\Captcha\CryptRndChars;
 use Clear\Captcha\UsedKeysProviderPdo;
 use Clear\Captcha\UsedKeysProviderCache;
 use Clear\Config\Factory as ConfigFactory;
-use Clear\Config\ConfigInterface;
 use Clear\Container\Container;
 use Clear\Counters\DatabaseProvider as CounterRepositoryPdo;
 use Clear\Counters\Service as CounterService;
@@ -74,10 +73,7 @@ $app->env = function () {
 };
 
 // Configurations
-$app->config = function () use ($app): ConfigInterface {
-    $filename = strtolower($app->name) . '.ini';
-    return ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . $filename);
-};
+$app->config = ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . strtolower($app->name) . '.ini');
 
 // Timezone settings
 if ($app->config->has('timezone')) {
