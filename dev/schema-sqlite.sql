@@ -23,19 +23,22 @@ CREATE TABLE IF NOT EXISTS users -- Users of the application
     updated_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC'))        -- Date and time when the user was last updated
 );
 
-CREATE TABLE acl_permissions (
-    id INTEGER NOT NULL PRIMARY KEY,
-    object VARCHAR(64) NOT NULL,
-    operation VARCHAR(64) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
-    updated_at TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC'))
+CREATE TABLE acl_permissions
+(
+	id                 INTEGER NOT NULL PRIMARY KEY,
+	object             VARCHAR(64) NOT NULL,
+	operation          VARCHAR(64) NOT NULL,
+	created_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
+	updated_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
+	UNIQUE (object, operation)
 );
 
-CREATE TABLE acl_roles (
-    id INTEGER NOT NULL PRIMARY KEY,
-    name VARCHAR(64) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
-    updated_at TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC'))
+CREATE TABLE acl_roles
+(
+	id                 INTEGER NOT NULL PRIMARY KEY,
+	name               VARCHAR(64) NOT NULL UNIQUE,
+	created_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
+	updated_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC'))
 );
 
 CREATE TABLE acl_role_permissions (

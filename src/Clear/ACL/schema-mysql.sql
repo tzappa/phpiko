@@ -4,14 +4,15 @@ CREATE TABLE IF NOT EXISTS acl_permissions
 	object             VARCHAR(64) NOT NULL,
 	operation          VARCHAR(64) NOT NULL,
 	created_at         TIMESTAMP NOT NULL DEFAULT NOW(),
-	updated_at         TIMESTAMP NOT NULL DEFAULT NOW()
+	updated_at         TIMESTAMP NOT NULL DEFAULT NOW(),
+	UNIQUE (object, operation)
 );
 
 
 CREATE TABLE IF NOT EXISTS acl_roles
 (
 	id                 INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	name               VARCHAR(64) NOT NULL,
+	name               VARCHAR(64) NOT NULL UNIQUE,
 	created_at         TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated_at         TIMESTAMP NOT NULL DEFAULT NOW()
 );

@@ -40,10 +40,15 @@ final class Role implements RoleInterface
      *
      * @param int $id
      * @param string $name
-     * @param \Clear\ACL\PermissionCollection|callable $permissions
+     * @param \Clear\ACL\PermissionCollection|callable|null $permissions
+     * @throws \InvalidArgumentException if name is empty or permissions is invalid
      */
-    public function __construct(int $id, string $name, $permissions)
+    public function __construct(int $id, string $name, PermissionCollection|callable|null $permissions)
     {
+        $name = trim($name);
+        if ($name === '') {
+            throw new \InvalidArgumentException('Role name cannot be empty');
+        }
         $this->id = $id;
         $this->name = $name;
         // if the callback method was passed,

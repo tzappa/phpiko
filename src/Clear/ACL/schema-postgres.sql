@@ -4,14 +4,15 @@ CREATE TABLE acl_permissions
 	object             VARCHAR(64) NOT NULL,
 	operation          VARCHAR(64) NOT NULL,
 	created_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-	updated_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	updated_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	UNIQUE (object, operation)
 );
 
 
 CREATE TABLE acl_roles
 (
 	id                 INTEGER NOT NULL SERIAL,
-	name               VARCHAR(64) NOT NULL,
+	name               VARCHAR(64) NOT NULL UNIQUE,
 	created_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

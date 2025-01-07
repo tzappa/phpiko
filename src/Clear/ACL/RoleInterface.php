@@ -32,7 +32,7 @@ interface RoleInterface
      *
      * @param string $name
      *
-     * @return self
+     * @return RoleInterface
      */
     public function setName(string $name): RoleInterface;
 

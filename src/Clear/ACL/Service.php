@@ -98,10 +98,11 @@ final class Service
      *
      * @param RoleInterface $role
      * @param string $name The new role's name
-     *
-     * @return boolean
+     * @throws AclException If the name is empty
+     * @throws AclException If the role with this name already exists
+     * @return bool
      */
-    public function renameRole(RoleInterface $role, string $name)
+    public function renameRole(RoleInterface $role, string $name): bool
     {
         $name = trim($name);
         if (!mb_strlen($name)) {
@@ -148,7 +149,7 @@ final class Service
      *
      * @param int $id
      */
-    public function deleteRole(int $id)
+    public function deleteRole(int $id): void
     {
         // revoke access for all users having this role
         $this->provider->deleteAllRefs($id);
@@ -240,9 +241,9 @@ final class Service
      * @param int $userId
      * @param int $roleId
      */
-    public function assignRoleToUser(int $userId, int $roleId)
+    public function assignRoleToUser(int $userId, int $roleId): void
     {
-        return $this->provider->addRefRole($userId, $roleId);
+        $this->provider->addRefRole($userId, $roleId);
     }
 
     /**
@@ -251,9 +252,9 @@ final class Service
      * @param int $userId
      * @param int $roleId
      */
-    public function revokeRoleFromUser(int $userId, int $roleId)
+    public function revokeRoleFromUser(int $userId, int $roleId): void
     {
-        return $this->provider->deleteRefRole($userId, $roleId);
+        $this->provider->deleteRefRole($userId, $roleId);
     }
 
     public function setRolePermissions(int $roleId, array $permissionIds)

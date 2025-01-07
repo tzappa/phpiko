@@ -45,7 +45,8 @@ CREATE TABLE acl_permissions
     object             VARCHAR(64) NOT NULL,
     operation          VARCHAR(64) NOT NULL,
     created_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
-    updated_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC'))
+    updated_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
+    UNIQUE (object, operation)
 );
 
 CREATE TABLE acl_roles

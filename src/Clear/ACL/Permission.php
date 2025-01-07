@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Clear\ACL;
 
+use InvalidArgumentException;
+
 /**
  * ACL Permission Class.
  * It consists of two parameters - operation and the object to which that operation is applicable.
@@ -19,6 +21,23 @@ final class Permission implements PermissionInterface
 
     public function __construct(int $id, string $object, string $operation)
     {
+        if ($id <= 0) {
+            throw new InvalidArgumentException('Permission ID must be positive');
+        }
+        $object = trim($object);
+        if ($object === '') {
+            throw new InvalidArgumentException('Object cannot be empty');
+        }
+        $operation = trim($operation);
+        if ($operation === '') {
+            throw new InvalidArgumentException('Operation cannot be empty');
+        }
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $object)) {
+            throw new InvalidArgumentException('Object contains invalid characters');
+        }
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $operation)) {
+            throw new InvalidArgumentException('Operation contains invalid characters');
+        }
         $this->id = $id;
         $this->object = $object;
         $this->operation = $operation;

@@ -16,7 +16,7 @@ namespace Clear\ACL;
  *
  * - ACL Interface for Role-Permissions many-to-many Provider
  *
- * - ALC Grants Provider
+ * - ACL Grants Provider
  *   Interface for user's roles provider.
  *   Describes which users has granted access to a different roles.
  *   In short - who has rights to do what.
@@ -75,7 +75,7 @@ interface AclProviderInterface
     public function updateRole(RoleInterface $role): bool;
 
     /**
-     * Crates a role in the data storage.
+     * Creates a role in the data storage.
      *
      * @param string $name
      *
@@ -88,7 +88,7 @@ interface AclProviderInterface
      *
      * @param int $id
      */
-    public function deleteRole(int $id);
+    public function deleteRole(int $id): void;
 
     /**
      * List Permissions in a particular role
@@ -108,7 +108,7 @@ interface AclProviderInterface
      * @param int $roleId
      * @param array of int $permissionIds Array of permission IDs
      */
-    public function setRolePermissions(int $roleId, array $permissionIds);
+    public function setRolePermissions(int $roleId, array $permissionIds): void;
 
     /**
      * Returns number of users with selected role.
@@ -136,7 +136,7 @@ interface AclProviderInterface
      *
      * @param int $refId
      *
-     * @return \Clear\Alc\PermissionCollection
+     * @return \Clear\ACL\PermissionCollection
      */
     public function getRefPermissions(int $refId): PermissionCollection;
 
@@ -155,20 +155,19 @@ interface AclProviderInterface
      * @param int $refId
      * @param int $roleId
      */
-    public function addRefRole(int $refId, int $roleId);
+    public function addRefRole(int $refId, int $roleId): void;
 
     /**
      * Revoke user access to a role
-     * @param  int $refId
-     * @param  int $roleId
+     * @param int $refId
+     * @param int $roleId
      */
-    public function deleteRefRole(int $refId, int $roleId);
+    public function deleteRefRole(int $refId, int $roleId): void;
 
     /**
      * Revoke access for all users to a role
      *
      * @param int $roleId
      */
-    public function deleteAllRefs(int $roleId);
-
+    public function deleteAllRefs(int $roleId): void;
 }

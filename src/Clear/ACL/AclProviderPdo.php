@@ -175,27 +175,40 @@ final class AclProviderPdo implements AclProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function deleteRole(int $id)
+    public function deleteRole(int $id): void
     {
         $sql = "DELETE FROM {$this->rolesTable} WHERE id = ?";
         $sth = $this->db->prepare($sql);
 
-        return $sth->execute([$id]);
+        $sth->execute([$id]);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function setRolePermissions(int $roleId, array $permissionIds)
+    public function setRolePermissions(int $roleId, array $permissionIds): void
     {
-        $sql = "DELETE FROM {$this->rolePermissionsTable} WHERE role_id = ?";
-        $sth = $this->db->prepare($sql);
-        $sth->execute([$roleId]);
+        $this->db->beginTransaction();
+        try {
+            $sql = "DELETE FROM {$this->rolePermissionsTable} WHERE role_id = ?";
+            $sth = $this->db->prepare($sql);
+            $sth->execute([$roleId]);
 
-        $sql = "INSERT INTO {$this->rolePermissionsTable} (role_id, permission_id) VALUES (?, ?)";
-        $sth = $this->db->prepare($sql);
-        foreach ($permissionIds as $permissionId) {
-            $sth->execute([$roleId, $permissionId]);
+            if (!empty($permissionIds)) {
+                $placeholders = implode(',', array_fill(0, count($permissionIds), '(?, ?)'));
+                $sql = "INSERT INTO {$this->rolePermissionsTable} (role_id, permission_id) VALUES {$placeholders}";
+                $sth = $this->db->prepare($sql);
+                $params = [];
+                foreach ($permissionIds as $permissionId) {
+                    $params[] = $roleId;
+                    $params[] = $permissionId;
+                }
+                $sth->execute($params);
+            }
+            $this->db->commit();
+        } catch (PDOException $e) {
+            $this->db->rollBack();
+            throw $e;
         }
     }
 
@@ -295,34 +308,34 @@ final class AclProviderPdo implements AclProviderInterface
     /**
      * {@inheritDoc}
      */
-    public function addRefRole(int $refId, int $roleId)
+    public function addRefRole(int $refId, int $roleId): void
     {
         $sql = "INSERT INTO {$this->grantsTable} (ref_id, role_id) VALUES (?, ?)";
         $sth = $this->db->prepare($sql);
 
-        return $sth->execute([$refId, $roleId]);
+        $sth->execute([$refId, $roleId]);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function deleteRefRole(int $refId, int $roleId)
+    public function deleteRefRole(int $refId, int $roleId): void
     {
         $sql = "DELETE FROM {$this->grantsTable} WHERE ref_id = ? AND role_id = ?";
         $sth = $this->db->prepare($sql);
 
-        return $sth->execute([$refId, $roleId]);
+        $sth->execute([$refId, $roleId]);
     }
 
     /**
      * {@inheritDoc}
      */
-    public function deleteAllRefs(int $roleId)
+    public function deleteAllRefs(int $roleId): void
     {
         $sql = "DELETE FROM {$this->grantsTable} WHERE role_id = ?";
         $sth = $this->db->prepare($sql);
 
-        return $sth->execute([$roleId]);
+        $sth->execute([$roleId]);
     }
 
     private function limit(int $limit, int $offset): string
@@ -368,12 +381,12 @@ final class AclProviderPdo implements AclProviderInterface
         return  'ORDER BY ' . $order;
     }
 
-    private function mapPermission(array $data)
+    private function mapPermission(array $data): Permission
     {
         return new Permission((int) $data['id'], $data['object'], $data['operation']);
     }
 
-    private function mapRole(array $data)
+    private function mapRole(array $data): Role
     {
         $data['id'] = (int) $data['id'];
         return new Role($data['id'], $data['name'], function ($id) { return $this->getRolePermissions($id); });

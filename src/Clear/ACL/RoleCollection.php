@@ -13,7 +13,7 @@ use InvalidArgumentException;
  */
 final class RoleCollection extends ArrayObject
 {
-    public function __construct($input = array(), int $flags = 0, string $iteratorClass = 'ArrayIterator')
+    public function __construct(array $input = array(), int $flags = 0, string $iteratorClass = 'ArrayIterator')
     {
         foreach ($input as $role) {
             if (!($role instanceof RoleInterface)) {
