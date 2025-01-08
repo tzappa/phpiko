@@ -35,6 +35,5 @@ CREATE TABLE acl_grants
 	created_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
 	updated_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
 	FOREIGN KEY(role_id) REFERENCES acl_roles(id) ON UPDATE CASCADE ON DELETE SET NULL,
-	-- if there is a table `users` with a primary key `id`
-	-- FOREIGN KEY(ref_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL
+	-- FOREIGN KEY(ref_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL -- if there is a table `users` with a primary key `id`
 );

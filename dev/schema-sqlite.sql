@@ -41,23 +41,33 @@ CREATE TABLE acl_roles
 	updated_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC'))
 );
 
-CREATE TABLE acl_role_permissions (
-    id INTEGER NOT NULL PRIMARY KEY,
-    role_id INTEGER NOT NULL, -- FK acl_roles.id
-    permission_id INTEGER NOT NULL, -- FK acl_permissions.id
-    created_at TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
-    updated_at TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
-    FOREIGN KEY (role_id) REFERENCES acl_roles (id) ON UPDATE CASCADE ON DELETE SET NULL,
-    FOREIGN KEY (permission_id) REFERENCES acl_permissions (id) ON UPDATE CASCADE ON DELETE SET NULL
+CREATE TABLE acl_role_permissions
+(
+	id                 INTEGER NOT NULL PRIMARY KEY,
+	role_id            INTEGER NOT NULL,                       -- FK acl_roles.id
+	permission_id      INTEGER NOT NULL,                       -- FK acl_permissions.id
+	created_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
+	updated_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
+	FOREIGN KEY(role_id) REFERENCES acl_roles(id) ON UPDATE CASCADE ON DELETE SET NULL,
+	FOREIGN KEY(permission_id) REFERENCES acl_permissions(id) ON UPDATE CASCADE ON DELETE SET NULL,
 );
 
-CREATE TABLE acl_grants (
-    id INTEGER NOT NULL PRIMARY KEY,
-    role_id INTEGER NOT NULL, -- FK acl_roles.id
-    ref_id INTEGER NOT NULL, -- FK to a referrer table such as users.id
-    created_at TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
-    updated_at TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
-    FOREIGN KEY (role_id) REFERENCES acl_roles (id) ON UPDATE CASCADE ON DELETE SET NULL,
-    -- if there is a table `users` with a primary key `id`
-    FOREIGN KEY(ref_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL
+CREATE TABLE acl_grants
+(
+	id                 INTEGER NOT NULL PRIMARY KEY,
+	role_id            INTEGER NOT NULL,                       -- FK acl_roles.id
+	ref_id             INTEGER NOT NULL,                       -- FK to a referrer table such as users.id
+	created_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
+	updated_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
+	FOREIGN KEY(role_id) REFERENCES acl_roles(id) ON UPDATE CASCADE ON DELETE SET NULL,
+	FOREIGN KEY(ref_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL -- if there is a table `users` with a primary key `id`
 );
+
+--
+-- Test data
+--
+INSERT INTO users (id, email, username, password, state) VALUES (1, 'admin@phpiko.loc', 'admin', 'admin', 'active');
+INSERT INTO acl_permissions (id, object, operation) VALUES (1, 'System', 'info');
+INSERT INTO acl_roles (id, name) VALUES (1, 'Admin');
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (1, 1, 1);
+INSERT INTO acl_grants (id, role_id, ref_id) VALUES (1, 1, 1);

@@ -7,7 +7,10 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Middleware\AuthMiddleware;
+use App\Middleware\{
+    AuthMiddleware,
+    AclMiddleware,
+};
 use App\RequestHandler\{
     Avatar,
     Home,
@@ -20,6 +23,8 @@ use App\Users\{
     UserRepositoryPdo,
     UserService
 };
+use Clear\ACL\Service as ACL;
+use Clear\ACL\AclProviderPdo;
 use Clear\Captcha\CryptRndChars;
 use Clear\Captcha\UsedKeysProviderPdo;
 use Clear\Captcha\UsedKeysProviderCache;
@@ -43,6 +48,7 @@ use Clear\Http\Router;
 use Clear\Http\LazyMiddleware;
 use Clear\Http\Exception\NotFoundException;
 use Clear\Http\Exception\UnauthorizedException;
+use Clear\Http\Exception\ForbiddenException;
 use Clear\Http\HttpException;
 use Clear\Logger\FileLogger;
 use Clear\Profiler\LogProfiler;
@@ -51,6 +57,7 @@ use Clear\Template\TwigTemplate;
 use Clear\Template\TemplateInterface;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Response\TextResponse;
+use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -183,6 +190,12 @@ $app->users = function () use ($app): UserService {
     return $users;
 };
 
+// ACL Service
+$app->acl = function () use ($app) {
+    $provider = new AclProviderPdo($app->database);
+    return new ACL($provider);
+};
+
 // Captcha Service
 $app->captcha = function () use ($app) {
     $captchaSecret = $app->config->get('captcha.secret');
@@ -235,6 +248,9 @@ $router->map('*', '/logout', function (ServerRequestInterface $request) use ($ap
     $requestHandler->setEventDispatcher($app->eventDispatcher);
     return $requestHandler->handle($request);
 }, 'logout');
+$router->map('GET', '/avatar', function (ServerRequestInterface $request) {
+    return (new Avatar())->handle($request);
+}, 'avatar');
 // Private routes
 $private = $router->group('/private')->middleware(new LazyMiddleware(function () use ($app) {
     return new AuthMiddleware($app->users, $app->session, $app->logger);
@@ -254,11 +270,13 @@ $private->map('*', '/change-password', function (ServerRequestInterface $request
     $requestHandler->setLogger($app->logger);
     return $requestHandler->handle($request);
 }, 'change-password');
-// Avatar
-$router->map('GET', '/avatar', function (ServerRequestInterface $request) {
-    return (new Avatar())->handle($request);
-}, 'avatar');
-
+$private->map('GET', '/phpinfo', function (ServerRequestInterface $request) {
+    ob_start();
+    phpinfo();
+    return new HtmlResponse(ob_get_clean());
+}, 'phpinfo')->middleware(new LazyMiddleware(function () use ($app) {
+    return new AclMiddleware($app->acl, 'System', 'info', $app->logger);
+}));
 
 // Dispatch the request
 try {
@@ -269,6 +287,9 @@ try {
 } catch (UnauthorizedException $e) {
     // Log message is handled by AuthMiddleware
     $result = new TextResponse($e->getMessage(), 401);
+} catch (ForbiddenException $e) {
+    // Log message is handled by AclMiddleware
+    $result = new TextResponse($e->getMessage(), 403);
 } catch (HttpException $e) {
     $result = new TextResponse('Sorry, an unexpected error occurred.', $e->getCode());
     $app->logger->error('{code} An error occured: {message} in {url}', ['code' => $e->getCode(), 'message' => $e->getMessage(), 'url' => (string) $request->getUri()]);
