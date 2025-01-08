@@ -15,7 +15,6 @@ use Psr\Log\LoggerInterface;
 
 /**
  * ACL middleware (PSR-15)
- *
  */
 final class AclMiddleware implements MiddlewareInterface
 {

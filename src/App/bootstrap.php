@@ -163,7 +163,7 @@ $app->database = function () use ($app): PdoInterface {
 $app->template = function () use ($app): TemplateInterface {
     $cachePath = $app->config->get('twig.cache_path', false); // set to false to disable caching
     $debug = boolval($app->config->get('twig.debug', false)); // typically false for production and true for development
-    $templatePath = $app->config->get('twig.template_path', __DIR__ . '/templates/');
+    $templatePath = __DIR__ . '/templates/';
     $tpl = new TwigTemplate($templatePath, $cachePath, $debug);
     // use .revision file modification time on server or something else - current timestamp for development and no cache
     $tpl->assign('assets_revision', '?rev=' . (@filemtime(dirname(__DIR__, 2) . '/.revision') ?: time()));

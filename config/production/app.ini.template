@@ -30,7 +30,6 @@ log_level = debug
 
 [twig]
 debug = off
-; template_path = "../templates"
 cache_path = "../tmp/twig"
 
 
