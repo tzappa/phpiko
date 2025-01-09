@@ -49,7 +49,7 @@ CREATE TABLE acl_role_permissions
 	created_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
 	updated_at         TIMESTAMP NOT NULL DEFAULT (datetime('now', 'UTC')),
 	FOREIGN KEY(role_id) REFERENCES acl_roles(id) ON UPDATE CASCADE ON DELETE SET NULL,
-	FOREIGN KEY(permission_id) REFERENCES acl_permissions(id) ON UPDATE CASCADE ON DELETE SET NULL,
+	FOREIGN KEY(permission_id) REFERENCES acl_permissions(id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE acl_grants
