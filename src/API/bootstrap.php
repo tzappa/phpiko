@@ -7,15 +7,17 @@ declare(strict_types=1);
 
 namespace API;
 
+// Internal
+
+// Clear Project
 use Clear\Config\Factory as ConfigFactory;
-use Clear\Config\ConfigInterface;
 use Clear\Container\Container;
 use Clear\Database\PdoExt as PDO;
 use Clear\Database\PdoInterface;
 use Clear\Logger\FileLogger;
 use Clear\Http\Router;
 use Clear\Http\Exception\NotFoundException;
-// Vendor specific
+// Vendor
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -38,10 +40,7 @@ $app->env = function () {
 };
 
 // Configurations
-$app->config = function () use ($app): ConfigInterface {
-    $filename = strtolower($app->name) . '.ini';
-    return ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . $filename);
-};
+$app->config = ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . strtolower($app->name) . '.ini');
 
 // Timezone settings
 if ($app->config->has('timezone')) {

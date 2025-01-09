@@ -22,6 +22,7 @@
     },
     "autoload": {
         "psr-4": {
+            "Admin\\": "src/Admin/",
             "API\\": "src/API/",
             "App\\": "src/App/",
             "Clear\\": "src/Clear/"

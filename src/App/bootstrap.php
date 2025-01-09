@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace App;
 
+// Internal
 use App\Middleware\{
     AuthMiddleware,
     AclMiddleware,
@@ -23,6 +24,7 @@ use App\Users\{
     UserRepositoryPdo,
     UserService
 };
+// Clear Project
 use Clear\ACL\Service as ACL;
 use Clear\ACL\AclProviderPdo;
 use Clear\Captcha\CryptRndChars;
@@ -55,12 +57,15 @@ use Clear\Profiler\LogProfiler;
 use Clear\Session\SessionManager;
 use Clear\Template\TwigTemplate;
 use Clear\Template\TemplateInterface;
+// Vendor
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Response\TextResponse;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
+// PSR
 use Psr\Log\LoggerInterface;
 use Psr\Http\Message\ServerRequestInterface;
+// PHP
 use Exception;
 use PDOException;
 
