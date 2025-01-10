@@ -13,7 +13,6 @@ namespace API;
 use Clear\Config\Factory as ConfigFactory;
 use Clear\Container\Container;
 use Clear\Database\PdoExt as PDO;
-use Clear\Database\PdoInterface;
 use Clear\Logger\FileLogger;
 use Clear\Http\Router;
 use Clear\Http\Exception\NotFoundException;
@@ -56,7 +55,7 @@ $app->logger = function () use ($app): LoggerInterface {
 };
 
 // Database connection
-$app->database = function () use ($app): PdoInterface {
+$app->database = function () use ($app) {
     if ('sqlite' == $app->config->get('database.driver')) {
         $dsn = 'sqlite:' . $app->config->get('database.dbname');
     } else {

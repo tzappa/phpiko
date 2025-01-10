@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS users
 (
-    id                 INTEGER NOT NULL SERIAL,
+    id                 SERIAL NOT NULL PRIMARY KEY,
     email              VARCHAR(255) UNIQUE,
     username           VARCHAR(255) NOT NULL UNIQUE,
 	password           TEXT,

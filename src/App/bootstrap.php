@@ -35,7 +35,6 @@ use Clear\Container\Container;
 use Clear\Counters\DatabaseProvider as CounterRepositoryPdo;
 use Clear\Counters\Service as CounterService;
 use Clear\Database\PdoExt as PDO;
-use Clear\Database\PdoInterface;
 use Clear\Database\Event\{
     AfterExec,
     AfterExecute,
@@ -101,7 +100,7 @@ $app->eventDispatcher = function () use ($app) {
 };
 
 // Database connection
-$app->database = function () use ($app): PdoInterface {
+$app->database = function () use ($app) {
     if ('sqlite' == $app->config->get('database.driver')) {
         $dsn = 'sqlite:' . $app->config->get('database.dbname');
     } else {
