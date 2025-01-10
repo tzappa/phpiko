@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Clear\Http;
 
-use Exception;
+use Clear\Http\Exception\NotFoundException;
 
-class ContinueException extends Exception {}
+class ContinueException extends NotFoundException {}
