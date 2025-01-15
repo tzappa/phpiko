@@ -1,6 +1,6 @@
 CREATE TABLE acl_permissions
 (
-	id                 INTEGER NOT NULL SERIAL,
+	id                 SERIAL NOT NULL PRIMARY KEY,
 	object             VARCHAR(64) NOT NULL,
 	operation          VARCHAR(64) NOT NULL,
 	created_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -11,7 +11,7 @@ CREATE TABLE acl_permissions
 
 CREATE TABLE acl_roles
 (
-	id                 INTEGER NOT NULL SERIAL,
+	id                 SERIAL NOT NULL PRIMARY KEY,
 	name               VARCHAR(64) NOT NULL UNIQUE,
 	created_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -20,7 +20,7 @@ CREATE TABLE acl_roles
 
 CREATE TABLE acl_role_permissions
 (
-	id                 INTEGER NOT NULL SERIAL,
+	id                 SERIAL NOT NULL PRIMARY KEY,
 	role_id            INTEGER NOT NULL,
 	permission_id      INTEGER NOT NULL,
 	created_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -33,7 +33,7 @@ COMMENT ON COLUMN acl_role_permissions.permission_id IS 'FK acl_permissions.id';
 
 CREATE TABLE acl_grants
 (
-	id                 INTEGER NOT NULL SERIAL,
+	id                 SERIAL NOT NULL PRIMARY KEY,
 	role_id            INTEGER NOT NULL,
 	ref_id             INTEGER NOT NULL,
 	created_at         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
