@@ -12,10 +12,10 @@ use RuntimeException;
  */
 class User
 {
-    public const STATE_ACTIVE = 'active';
+    public const STATE_ACTIVE   = 'active';
     public const STATE_INACTIVE = 'inactive';
-    public const STATE_NOLOGIN = 'nologin'; // locked account for too many failed login attempts
-    public const STATE_BLOCKED = 'blocked';
+    public const STATE_NOLOGIN  = 'nologin'; // locked account for too many failed login attempts
+    public const STATE_BLOCKED  = 'blocked';
 
     private const VALID_STATES = [
         self::STATE_ACTIVE,
