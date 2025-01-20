@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
 use Psr\Log\InvalidArgumentException;
+use DateTimeImmutable;
 use Stringable;
 
 /**
@@ -386,6 +387,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
             }
         }
 
+        $date = new DateTimeImmutable();
         $msg = $this->logFormat;
         $msg = str_replace(
             array(
@@ -396,7 +398,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
                 '{context}'
             ),
             array(
-                date($this->getDateFormat()),
+                $date->format($this->dateFormat),
                 $level,
                 strtoupper($level),
                 (string) $message,
