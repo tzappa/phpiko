@@ -88,9 +88,7 @@ if ($app->config->has('timezone')) {
 // Logger
 $app->logger = function () use ($app): LoggerInterface {
     $config = $app->config->get('logger');
-    $logger = new FileLogger($config);
-
-    return $logger;
+    return new FileLogger($config);
 };
 
 // Events
