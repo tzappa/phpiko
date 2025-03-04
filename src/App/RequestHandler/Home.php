@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -15,10 +15,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 final class Home implements RequestHandlerInterface
 {
-    public function __construct(private TemplateInterface $template)
-    {
-
-    }
+    public function __construct(private TemplateInterface $template) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
