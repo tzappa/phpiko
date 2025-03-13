@@ -161,12 +161,12 @@ final class AclProviderPdo implements AclProviderInterface
         $sth->bindValue('dt', date('Y-m-d H:i:s'));
 
         if (!$sth->execute()) {
-            return false;
+            throw new Exception('Failed to create role');
         }
 
         $id = (int) (($pg) ? $sth->fetchColumn() : $this->db->lastInsertId());
         if (!$id) {
-            return false;
+            throw new Exception('Failed to fetch new role id');
         }
 
         return $this->getRole($id);
