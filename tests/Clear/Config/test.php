@@ -6,7 +6,7 @@
 
 return [
     "str"     => "value",
-    "arr"     => array("sub" => "subvalue", "nokey"),
+    "arr"     => ["sub" => "subvalue", "nokey"],
     "null"    => null,
     "int"     => 42,
     "zero"    => 0,

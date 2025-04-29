@@ -29,6 +29,8 @@ final class Factory
                 $parser = new Parser\Ini();
             } elseif ('json' === $ext) {
                 $parser = new Parser\Json();
+            } elseif ('php' === $ext) {
+                $parser = new Parser\Php();
             } else {
                 throw new Exception\ConfigException("Parser unavailable for file with extension {$ext}");
             }

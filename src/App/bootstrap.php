@@ -87,7 +87,7 @@ $app->name = __NAMESPACE__;
 // Environment "production", "development", etc.
 $app->env = getenv('APPLICATION_ENV') ?: 'production';
 // Configurations
-$app->config = ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . strtolower($app->name) . '.ini');
+$app->config = ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . strtolower($app->name) . '.php');
 
 // Timezone settings
 if ($app->config->has('timezone')) {
