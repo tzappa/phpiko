@@ -25,6 +25,16 @@ final class UserService
     }
 
     /**
+     * Gets the user repository instance
+     *
+     * @return UserRepositoryInterface
+     */
+    public function getRepository(): UserRepositoryInterface
+    {
+        return $this->repository;
+    }
+
+    /**
      * Logs in the user.
      * If there is an login error the error message is passed in the $error variable.
      *

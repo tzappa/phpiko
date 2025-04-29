@@ -1,0 +1,36 @@
+{% extends 'layout.twig' %}
+
+{% set head_title = 'Invalid Token' %}
+
+{% block css %}
+	{{ parent() }}
+<style>
+.error-container {
+	max-width: 600px;
+	margin: 0 auto;
+	padding: 20px;
+	text-align: center;
+}
+.error-icon {
+	font-size: 64px;
+	color: #D8000C;
+	margin-bottom: 20px;
+}
+.error-message {
+	margin-bottom: 20px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+	<div class="error-icon">⚠️</div>
+	<h1>Invalid or Expired Token</h1>
+	<div class="error-message">
+		<p>The password reset link you used is either invalid or has expired.</p>
+		<p>Reset links are valid for 24 hours after they are generated.</p>
+	</div>
+	<p><a href="{{ route('forgot-password') }}" class="button">Request a new reset link</a></p>
+	<p><a href="{{ route('login') }}">Return to login page</a></p>
+</div>
+{% endblock %}
