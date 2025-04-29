@@ -21,8 +21,10 @@ use App\RequestHandler\{
     Logout,
 };
 use App\Users\{
+    User,
     UserRepositoryPdo,
-    UserService
+    UserService,
+    PasswordStrength,
 };
 // Clear Project
 use Clear\ACL\Service as ACL;
@@ -188,6 +190,8 @@ $app->users = function () use ($app): UserService {
     if ($repository->count() < 1) {
         $repository->add(['username' => 'admin', 'password' => password_hash('admin', PASSWORD_DEFAULT), 'state' => 'active']);
     }
+    // Use password Strength service
+    User::setPasswordStrength(new PasswordStrength());
 
     return $users;
 };
