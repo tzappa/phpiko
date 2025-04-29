@@ -9,9 +9,9 @@ use App\Users\ResetPassword\ResetPasswordService;
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
 use Clear\Template\TemplateInterface;
+use Clear\Events\ListenerProvider;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
-use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -27,7 +27,7 @@ final class ResetPassword implements RequestHandlerInterface
 
     public function __construct(
         private ResetPasswordService $resetPasswordService,
-        private ListenerProviderInterface $listener,
+        private ListenerProvider $listener,
         private TemplateInterface $template,
         private SessionInterface $session
     ) {}

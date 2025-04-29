@@ -49,7 +49,8 @@ class BasicEmailService implements EmailServiceInterface
 
         $headers = "From: {$this->fromName} <{$this->fromEmail}>\r\n";
         $headers .= "Reply-To: {$this->fromEmail}\r\n";
-        $headers .= "X-Mailer: PHP/" . phpversion();
+        $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+        $headers .= "MIME-Version: 1.0\r\n";
 
         try {
             $result = mail($email, $subject, $message, $headers);
