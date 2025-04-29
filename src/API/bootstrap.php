@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace API;
 
 // Internal
+use App\Users\PasswordStrength;
 
 // Clear Project
 use Clear\Config\Factory as ConfigFactory;
@@ -87,7 +88,6 @@ $app->database = function () use ($app) {
     return $db;
 };
 
-
 // Request
 $request = ServerRequestFactory::fromGlobals();
 $request = $request->withAttribute('app', $app);
@@ -96,6 +96,12 @@ $app->request = $request;
 // Routes
 $router = new Router();
 $app->router = $router;
+
+// Add direct API routes
+$router->map('POST', '/api/check-password-strength', function (ServerRequestInterface $request) use ($app) {
+    $handler = new RequestHandler\CheckPasswordStrength(new PasswordStrength());
+    return $handler->handle($request);
+});
 
 // API v1.*
 $api1 = $router->group('/api/v{api_version:1(?:\.\d+)?}');

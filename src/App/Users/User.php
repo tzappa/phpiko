@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Users;
 
+use App\Users\PasswordStrength;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -25,6 +26,9 @@ class User
     ];
 
     public const MIN_PASSWORD_LENGTH = 8;
+
+    // Password strength checker instance
+    private static ?PasswordStrength $passwordStrength = null;
 
     public readonly ?int $id;
     public readonly string $username;
@@ -61,6 +65,16 @@ class User
         $this->username = $user['username'];
         $this->email = $user['email'] ?? null;
         $this->state = $user['state'];
+    }
+
+    /**
+     * Set the password strength checker instance
+     *
+     * @param PasswordStrength $passwordStrength
+     */
+    public static function setPasswordStrength(PasswordStrength $passwordStrength): void
+    {
+        self::$passwordStrength = $passwordStrength;
     }
 
     public function toArray(): array
@@ -103,6 +117,12 @@ class User
         if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password) || !preg_match('/[^A-Za-z0-9]/', $password)) {
             throw new InvalidArgumentException('Password must contain uppercase, lowercase, numbers, and special characters');
         }
+
+        // Check if the password is strong enough using zxcvbn
+        if (self::$passwordStrength !== null && !self::$passwordStrength->isStrong($password)) {
+            throw new InvalidArgumentException('Password is not strong enough. Please choose a stronger password.');
+        }
+
         if ($this->repository === null) {
             throw new RuntimeException('Repository is required for state changes');
         }
