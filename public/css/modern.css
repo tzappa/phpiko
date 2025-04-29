@@ -1,0 +1,322 @@
+/* Modern CSS - PHPiko Framework
+   Created: April 29, 2025
+   A clean, modern stylesheet for all templates
+*/
+
+:root {
+  /* Color scheme - easily customizable */
+  --primary-color: #4361ee;
+  --primary-hover: #3a56d4;
+  --secondary-color: #3a0ca3;
+  --accent-color: #f72585;
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --error-color: #f44336;
+  --light-bg: #f8f9fa;
+  --dark-bg: #212529;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --text-light: #f8f9fa;
+  --border-color: #dee2e6;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2.5rem;
+
+  /* Border radius */
+  --border-radius-sm: 0.25rem;
+  --border-radius: 0.5rem;
+  --border-radius-lg: 1rem;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  background-color: var(--light-bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-primary);
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-lg);
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.75rem;
+}
+
+p {
+  margin-bottom: var(--spacing-md);
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+/* Header */
+header {
+  background-color: white;
+  box-shadow: var(--shadow);
+  padding: var(--spacing-md) 0;
+}
+
+.avatar {
+    width: 42px;
+}
+
+header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+/* Navigation */
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: var(--spacing-lg);
+}
+
+nav a {
+  font-weight: 500;
+}
+
+/* Main content */
+main {
+  flex: 1;
+  padding: var(--spacing-xl) 0;
+}
+
+/* Footer */
+footer {
+  background-color: var(--dark-bg);
+  color: var(--text-light);
+  padding: var(--spacing-xl) 0;
+  margin-top: auto;
+}
+
+footer a {
+  color: var(--text-light);
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+label {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 500;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+button, .button {
+  display: inline-block;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button:hover, .button:hover {
+  background-color: var(--primary-hover);
+  text-decoration: none;
+  color: white;
+}
+
+button:active, .button:active {
+  transform: translateY(1px);
+}
+
+/* Alert messages */
+.error-message {
+  color: var(--error-color);
+  background-color: rgba(244, 67, 54, 0.1);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--error-color);
+  margin-bottom: var(--spacing-lg);
+}
+
+.success-message {
+  color: var(--success-color);
+  background-color: rgba(76, 175, 80, 0.1);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--success-color);
+  margin-bottom: var(--spacing-lg);
+}
+
+.warning-message {
+  color: var(--warning-color);
+  background-color: rgba(255, 152, 0, 0.1);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--warning-color);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* CAPTCHA specific styles */
+.captcha-container {
+  margin: var(--spacing-lg) 0;
+}
+
+.captcha-image {
+  max-width: 200px;
+  height: auto;
+  display: block;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Password strength meter */
+.password-strength-meter {
+  height: 5px;
+  width: 100%;
+  margin: var(--spacing-sm) 0;
+  background: #DDD;
+  border-radius: 3px;
+}
+
+.password-strength-meter div {
+  height: 5px;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+.strength-very-weak { width: 20%; background-color: var(--error-color); }
+.strength-weak { width: 40%; background-color: var(--warning-color); }
+.strength-medium { width: 60%; background-color: #FFDC00; }
+.strength-strong { width: 80%; background-color: #2ECC40; }
+.strength-very-strong { width: 100%; background-color: var(--success-color); }
+
+/* Helper classes */
+.text-center {
+  text-align: center;
+}
+.rounded-circle {
+    border-radius: 50%;
+}
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: var(--spacing-sm); }
+.mb-2 { margin-bottom: var(--spacing-md); }
+.mb-3 { margin-bottom: var(--spacing-lg); }
+.mb-4 { margin-bottom: var(--spacing-xl); }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: var(--spacing-sm); }
+.mt-2 { margin-top: var(--spacing-md); }
+.mt-3 { margin-top: var(--spacing-lg); }
+.mt-4 { margin-top: var(--spacing-xl); }
+
+/* Responsive design */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+  }
+
+  .container {
+    padding: var(--spacing-md);
+  }
+
+  nav ul {
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  header .container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  nav ul {
+    flex-direction: column;
+    width: 100%;
+    gap: var(--spacing-sm);
+  }
+}

@@ -7,6 +7,7 @@
 	{% if head_description %}<meta name="description" content="{{ head_description }}" />{% endif %}
 	{% block css %}
 		<link rel="stylesheet" media="all" href="/css/base.css{{ assets_revision }}" />
+		<link rel="stylesheet" media="all" href="/css/modern.css{{ assets_revision }}" />
 		{% for css in css_files %}
 			<link rel="stylesheet" media="all" href="{{ css }}{{ assets_revision }}"/>
 		{% endfor %}
@@ -21,8 +22,48 @@
 {% endblock head %}
 </head>
 <body>
-{% block content %}
+	{% block header %}
+	<header>
+		<div class="container">
+			<div class="logo">
+				<a href="{{ route('home') }}">PHPiko</a>
+			</div>
+			<nav>
+				{% if username is defined %}
+					<img src="{{ route('avatar') }}?name={{ username }}" class="avatar rounded-circle" />
+					<ul>
+						<li><a href="{{ route('change-password') }}">Change Password</a></li>
+						<li><a href="{{ route('logout') }}">Logout</a></li>
+					</ul>
+				{% else %}
+					<ul>
+						<li><a href="{{ route('home') }}">Home</a></li>
+						<li><a href="{{ route('login') }}">Login</a></li>
+					</ul>
+				{% endif %}
+			</nav>
+		</div>
+	</header>
+	{% endblock %}
 
-{% endblock %}
+	<main>
+		<div class="container">
+			{% block content %}
+			{% endblock %}
+		</div>
+	</main>
+
+	{% block footer %}
+	<footer>
+		<div class="container">
+			<div class="text-center">
+				&copy; {{ "now"|date("Y") }} PHPiko Framework
+			</div>
+		</div>
+	</footer>
+	{% endblock %}
+
+	{% block scripts %}
+	{% endblock %}
 </body>
 </html>
