@@ -118,9 +118,18 @@ class User
             throw new InvalidArgumentException('Password must contain uppercase, lowercase, numbers, and special characters');
         }
 
-        // Check if the password is strong enough using zxcvbn
-        if (self::$passwordStrength !== null && !self::$passwordStrength->isStrong($password)) {
-            throw new InvalidArgumentException('Password is not strong enough. Please choose a stronger password.');
+        // Check if to use  password strength checker
+        if (self::$passwordStrength !== null) {
+            // Check if the password is strong enough using zxcvbn
+            if (!self::$passwordStrength->isStrong($password)) {
+                $details = self::$passwordStrength->getStrengthDetails($password);
+                $feedback = $details['feedback']['warning'] ?? '';
+                $suggestions = isset($details['feedback']['suggestions']) ? implode(' ', $details['feedback']['suggestions']) : '';
+
+                throw new InvalidArgumentException(
+                    "Password is not strong enough. $feedback $suggestions A medium-strength password or stronger is required."
+                );
+            }
         }
 
         if ($this->repository === null) {
