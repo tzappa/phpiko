@@ -19,12 +19,19 @@ use App\RequestHandler\{
     Login,
     ChangePassword,
     Logout,
+    ForgotPassword,
+    ResetPassword,
 };
 use App\Users\{
     User,
     UserRepositoryPdo,
     UserService,
     PasswordStrength,
+};
+use App\Users\ResetPassword\{
+    TokenRepositoryPdo,
+    ResetPasswordService,
+    BasicEmailService,
 };
 // Clear Project
 use Clear\ACL\Service as ACL;
@@ -222,6 +229,24 @@ $app->counters = function () use ($app) {
     return $counters;
 };
 
+// Reset Password Service
+$app->resetPasswordService = function () use ($app): ResetPasswordService {
+    $tokenRepository = new TokenRepositoryPdo($app->database);
+    return new ResetPasswordService(
+        $tokenRepository,
+        $app->users->getRepository(),
+        $app->users,
+        $app->eventDispatcher
+    );
+};
+
+// Email Service for password resets
+$app->emailService = function () use ($app): BasicEmailService {
+    $fromEmail = $app->config->get('mail.from_email', 'noreply@example.com');
+    $fromName = $app->config->get('mail.from_name', 'Website Administrator');
+    return new BasicEmailService($fromEmail, $fromName, $app->logger);
+};
+
 $request = ServerRequestFactory::fromGlobals();
 
 // Running from CLI? phpunit?
@@ -249,6 +274,33 @@ $router->map('*', '/login', function (ServerRequestInterface $request) use ($app
     // $requestHandler->setCaptcha($app->captcha);
     return $requestHandler->handle($request);
 }, 'login');
+
+// Forgot Password route
+$router->map('*', '/forgot-password', function (ServerRequestInterface $request) use ($app) {
+    $requestHandler = new ForgotPassword(
+        $app->resetPasswordService,
+        $app->eventListener,
+        $app->template,
+        $app->session
+    );
+    $requestHandler->setLogger($app->logger);
+    $requestHandler->setEmailService($app->emailService);
+    return $requestHandler->handle($request);
+}, 'forgot-password');
+
+// Reset Password route with token
+$router->map('*', '/reset-password/{token}', function (ServerRequestInterface $request, array $args) use ($app) {
+    $request = $request->withAttribute('token', $args['token'] ?? '');
+    $requestHandler = new ResetPassword(
+        $app->resetPasswordService,
+        $app->eventListener,
+        $app->template,
+        $app->session
+    );
+    $requestHandler->setLogger($app->logger);
+    return $requestHandler->handle($request);
+}, 'reset-password');
+
 $router->map('*', '/logout', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new Logout($app->users, $app->session);
     $requestHandler->setEventDispatcher($app->eventDispatcher);

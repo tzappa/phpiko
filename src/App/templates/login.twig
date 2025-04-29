@@ -22,6 +22,10 @@
 	border: 1px solid #000;
 	border-radius: 5px;
 }
+.forgot-password {
+	margin-top: 15px;
+	font-size: 0.9em;
+}
 </style>
 {% endblock %}
 
@@ -50,6 +54,9 @@
 		{% endif %}
 		<button type="submit">Login</button>
 	</form>
+	<div class="forgot-password">
+		<a href="{{ route('forgot-password') }}" title="Reset your password">Forgot your password?</a>
+	</div>
 {% endblock %}
 
 
