@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\RequestHandler;
 
-use App\Users\Signup\SignupService;
 use Clear\Logger\LoggerTrait;
 use Clear\Template\TemplateInterface;
 use Clear\Session\SessionManager;
@@ -20,7 +19,6 @@ class SignupEmailSent
     use LoggerTrait;
 
     public function __construct(
-        private SignupService $signupService,
         private TemplateInterface $template,
         private SessionManager $session
     ) {}

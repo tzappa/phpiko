@@ -337,7 +337,6 @@ $router->map('*', '/signup', function (ServerRequestInterface $request) use ($ap
 // Email verification routes
 $router->map('GET', '/verify-email', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new SignupEmailSent(
-        $app->signupService,
         $app->template,
         $app->session
     );

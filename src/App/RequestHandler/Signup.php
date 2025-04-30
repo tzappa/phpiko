@@ -69,8 +69,11 @@ class Signup
             try {
                 $data = $request->getParsedBody() ?? [];
                 $email = $data['email'] ?? '';
+                $email = trim($email);
 
-                if (empty($email)) {
+                if (!$this->checkCsrfToken($data['csrf'] ?? '')) {
+                    $errors['csrf'] = 'Expired or invalid request. Please try again.';
+                } elseif (empty($email)) {
                     $errors['email'] = 'Email is required';
                 } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $errors['email'] = 'Invalid email format';

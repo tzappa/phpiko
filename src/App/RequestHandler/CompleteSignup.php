@@ -86,8 +86,10 @@ class CompleteSignup
                     // Complete the signup process
                     $user = $this->signupService->completeSignup($token, $username, $password);
 
-                    return new RedirectResponse('/');
-                }
+                    // Log the user in
+                    $this->loginService->login($user['username'], $password);
+
+                    return new RedirectResponse('/');                }
             } catch (InvalidArgumentException $e) {
                 // Handle validation errors
                 if (strpos($e->getMessage(), 'Username is already taken') !== false) {

@@ -22,6 +22,7 @@
             </p>
 
             <form method="post" action="{{ route('signup') }}">
+                <input type="hidden" name="csrf" value="{{ csrf }}">
                 <div class="mb-3">
                     <label for="email" class="form-label">Email Address</label>
                     <input type="email" class="form-control {% if errors.email %}is-invalid{% endif %}"
