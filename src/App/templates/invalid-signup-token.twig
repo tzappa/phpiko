@@ -1,0 +1,32 @@
+{% extends 'layout.twig' %}
+
+{% set head_title = 'Invalid Token' %}
+
+{% block css %}
+	{{ parent() }}
+<style>
+.error-container {
+	max-width: 600px;
+	margin: 0 auto;
+	padding: 20px;
+	text-align: center;
+}
+.error-icon {
+	font-size: 64px;
+	color: #D8000C;
+	margin-bottom: 20px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+	<div class="error-icon">⚠️</div>
+	<h1>Invalid or Expired Token</h1>
+	<div class="error-message">
+		<p>The signup link you used is either invalid or has expired.</p>
+		<p>Signup links are valid for 24 hours after they are generated.</p>
+	</div>
+	<p><a href="{{ route('signup') }}" class="button">Create new registration</a></p>
+</div>
+{% endblock %}

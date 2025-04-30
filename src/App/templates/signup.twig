@@ -1,0 +1,47 @@
+{% extends "layout.twig" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-3">Create an Account</h1>
+
+    {% if errors.general %}
+    <div class="alert alert-danger">
+        {{ errors.general }}
+    </div>
+    {% endif %}
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Step 1: Enter your email address</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-4">
+                We'll send you a verification link to confirm your email address.
+            </p>
+
+            <form method="post" action="{{ route('signup') }}">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" class="form-control {% if errors.email %}is-invalid{% endif %}"
+                           id="email" name="email" value="{{ data.email|default('') }}" required>
+                    {% if errors.email %}
+                    <div class="invalid-feedback">
+                        {{ errors.email }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Continue</button>
+                </div>
+
+                <div class="mt-3 text-center">
+                    <p>Already have an account? <a href="{{ route('login') }}">Log in</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
