@@ -21,6 +21,10 @@ use App\RequestHandler\{
     Logout,
     ForgotPassword,
     ResetPassword,
+    Signup,
+    SignupEmailSent,
+    VerifyEmail,
+    CompleteSignup,
 };
 use App\Users\{
     User,
@@ -39,6 +43,11 @@ use App\Users\ResetPassword\{
     TokenRepositoryPdo,
     ResetPasswordService,
     BasicEmailService,
+};
+use App\Users\Signup\{
+    SignupService,
+    EmailVerificationRepositoryPdo,
+    EmailVerificationService,
 };
 // Clear Project
 use Clear\ACL\Service as ACL;
@@ -229,6 +238,19 @@ $app->resetPasswordService = function () use ($app): ResetPasswordService {
     );
 };
 
+// Email Verification Repository
+$app->emailVerificationRepository = function () use ($app) {
+    return new EmailVerificationRepositoryPdo($app->database);
+};
+
+// Signup Service
+$app->signupService = function () use ($app): SignupService {
+    return new SignupService(
+        $app->emailVerificationRepository,
+        $app->userRepository,
+        $app->eventDispatcher
+    );
+};
 
 // ACL Service
 $app->acl = function () use ($app) {
@@ -263,6 +285,13 @@ $app->emailService = function () use ($app): BasicEmailService {
     return new BasicEmailService($fromEmail, $fromName, $app->logger);
 };
 
+// Email Service for verification emails
+$app->verificationEmailService = function () use ($app): EmailVerificationService {
+    $fromEmail = $app->config->get('mail.from_email', 'noreply@example.com');
+    $fromName = $app->config->get('mail.from_name', 'Website Administrator');
+    return new EmailVerificationService($fromEmail, $fromName, $app->logger);
+};
+
 $request = ServerRequestFactory::fromGlobals();
 
 // Running from CLI? phpunit?
@@ -290,6 +319,44 @@ $router->map('*', '/login', function (ServerRequestInterface $request) use ($app
     // $requestHandler->setCaptcha($app->captcha);
     return $requestHandler->handle($request);
 }, 'login');
+
+// Signup routes
+$router->map('*', '/signup', function (ServerRequestInterface $request) use ($app) {
+    $requestHandler = new Signup(
+        $app->signupService,
+        $app->eventListener,
+        $app->counters,
+        $app->template,
+        $app->session
+    );
+    $requestHandler->setLogger($app->logger);
+    $requestHandler->setEmailService($app->verificationEmailService);
+    return $requestHandler->handle($request);
+}, 'signup');
+
+// Email verification routes
+$router->map('GET', '/verify-email', function (ServerRequestInterface $request) use ($app) {
+    $requestHandler = new SignupEmailSent(
+        $app->template,
+        $app->session
+    );
+    $requestHandler->setLogger($app->logger);
+    return $requestHandler->handle($request);
+}, 'verify-email');
+
+// Complete signup route
+$router->map('*', '/complete-signup/{token}', function (ServerRequestInterface $request) use ($app) {
+    $requestHandler = new CompleteSignup(
+        $app->signupService,
+        $app->loginService,
+        $app->eventListener,
+        $app->counters,
+        $app->template,
+        $app->session
+    );
+    $requestHandler->setLogger($app->logger);
+    return $requestHandler->handle($request);
+}, 'complete-signup');
 
 // Forgot Password route
 $router->map('*', '/forgot-password', function (ServerRequestInterface $request) use ($app) {

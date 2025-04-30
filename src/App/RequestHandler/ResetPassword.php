@@ -93,7 +93,7 @@ final class ResetPassword implements RequestHandlerInterface
      */
     private function renderInvalidToken(): string
     {
-        $tpl = $this->template->load('invalid-token.twig');
+        $tpl = $this->template->load('invalid-reset-token.twig');
         return $tpl->parse();
     }
 

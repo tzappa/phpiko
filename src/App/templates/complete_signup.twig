@@ -1,0 +1,73 @@
+{% extends "layout.twig" %}
+
+{% block title %}Complete Signup{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mt-4 mb-3">Complete Your Registration</h1>
+
+    {% if errors.general is defined %}
+    <div class="alert alert-danger">
+        {{ errors.general }}
+    </div>
+    {% endif %}
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Step 3: Create your account</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-3">
+                Your email address <strong>{{ data.email }}</strong> has been verified.
+                Now, complete your registration by creating a username and password.
+            </p>
+
+            <form method="post" action="">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control {% if errors.username is defined %}is-invalid{% endif %}"
+                           id="username" name="username" value="{{ data.username|default('') }}" required>
+                    {% if errors.username is defined %}
+                    <div class="invalid-feedback">
+                        {{ errors.username }}
+                    </div>
+                    {% endif %}
+                    <div class="form-text">
+                        Choose a unique username that you'll use to log in.
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control {% if errors.password is defined %}is-invalid{% endif %}"
+                           id="password" name="password" required>
+                    {% if errors.password is defined %}
+                    <div class="invalid-feedback">
+                        {{ errors.password }}
+                    </div>
+                    {% endif %}
+                    <div class="form-text">
+                        Passwords must be at least 8 characters long and include uppercase and lowercase letters,
+                        numbers, and special characters.
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="confirm_password" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control {% if errors.confirm_password is defined %}is-invalid{% endif %}"
+                           id="confirm_password" name="confirm_password" required>
+                    {% if errors.confirm_password is defined %}
+                    <div class="invalid-feedback">
+                        {{ errors.confirm_password }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Complete Registration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
