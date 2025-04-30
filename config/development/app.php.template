@@ -1,0 +1,52 @@
+<?php
+/**
+ * Application configuration template
+ *
+ * Copy this file to config/development/app.php and edit it
+ * to match your environment.
+ */
+
+return [
+    'name' => 'PHPiko',
+    'version' => 0.1,
+    'timezone' => 'Europe/Sofia',
+
+    'logger' => [
+        // Log levels: debug, info, notice, warning, error, critical, alert, emergency
+        'level' => 'debug',
+        'filename' => '../log/phpiko.log',
+        'format' => '[{datetime}] [{level}] {message} {context}',
+        'dateFormat' => 'Y-m-d H:i:s',
+        'interpolatePlaceholders' => true,
+        'removeInterpolatedContext' => true,
+    ],
+
+    'database' => [
+        // the type of the database - mysql, pgsql, sqlite, etc.
+        'driver' => 'sqlite',
+        'dbname' => '../tmp/phpiko.sqlite',
+        // 'host' => '',
+        // 'port' => '',
+        // 'user' => '',
+        // 'pass' => '',
+        // Set the database in read-only (r) / read-write (rw) or in unavailable mode (-). Default is rw
+        'state' => 'rw',
+        // Enable or disable profiling. Default is disabled (0)
+        'log_enabled' => true,
+        // The level at which to log profile messages. Default level is debug
+        'log_level' => 'debug',
+    ],
+    'twig' => [
+        'debug' => true,
+        'cache_path' => false,
+    ],
+
+    'captcha' => [
+        'secret' => 'change_me_with_some_random_string_like_3yqjv5qd3rsmqlafmwgmpwxn4ke1234i4fghl6bq377ollao5q55puzmzjartypj6j24rz34dt2098zyxwvutsrqponmlkjhgfedcba',
+        'length' => 6,
+        // quality of the image 0 (low) -100 (hi)
+        'quality' => 10,
+        'provider' => 'cache', // cache or database
+    ],
+
+];

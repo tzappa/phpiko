@@ -40,7 +40,7 @@ $app->env = function () {
 };
 
 // Configurations
-$app->config = ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . strtolower($app->name) . '.ini');
+$app->config = ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . strtolower($app->name) . '.php');
 
 // Timezone settings
 if ($app->config->has('timezone')) {
