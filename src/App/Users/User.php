@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Users;
 
-use App\Users\PasswordStrength;
+use App\Users\Password\PasswordStrength;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -111,12 +111,6 @@ class User
     public function setPassword(string $password): void
     {
         $password = trim($password);
-        if (strlen($password) < self::MIN_PASSWORD_LENGTH) {
-            throw new InvalidArgumentException('Password must be at least ' . self::MIN_PASSWORD_LENGTH . ' characters');
-        }
-        if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password) || !preg_match('/[^A-Za-z0-9]/', $password)) {
-            throw new InvalidArgumentException('Password must contain uppercase, lowercase, numbers, and special characters');
-        }
 
         // Check if to use  password strength checker
         if (self::$passwordStrength !== null) {
@@ -129,6 +123,13 @@ class User
                 throw new InvalidArgumentException(
                     "Password is not strong enough. $feedback $suggestions A medium-strength password or stronger is required."
                 );
+            }
+        } else {
+            if (strlen($password) < self::MIN_PASSWORD_LENGTH) {
+                throw new InvalidArgumentException('Password must be at least ' . self::MIN_PASSWORD_LENGTH . ' characters');
+            }
+            if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password) || !preg_match('/[^A-Za-z0-9]/', $password)) {
+                throw new InvalidArgumentException('Password must contain uppercase, lowercase, numbers, and special characters');
             }
         }
 

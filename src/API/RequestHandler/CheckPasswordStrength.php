@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace API\RequestHandler;
 
-use App\Users\PasswordStrength;
+use App\Users\Password\PasswordStrength;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

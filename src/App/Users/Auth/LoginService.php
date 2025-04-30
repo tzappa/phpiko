@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Users;
+namespace App\Users\Auth;
 
+use App\Users\{
+    UserRepositoryInterface,
+    NullDispatcher,
+    User
+};
 use App\Users\Events\{
-    ChangePasswordEvent,
     InvalidPasswordEvent,
     LoginFailEvent,
-    LoginEvent,
-    LogoutEvent
+    LoginEvent
 };
 use Psr\EventDispatcher\EventDispatcherInterface;
-use InvalidArgumentException;
-use RuntimeException;
 
-final class UserService
+final class LoginService
 {
     private EventDispatcherInterface $dispatcher;
 
@@ -25,18 +26,8 @@ final class UserService
     }
 
     /**
-     * Gets the user repository instance
-     *
-     * @return UserRepositoryInterface
-     */
-    public function getRepository(): UserRepositoryInterface
-    {
-        return $this->repository;
-    }
-
-    /**
      * Logs in the user.
-     * If there is an login error the error message is passed in the $error variable.
+     * If there is a login error the error message is passed in the $error variable.
      *
      * @param string $username
      * @param string $password
@@ -88,69 +79,5 @@ final class UserService
         $this->dispatcher->dispatch(new LoginEvent($user));
 
         return $user;
-    }
-
-    /**
-     * Checks the logged in user' status.
-     * Used to check if the user is still active, blocked or deleted.
-     * Users in NOLOGIN state can stay logged in.
-     *
-     * @param int $id
-     * @return User|null The user object or null if the user does not exists or is blocked or inactive
-     * @throws InvalidArgumentException
-     */
-    public function checkLogin(int $id): ?User
-    {
-        $user = $this->repository->find('id', $id);
-        if ($user === null) {
-            return null;
-        }
-        if ($user['state'] === User::STATE_BLOCKED) {
-            return null;
-        }
-        if ($user['state'] === User::STATE_INACTIVE) {
-            return null;
-        }
-
-        return new User($user, $this->repository);
-    }
-
-    /**
-     * Logs out the user.
-     *
-     * @param User $user
-     */
-    public function logout(User $user): void
-    {
-        $this->dispatcher->dispatch(new LogoutEvent($user));
-    }
-
-    /**
-     * Changes the user's password.
-     *
-     * @param User $user
-     * @param string $currentPassword Current password
-     * @param string $newPassword New password
-     * @param string $newPassword2 New password repeated
-     * @return string|null Error message or null on success
-     */
-    public function changePassword(User $user, string $currentPassword, string $newPassword, string $newPassword2): string|null
-    {
-        if ($newPassword !== $newPassword2) {
-            return 'New passwords do not match';
-        }
-        if (!$user->checkPassword($currentPassword)) {
-            $this->dispatcher->dispatch(new InvalidPasswordEvent($user, 'Invalid current password'));
-            return 'Invalid current password';
-        }
-        try {
-            $user->setPassword($newPassword);
-        } catch (InvalidArgumentException $e) {
-            return $e->getMessage();
-        } catch (RuntimeException $e) {
-            return 'Failed to change password';
-        }
-        $this->dispatcher->dispatch(new ChangePasswordEvent($user));
-        return null;
     }
 }

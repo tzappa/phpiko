@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Users;
+namespace App\Users\Password;
 
 use ZxcvbnPhp\Zxcvbn;
 

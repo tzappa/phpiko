@@ -6,7 +6,7 @@ namespace App\RequestHandler;
 
 use App\Users\Events\ChangePasswordEvent;
 use App\Users\Events\InvalidPasswordEvent;
-use App\Users\UserService;
+use App\Users\Password\ChangePasswordService;
 use Clear\Counters\Service as Counters;
 use Clear\Events\ListenerProvider;
 use Clear\Logger\LoggerTrait;
@@ -30,7 +30,7 @@ final class ChangePassword implements RequestHandlerInterface
     use CsrfTrait;
 
     public function __construct(
-        private UserService $users,
+        private ChangePasswordService $users,
         private ListenerProvider $listener,
         private Counters $counters,
         private TemplateInterface $template,

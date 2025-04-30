@@ -8,7 +8,7 @@ declare(strict_types=1);
 namespace API;
 
 // Internal
-use App\Users\PasswordStrength;
+use App\Users\Password\PasswordStrength;
 
 // Clear Project
 use Clear\Config\Factory as ConfigFactory;

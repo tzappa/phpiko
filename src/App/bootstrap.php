@@ -25,8 +25,15 @@ use App\RequestHandler\{
 use App\Users\{
     User,
     UserRepositoryPdo,
-    UserService,
+};
+use App\Users\Auth\{
+    CheckLoginService,
+    LoginService,
+    LogoutService,
+};
+use App\Users\Password\{
     PasswordStrength,
+    ChangePasswordService,
 };
 use App\Users\ResetPassword\{
     TokenRepositoryPdo,
@@ -190,18 +197,38 @@ $app->session = function () {
     return new SessionManager();
 };
 
-// User Repository
-$app->users = function () use ($app): UserService {
-    $repository = new UserRepositoryPdo($app->database);
-    $users = new UserService($repository, $app->eventDispatcher);
-    if ($repository->count() < 1) {
-        $repository->add(['username' => 'admin', 'password' => password_hash('admin', PASSWORD_DEFAULT), 'state' => 'active']);
-    }
-    // Use password Strength service
-    User::setPasswordStrength(new PasswordStrength());
-
-    return $users;
+// Use password Strength service for users
+User::setPasswordStrength(new PasswordStrength());
+// Users
+$app->userRepository = function () use ($app): UserRepositoryPdo {
+    return new UserRepositoryPdo($app->database);
 };
+// CheckLogin service
+$app->checkLoginService = function () use ($app): CheckLoginService {
+    return new CheckLoginService($app->userRepository, $app->session);
+};
+// Login Service
+$app->loginService = function () use ($app): LoginService {
+    return new LoginService($app->userRepository, $app->eventDispatcher);
+};
+// Logout Service
+$app->logoutService = function () use ($app): LogoutService {
+    return new LogoutService($app->userRepository, $app->eventDispatcher);
+};
+// Change Password Service
+$app->changePasswordService = function () use ($app): ChangePasswordService {
+    return new ChangePasswordService($app->userRepository, $app->eventDispatcher);
+};
+// Reset Password Service
+$app->resetPasswordService = function () use ($app): ResetPasswordService {
+    $tokenRepository = new TokenRepositoryPdo($app->database);
+    return new ResetPasswordService(
+        $tokenRepository,
+        $app->userRepository,
+        $app->eventDispatcher
+    );
+};
+
 
 // ACL Service
 $app->acl = function () use ($app) {
@@ -229,17 +256,6 @@ $app->counters = function () use ($app) {
     return $counters;
 };
 
-// Reset Password Service
-$app->resetPasswordService = function () use ($app): ResetPasswordService {
-    $tokenRepository = new TokenRepositoryPdo($app->database);
-    return new ResetPasswordService(
-        $tokenRepository,
-        $app->users->getRepository(),
-        $app->users,
-        $app->eventDispatcher
-    );
-};
-
 // Email Service for password resets
 $app->emailService = function () use ($app): BasicEmailService {
     $fromEmail = $app->config->get('mail.from_email', 'noreply@example.com');
@@ -264,7 +280,7 @@ $router->map('GET', '/', function (ServerRequestInterface $request) use ($app) {
 }, 'home');
 $router->map('*', '/login', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new Login(
-        $app->users,
+        $app->loginService,
         $app->eventListener,
         $app->counters,
         $app->template,
@@ -302,7 +318,7 @@ $router->map('*', '/reset-password/{token}', function (ServerRequestInterface $r
 }, 'reset-password');
 
 $router->map('*', '/logout', function (ServerRequestInterface $request) use ($app) {
-    $requestHandler = new Logout($app->users, $app->session);
+    $requestHandler = new Logout($app->logoutService, $app->session);
     $requestHandler->setEventDispatcher($app->eventDispatcher);
     return $requestHandler->handle($request);
 }, 'logout');
@@ -311,7 +327,7 @@ $router->map('GET', '/avatar', function (ServerRequestInterface $request) {
 }, 'avatar');
 // Private routes
 $private = $router->group('/private')->middleware(new LazyMiddleware(function () use ($app) {
-    return new AuthMiddleware($app->users, $app->session, $app->logger);
+    return new AuthMiddleware($app->checkLoginService, $app->session, $app->logger);
 }));
 $private->map('GET', '/hello', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new Hello($app->template);
@@ -319,7 +335,7 @@ $private->map('GET', '/hello', function (ServerRequestInterface $request) use ($
 });
 $private->map('*', '/change-password', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new ChangePassword(
-        $app->users,
+        $app->changePasswordService,
         $app->eventListener,
         $app->counters,
         $app->template,

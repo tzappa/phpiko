@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\RequestHandler;
 
-use App\Users\UserService;
+use App\Users\Auth\LoginService;
 use App\Users\User;
 use App\Users\Events\LoginFailEvent;
 use App\Users\Events\LoginEvent;
@@ -37,7 +37,7 @@ final class Login implements RequestHandlerInterface
     private $captcha = null;
 
     public function __construct(
-        private UserService $users,
+        private LoginService $users,
         private ListenerProvider $listener,
         private Counters $counters,
         private TemplateInterface $template,

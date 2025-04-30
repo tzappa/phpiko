@@ -8,7 +8,6 @@ use App\Users\Events\PasswordResetRequestEvent;
 use App\Users\Events\PasswordResetSuccessEvent;
 use App\Users\User;
 use App\Users\UserRepositoryInterface;
-use App\Users\UserService;
 use InvalidArgumentException;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use RuntimeException;
@@ -23,7 +22,6 @@ class ResetPasswordService
     public function __construct(
         private TokenRepositoryInterface $tokenRepository,
         private UserRepositoryInterface $userRepository,
-        private UserService $userService,
         ?EventDispatcherInterface $dispatcher = null
     ) {
         $this->dispatcher = $dispatcher ?? new \App\Users\NullDispatcher();

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\RequestHandler;
 
-use App\Users\UserService;
+use App\Users\Auth\LogoutService;
 use Clear\Session\SessionInterface;
 use Clear\Events\EventDispatcherTrait;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -19,7 +19,7 @@ final class Logout implements RequestHandlerInterface
 {
     use EventDispatcherTrait;
 
-    public function __construct(private UserService $users, private SessionInterface $session) {}
+    public function __construct(private LogoutService $users, private SessionInterface $session) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
