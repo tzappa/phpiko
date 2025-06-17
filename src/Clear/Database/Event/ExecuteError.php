@@ -8,7 +8,7 @@ use PDOException;
 
 /**
  * Event sent when an PDOException occurs during the execution of a statement.
- * 
+ *
  * This event is dispatched by PdoExt and PdoStatementExt when a PDOException
  * occurs during statement execution. It provides access to the failed query,
  * its parameters, and the exception details.
@@ -20,8 +20,8 @@ use PDOException;
 final class ExecuteError extends PdoEvent
 {
     public function __construct(
-        private readonly string $queryString, 
-        private readonly ?array $params = null, 
+        private readonly string $queryString,
+        private readonly ?array $params,
         private readonly PDOException $exception
     ) {
         parent::__construct('ExecuteError');
