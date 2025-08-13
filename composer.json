@@ -1,6 +1,6 @@
 {
     "name": "tzappa/phpiko",
-    "description": "Short description goes here",
+    "description": "Small PHP codebase for a web application",
     "type": "project",
     "license": "Unlicense",
     "require": {
