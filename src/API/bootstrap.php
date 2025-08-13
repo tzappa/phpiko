@@ -15,14 +15,13 @@ use Clear\Config\Factory as ConfigFactory;
 use Clear\Container\Container;
 use Clear\Database\PdoExt as PDO;
 use Clear\Logger\FileLogger;
-use Clear\Http\Router;
+
 use Clear\Http\Exception\NotFoundException;
 // Vendor
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Laminas\Diactoros\Response\JsonResponse;
 // PSR
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 // PHP
 use PDOException;
@@ -93,29 +92,10 @@ $request = ServerRequestFactory::fromGlobals();
 $request = $request->withAttribute('app', $app);
 $app->request = $request;
 
-// Routes
-$router = new Router();
-$app->router = $router;
-
-// Add direct API routes
-$router->map('POST', '/api/check-password-strength', function (ServerRequestInterface $request) use ($app) {
-    $handler = new RequestHandler\CheckPasswordStrength(new PasswordStrength());
-    return $handler->handle($request);
-});
-
-// API v1.*
-$api1 = $router->group('/api/v{api_version:1(?:\.\d+)?}');
-// Server status
-$api1->map('GET', '/status', function (ServerRequestInterface $request) use ($app) {
-    return (new RequestHandler\ServerStatus($app))->handle($request);
-});
-
-// Not found for API v1
-$api1->map('GET', '{path:.*}', function ($request) use ($app) {
-    return new JsonResponse(['error' => 'Not found'], 404);
-});
+// Router
+$app->router = require __DIR__ . '/routes.php';
 try {
-    $response = $router->dispatch($request);
+    $response = $app->router->dispatch($request);
 } catch (NotFoundException $e) {
     $response = (new JsonResponse(['error' => 'Not found'], 404));
 }
