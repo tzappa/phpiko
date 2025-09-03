@@ -4,19 +4,14 @@ declare(strict_types=1);
 
 namespace App\RequestHandler;
 
-use App\Users\Signup\SignupService;
-use App\Users\Signup\EmailVerificationService;
 use Clear\Captcha\CaptchaInterface;
 use Clear\Template\TemplateInterface;
-use Clear\Counters\Service as CounterService;
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
-use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
-use InvalidArgumentException;
 use Exception;
 
 /**
@@ -27,28 +22,13 @@ class Signup
     use LoggerTrait;
     use CsrfTrait;
 
-    private ?EmailVerificationService $emailService = null;
     private ?CaptchaInterface $captcha = null;
 
     public function __construct(
-        private SignupService $signupService,
-        private ListenerProviderInterface $eventListener,
-        private CounterService $counters,
         private TemplateInterface $template,
         private SessionInterface $session
     ) {}
 
-    /**
-     * Set email service
-     *
-     * @param EmailVerificationService $emailService
-     * @return self
-     */
-    public function setEmailService(EmailVerificationService $emailService): self
-    {
-        $this->emailService = $emailService;
-        return $this;
-    }
 
     /**
      * Set captcha service
@@ -94,40 +74,22 @@ class Signup
                 } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                     $errors['email'] = 'Invalid email format';
                 } else {
-                    // Create a verification token
-                    $tokenData = $this->signupService->initiateSignup($email);
-
-                    // Send verification email
-                    if ($this->emailService) {
-                        $verificationBaseUrl = $request->getUri()->withPath('/complete-signup')->withQuery('')->withFragment('')->__toString();
-
-                        $emailSent = $this->emailService->sendVerificationEmail(
-                            $email,
-                            $tokenData['token'],
-                            $verificationBaseUrl
-                        );
-
-                        if (!$emailSent) {
-                            throw new Exception('Failed to send verification email');
+                    // Call the API endpoint
+                    $apiResponse = $this->callSignupAPI($request, $email, $data['code'] ?? '', $data['checksum'] ?? '');
+                    
+                    if ($apiResponse['success']) {
+                        // Store email in session temporarily for showing on verification page
+                        $this->session->set('verification_email', $email);
+                        return new RedirectResponse('/verify-email');
+                    } else {
+                        // Handle API errors
+                        if (isset($apiResponse['errors'])) {
+                            $errors = array_merge($errors, $apiResponse['errors']);
+                        } else {
+                            $errors['general'] = $apiResponse['error'] ?? 'An error occurred. Please try again later.';
                         }
                     }
-
-                    // Store email in session temporarily for showing on verification page
-                    $this->session->set('verification_email', $email);
-
-                    // Track signup initiation
-                    // $this->counters->increment('signup_initiated');
-
-                    // Redirect to a "check your email" page or show a success message
-                    // $this->session->setFlash('success', 'Please check your email to verify your address.');
-                    return new RedirectResponse('/verify-email');
                 }
-            } catch (InvalidArgumentException $e) {
-                $errors['email'] = $e->getMessage();
-                $this->logger->notice('Signup error: {message}', [
-                    'message' => $e->getMessage(),
-                    'email' => $data['email'] ?? null,
-                ]);
             } catch (Exception $e) {
                 $errors['general'] = 'An error occurred. Please try again later.';
                 $this->logger->error('Signup error: {message}', [
@@ -151,5 +113,50 @@ class Signup
         
         $html = $tpl->parse();
 
-        return new HtmlResponse($html);}
+        return new HtmlResponse($html);
+    }
+
+    /**
+     * Call the signup API endpoint
+     */
+    private function callSignupAPI(ServerRequestInterface $request, string $email, string $captchaCode, string $captchaChecksum): array
+    {
+        $apiUrl = 'http://phpiko.loc/api/v1/signup';
+
+        $data = [
+            'email' => $email,
+            'captcha_code' => $captchaCode,
+            'captcha_checksum' => $captchaChecksum
+        ];
+
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $apiUrl,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode($data),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json',
+                'Accept: application/json'
+            ],
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CONNECTTIMEOUT => 10
+        ]);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            throw new Exception("cURL error: $error");
+        }
+
+        $responseData = json_decode($response, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new Exception('Invalid JSON response from API');
+        }
+
+        return array_merge($responseData, ['http_code' => $httpCode, 'success' => $httpCode === 200]);
+    }
 }

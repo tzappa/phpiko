@@ -55,15 +55,11 @@ $router->map('*', '/login', function (ServerRequestInterface $request) use ($app
 // Signup routes
 $router->map('*', '/signup', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new Signup(
-        $app->signupService,
-        $app->eventListener,
-        $app->counters,
         $app->template,
         $app->session
     );
     $requestHandler->setLogger($app->logger);
     $requestHandler->setCaptcha($app->captcha);
-    $requestHandler->setEmailService($app->verificationEmailService);
     return $requestHandler->handle($request);
 }, 'signup');
 
