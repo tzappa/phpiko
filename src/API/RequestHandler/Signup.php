@@ -6,7 +6,6 @@ namespace API\RequestHandler;
 
 use App\Users\Signup\SignupService;
 use App\Users\Signup\EmailVerificationService;
-use Clear\Captcha\CaptchaInterface;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,8 +19,6 @@ use Exception;
 class Signup implements RequestHandlerInterface
 {
     private ?EmailVerificationService $emailService = null;
-    private ?CaptchaInterface $captcha = null;
-
     public function __construct(private SignupService $signupService) {}
 
     /**
@@ -30,15 +27,6 @@ class Signup implements RequestHandlerInterface
     public function setEmailService(EmailVerificationService $emailService): self
     {
         $this->emailService = $emailService;
-        return $this;
-    }
-
-    /**
-     * Set captcha service
-     */
-    public function setCaptcha(CaptchaInterface $captcha): self
-    {
-        $this->captcha = $captcha;
         return $this;
     }
 
@@ -57,8 +45,6 @@ class Signup implements RequestHandlerInterface
         }
 
         $email = trim($data['email'] ?? '');
-        $captchaCode = $data['captcha_code'] ?? '';
-        $captchaChecksum = $data['captcha_checksum'] ?? '';
 
         // Validation
         $errors = [];
@@ -67,11 +53,6 @@ class Signup implements RequestHandlerInterface
             $errors['email'] = 'Email is required';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = 'Invalid email format';
-        }
-
-        // CAPTCHA validation if enabled
-        if (!empty($this->captcha) && !$this->captcha->verify($captchaCode, $captchaChecksum)) {
-            $errors['captcha'] = 'Wrong CAPTCHA';
         }
 
         if (!empty($errors)) {

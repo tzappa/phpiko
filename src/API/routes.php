@@ -51,8 +51,7 @@ $api1->map('POST', '/signup', function (ServerRequestInterface $request) use ($a
     $handler = new Signup($signupService);
     
     // Optionally set email service if available in app context
-    // $handler->setEmailService($app->emailService ?? null);
-    // $handler->setCaptcha($app->captcha ?? null);
+    $handler->setEmailService($app->emailService ?? null);
     
     return $handler->handle($request);
 });
