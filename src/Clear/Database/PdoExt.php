@@ -21,9 +21,9 @@ use InvalidArgumentException;
  */
 final class PdoExt extends PDO implements PdoInterface
 {
-    const STATE_READ_ONLY   = 'r';
-    const STATE_READ_WRITE  = 'rw';
-    const STATE_UNAVAILABLE = '-';
+    public const STATE_READ_ONLY   = 'r';
+    public const STATE_READ_WRITE  = 'rw';
+    public const STATE_UNAVAILABLE = '-';
 
     protected ?EventDispatcherInterface $dispatcher = null;
 
@@ -32,7 +32,7 @@ final class PdoExt extends PDO implements PdoInterface
      *
      * @var string
      */
-    private $state = self::STATE_READ_WRITE;
+    private string $state = self::STATE_READ_WRITE;
 
     public function __construct(string $dsn, string $username = '', string $passwd = '', array $options = [])
     {

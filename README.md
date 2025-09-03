@@ -2,11 +2,7 @@
 
 ## Description
 
-Test some AI-generated code.
-
-
 ## Conventions
-
 - psr-1 coding style
 - psr-4 autoloading
 - psr-3 logging interface
@@ -14,4 +10,3 @@ Test some AI-generated code.
 - psr-15 request handler
 - psr-17 server request factory
 - php-pds/skeleton
-- 

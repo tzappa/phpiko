@@ -12,7 +12,7 @@ class Avatar
     public function __construct(private string $name) {}
 
     /**
-     * @return Image
+     *  Image output
      */
     public function make(?string $filename = null)
     {
@@ -101,16 +101,16 @@ class Avatar
     private function calculateTextBox($text, $fontFile, $fontSize, $fontAngle)
     {
         $rect = imagettfbbox($fontSize, $fontAngle, $fontFile, $text);
-        $minX = min(array($rect[0],$rect[2],$rect[4],$rect[6]));
-        $maxX = max(array($rect[0],$rect[2],$rect[4],$rect[6]));
-        $minY = min(array($rect[1],$rect[3],$rect[5],$rect[7]));
-        $maxY = max(array($rect[1],$rect[3],$rect[5],$rect[7]));
+        $minX = min([$rect[0],$rect[2],$rect[4],$rect[6]]);
+        $maxX = max([$rect[0],$rect[2],$rect[4],$rect[6]]);
+        $minY = min([$rect[1],$rect[3],$rect[5],$rect[7]]);
+        $maxY = max([$rect[1],$rect[3],$rect[5],$rect[7]]);
 
-        return array(
+        return [
             'left'   => abs($minX) - 1,
             'top'    => abs($minY) - 1,
             'width'  => $maxX - $minX,
             'height' => $maxY - $minY
-        );
+        ];
     }
 }
