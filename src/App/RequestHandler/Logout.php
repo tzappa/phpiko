@@ -15,7 +15,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Logout
  */
-final class Logout implements RequestHandlerInterface
+class Logout implements RequestHandlerInterface
 {
     use EventDispatcherTrait;
 

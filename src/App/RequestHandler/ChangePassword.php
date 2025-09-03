@@ -21,7 +21,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Change Password Page
  */
-final class ChangePassword implements RequestHandlerInterface
+class ChangePassword implements RequestHandlerInterface
 {
     // Lock the account after 5 failed password change attempts
     private const LOCK_ACCOUNT_AFTER = 5;

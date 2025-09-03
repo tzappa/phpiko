@@ -20,7 +20,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * Reset Password Page
  * Allows users to set a new password using a token
  */
-final class ResetPassword implements RequestHandlerInterface
+class ResetPassword implements RequestHandlerInterface
 {
     use LoggerTrait;
     use CsrfTrait;

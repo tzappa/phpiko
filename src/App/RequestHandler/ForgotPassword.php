@@ -21,7 +21,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * Forgot Password Page
  * Allows users to request a password reset via email
  */
-final class ForgotPassword implements RequestHandlerInterface
+class ForgotPassword implements RequestHandlerInterface
 {
     use LoggerTrait;
     use CsrfTrait;

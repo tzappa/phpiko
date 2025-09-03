@@ -13,7 +13,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Home Page
  */
-final class Home implements RequestHandlerInterface
+class Home implements RequestHandlerInterface
 {
     public function __construct(private TemplateInterface $template)
     {

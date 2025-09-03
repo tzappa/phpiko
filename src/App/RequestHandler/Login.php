@@ -23,7 +23,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Login Page
  */
-final class Login implements RequestHandlerInterface
+class Login implements RequestHandlerInterface
 {
     // Lock the account after 5 failed login attempts
     private const LOCK_ACCOUNT_AFTER = 5;
