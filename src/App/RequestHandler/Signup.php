@@ -123,10 +123,16 @@ class Signup
     {
         $apiUrl = 'http://phpiko.loc/api/v1/signup';
 
+        $verificationBaseUrl = $request->getUri()->getScheme() . '://' . 
+                               $request->getUri()->getHost() . 
+                               (($port = $request->getUri()->getPort()) ? ":$port" : '') . 
+                               '/complete-signup';
+
         $data = [
             'email' => $email,
             'captcha_code' => $captchaCode,
-            'captcha_checksum' => $captchaChecksum
+            'captcha_checksum' => $captchaChecksum,
+            'verification_base_url' => $verificationBaseUrl
         ];
 
         $ch = curl_init();

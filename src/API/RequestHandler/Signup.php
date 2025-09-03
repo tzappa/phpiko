@@ -24,7 +24,7 @@ class Signup implements RequestHandlerInterface
     /**
      * Set email service
      */
-    public function setEmailService(EmailVerificationService $emailService): self
+    public function setEmailService(?EmailVerificationService $emailService): self
     {
         $this->emailService = $emailService;
         return $this;
@@ -45,6 +45,7 @@ class Signup implements RequestHandlerInterface
         }
 
         $email = trim($data['email'] ?? '');
+        $verificationBaseUrl = trim($data['verification_base_url'] ?? '');
 
         // Validation
         $errors = [];
@@ -53,6 +54,12 @@ class Signup implements RequestHandlerInterface
             $errors['email'] = 'Email is required';
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors['email'] = 'Invalid email format';
+        }
+
+        if (empty($verificationBaseUrl)) {
+            $errors['verification_base_url'] = 'Verification base URL is required';
+        } elseif (!filter_var($verificationBaseUrl, FILTER_VALIDATE_URL)) {
+            $errors['verification_base_url'] = 'Invalid verification base URL format';
         }
 
         if (!empty($errors)) {
@@ -65,8 +72,6 @@ class Signup implements RequestHandlerInterface
 
             // Send verification email
             if ($this->emailService) {
-                $verificationBaseUrl = 'http://phpiko.loc/complete-signup';
-
                 $emailSent = $this->emailService->sendVerificationEmail(
                     $email,
                     $tokenData['token'],
