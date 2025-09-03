@@ -62,6 +62,7 @@ $router->map('*', '/signup', function (ServerRequestInterface $request) use ($ap
         $app->session
     );
     $requestHandler->setLogger($app->logger);
+    $requestHandler->setCaptcha($app->captcha);
     $requestHandler->setEmailService($app->verificationEmailService);
     return $requestHandler->handle($request);
 }, 'signup');
@@ -99,6 +100,7 @@ $router->map('*', '/forgot-password', function (ServerRequestInterface $request)
         $app->session
     );
     $requestHandler->setLogger($app->logger);
+    $requestHandler->setCaptcha($app->captcha);
     $requestHandler->setEmailService($app->emailService);
     return $requestHandler->handle($request);
 }, 'forgot-password');

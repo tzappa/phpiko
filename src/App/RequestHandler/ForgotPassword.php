@@ -7,6 +7,7 @@ namespace App\RequestHandler;
 use App\Users\Events\PasswordResetRequestEvent;
 use App\Users\ResetPassword\ResetPasswordService;
 use App\Users\ResetPassword\EmailServiceInterface;
+use Clear\Captcha\CaptchaInterface;
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
 use Clear\Template\TemplateInterface;
@@ -26,6 +27,7 @@ final class ForgotPassword implements RequestHandlerInterface
     use CsrfTrait;
 
     private ?EmailServiceInterface $emailService = null;
+    private ?CaptchaInterface $captcha = null;
 
     public function __construct(
         private ResetPasswordService $resetPasswordService,
@@ -37,6 +39,12 @@ final class ForgotPassword implements RequestHandlerInterface
     public function setEmailService(EmailServiceInterface $emailService): self
     {
         $this->emailService = $emailService;
+        return $this;
+    }
+
+    public function setCaptcha(CaptchaInterface $captcha): self
+    {
+        $this->captcha = $captcha;
         return $this;
     }
 
@@ -62,6 +70,8 @@ final class ForgotPassword implements RequestHandlerInterface
             $data = $request->getParsedBody();
             if (!$this->checkCsrfToken($data['csrf'] ?? '')) {
                 $error = 'Expired or invalid request. Please try again.';
+            } elseif (!empty($this->captcha) && (!$this->captcha->verify($data['code'] ?? '', $data['checksum'] ?? ''))) {
+                $error = 'Wrong CAPTCHA';
             } else {
                 $email = $data['email'] ?? '';
                 $resetError = $this->resetPasswordService->createResetRequest($email, $baseUrl);
@@ -81,6 +91,12 @@ final class ForgotPassword implements RequestHandlerInterface
         $tpl->assign('csrf', $this->generateCsrfToken());
         $tpl->assign('error', $error);
         $tpl->assign('success', $success);
+        
+        if (!empty($this->captcha)) {
+            $this->captcha->create();
+            $tpl->assign('captcha_image', 'data:image/jpeg;base64,' . base64_encode($this->captcha->getImage()));
+            $tpl->assign('captcha_checksum', $this->captcha->getChecksum());
+        }
 
         return new HtmlResponse($tpl->parse());
     }

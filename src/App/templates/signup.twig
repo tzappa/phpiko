@@ -2,6 +2,10 @@
 
 {% block title %}Sign Up{% endblock %}
 
+{% block css %}
+	{{ parent() }}
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <h1 class="mt-4 mb-3">Create an Account</h1>
@@ -33,6 +37,22 @@
                     </div>
                     {% endif %}
                 </div>
+
+                {% if captcha_image and captcha_checksum %}
+                <div class="mb-3 captcha-container">
+                    <input type="hidden" name="checksum" value="{{ captcha_checksum }}"/>
+                    <img src="{{ captcha_image }}" class="captcha-image" alt="CAPTCHA verification code" aria-label="Please enter the code shown in this image"/>
+                    <label for="captcha-code" class="form-label">CAPTCHA code:</label>
+                    <input type="text" name="code" id="captcha-code" class="form-control {% if errors.captcha %}is-invalid{% endif %}" 
+                           required inputmode="numeric" autocomplete="off" 
+                           placeholder="Enter the code shown above" aria-label="CAPTCHA verification code input" value="" />
+                    {% if errors.captcha %}
+                    <div class="invalid-feedback">
+                        {{ errors.captcha }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
 
                 <div class="d-grid gap-2">
                     <button type="submit" class="btn btn-primary">Continue</button>

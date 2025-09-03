@@ -6,6 +6,7 @@ namespace App\RequestHandler;
 
 use App\Users\Signup\SignupService;
 use App\Users\Signup\EmailVerificationService;
+use Clear\Captcha\CaptchaInterface;
 use Clear\Template\TemplateInterface;
 use Clear\Counters\Service as CounterService;
 use Clear\Logger\LoggerTrait;
@@ -27,6 +28,7 @@ class Signup
     use CsrfTrait;
 
     private ?EmailVerificationService $emailService = null;
+    private ?CaptchaInterface $captcha = null;
 
     public function __construct(
         private SignupService $signupService,
@@ -45,6 +47,18 @@ class Signup
     public function setEmailService(EmailVerificationService $emailService): self
     {
         $this->emailService = $emailService;
+        return $this;
+    }
+
+    /**
+     * Set captcha service
+     *
+     * @param CaptchaInterface $captcha
+     * @return self
+     */
+    public function setCaptcha(CaptchaInterface $captcha): self
+    {
+        $this->captcha = $captcha;
         return $this;
     }
 
@@ -73,6 +87,8 @@ class Signup
 
                 if (!$this->checkCsrfToken($data['csrf'] ?? '')) {
                     $errors['csrf'] = 'Expired or invalid request. Please try again.';
+                } elseif (!empty($this->captcha) && (!$this->captcha->verify($data['code'] ?? '', $data['checksum'] ?? ''))) {
+                    $errors['captcha'] = 'Wrong CAPTCHA';
                 } elseif (empty($email)) {
                     $errors['email'] = 'Email is required';
                 } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -126,6 +142,13 @@ class Signup
         $tpl->assign('csrf', $this->generateCsrfToken());
         $tpl->assign('data', $data);
         $tpl->assign('errors', $errors);
+        
+        if (!empty($this->captcha)) {
+            $this->captcha->create();
+            $tpl->assign('captcha_image', 'data:image/jpeg;base64,' . base64_encode($this->captcha->getImage()));
+            $tpl->assign('captcha_checksum', $this->captcha->getChecksum());
+        }
+        
         $html = $tpl->parse();
 
         return new HtmlResponse($html);}
