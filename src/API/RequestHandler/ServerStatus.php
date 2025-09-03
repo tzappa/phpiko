@@ -13,7 +13,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Reports the status of the API server and DB server (connection)
  */
-final class ServerStatus implements RequestHandlerInterface
+class ServerStatus implements RequestHandlerInterface
 {
     private $app;
 
