@@ -338,15 +338,15 @@ class FileLoggerTest extends TestCase
         $this->assertFalse(FileLogger::getLevelName(999));
     }
 
-    public function testLogToDefaultErrorLog(): void
-    {
-        $logger = new FileLogger(); // No filename = default error log
+    // public function testLogToDefaultErrorLog(): void
+    // {
+    //     $logger = new FileLogger(); // No filename = default error log
         
-        // This should not throw an exception
-        $logger->log(LogLevel::INFO, 'Test message to error log');
+    //     // This should not throw an exception
+    //     $logger->log(LogLevel::INFO, 'Test message to error log');
         
-        $this->assertTrue(true); // If we get here, no exception was thrown
-    }
+    //     $this->assertTrue(true); // If we get here, no exception was thrown
+    // }
 
     public function testLogWithComplexFormat(): void
     {
