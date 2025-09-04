@@ -90,6 +90,7 @@ This project strictly follows PSR standards:
 - Strict typing enabled (`declare(strict_types=1)`)
 - Constructor property promotion used where appropriate
 - Grouped use statements by namespace origin
+- Add newline at end of files
 
 ## Key Files
 

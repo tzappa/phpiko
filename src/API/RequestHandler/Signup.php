@@ -19,6 +19,7 @@ use Exception;
 class Signup implements RequestHandlerInterface
 {
     private ?EmailVerificationService $emailService = null;
+
     public function __construct(private SignupService $signupService) {}
 
     /**
