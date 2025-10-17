@@ -42,7 +42,12 @@ class ServerStatus implements RequestHandlerInterface
             ]
         ];
         try {
-            $this->app->database;
+            $db = $this->app->database;
+            if (!$db) {
+                $res['Status']['DB Server'] = 'Fail';
+            } else {
+                $res['Status']['DB Server'] = 'Operational';
+            }
         } catch (Exception $e) {
             $res['Status']['DB Server'] = 'Fail';
         }
