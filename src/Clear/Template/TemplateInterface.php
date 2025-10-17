@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -6,7 +6,8 @@ namespace Clear\Template;
 
 /**
  * Template Interface.
- * Used to make wrappers around different template engines like Twig, Smarty or even STE (Simplete) or plain PHP (HTML) files
+ * Used to make wrappers around different template engines like Twig,
+ * Smarty or even STE (Simplete) or plain PHP (HTML) files
  * Only basic but mandatory methods are defined
  */
 interface TemplateInterface

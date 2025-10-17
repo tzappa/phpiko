@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -35,7 +35,7 @@ class FakeTemplate implements TemplateInterface
         $this->loadedTemplate = $name;
         $this->container = [];
 
-    	return $this;
+        return $this;
     }
 
     /**
