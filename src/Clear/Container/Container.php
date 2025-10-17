@@ -175,7 +175,10 @@ final class Container implements ArrayAccess, ContainerInterface
             return null;
         }
 
-        if (is_object($this->definitions[$idOrClosure]) && method_exists($this->definitions[$idOrClosure], '__invoke')) {
+        if (
+            is_object($this->definitions[$idOrClosure])
+            && method_exists($this->definitions[$idOrClosure], '__invoke')
+        ) {
             return $this->definitions[$idOrClosure]($this);
         }
 
