@@ -18,7 +18,7 @@ final class AfterQuery extends PdoEvent
      * @param PDOStatement|false  $statement   The resulting PDOStatement or false on failure.
      */
     public function __construct(
-        private readonly string $queryString, 
+        private readonly string $queryString,
         private readonly PDOStatement|false $statement
     ) {
         parent::__construct('AfterQuery');

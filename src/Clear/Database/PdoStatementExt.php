@@ -16,7 +16,9 @@ use PDOException;
  */
 final class PdoStatementExt extends PDOStatement implements PdoStatementInterface
 {
-    protected function __construct(private PdoExt $connection, private ?EventDispatcherInterface $dispatcher) {}
+    protected function __construct(private PdoExt $connection, private ?EventDispatcherInterface $dispatcher)
+    {
+    }
 
     /**
      * {@inheritDoc}

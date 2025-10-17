@@ -52,7 +52,7 @@ final class PdoExt extends PDO implements PdoInterface
     public function setEventDispatcher(?EventDispatcherInterface $dispatcher): void
     {
         $this->dispatcher = $dispatcher;
-        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('\Clear\Database\PdoStatementExt', array($this, $this->dispatcher)));
+        $this->setAttribute(PDO::ATTR_STATEMENT_CLASS, ['\Clear\Database\PdoStatementExt', [$this, $this->dispatcher]]);
     }
 
     /**
@@ -121,7 +121,10 @@ final class PdoExt extends PDO implements PdoInterface
         if (self::STATE_UNAVAILABLE === $this->state) {
             return false;
         }
-        return ! preg_match("/^(ALTER|CREATE|DELETE|DROP|GRANT|INSERT|RENAME|REVOKE|TRUNCATE|UPDATE)\s/i", trim($queryString));
+        return ! preg_match(
+            "/^(ALTER|CREATE|DELETE|DROP|GRANT|INSERT|RENAME|REVOKE|TRUNCATE|UPDATE)\s/i",
+            trim($queryString)
+        );
     }
 
     private function dispatch(object $event): void

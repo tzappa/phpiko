@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -56,7 +56,7 @@ trait MiddlewareTrait
             return $res;
         }
         if (is_string($middleware)) {
-            $middleware = new $middleware;
+            $middleware = new $middleware();
         }
         if ($middleware instanceof MiddlewareInterface) {
             if ($handler instanceof RequestHandlerInterface) {

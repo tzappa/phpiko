@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -13,7 +13,6 @@ final class LazyMiddleware implements MiddlewareInterface
 {
     public function __construct(private $callback)
     {
-
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

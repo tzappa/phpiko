@@ -11,7 +11,9 @@ use Psr\EventDispatcher\StoppableEventInterface;
  */
 class PdoEvent implements StoppableEventInterface
 {
-    public function __construct(private readonly string $eventType) {}
+    public function __construct(private readonly string $eventType)
+    {
+    }
 
     /**
      * Get the event type.

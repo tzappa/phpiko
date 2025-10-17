@@ -6,4 +6,6 @@ namespace Clear\Http;
 
 use Clear\Http\Exception\NotFoundException;
 
-class ContinueException extends NotFoundException {}
+class ContinueException extends NotFoundException
+{
+}

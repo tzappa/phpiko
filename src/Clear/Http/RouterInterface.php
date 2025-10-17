@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -16,8 +16,9 @@ interface RouterInterface
      *      To accept any method, use '*'.
      *
      * @param string   $path     URI path or pattern
-     *      The pattern ca be simple uri path like '/hello/world'
-     *      or a complex pattern containing dynamic segments like '/hello/{name}' or '/article/{id:\d+}-{slug:[a-z\-]+]}'
+     *      The pattern can be simple uri path like '/hello/world'
+     *      or a complex pattern containing dynamic segments like '/hello/{name}'
+     *      or '/article/{id:\d+}-{slug:[a-z\-]+]}'
      *
      * @param callable $handler  The callback function that will be called when the route matches
      * @param string   $name     Route name e.g. 'home'. If not empty, the route
