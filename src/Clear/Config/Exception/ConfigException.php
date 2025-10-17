@@ -10,4 +10,6 @@ use RuntimeException;
  * Base exception class.
  * Specific exceptions are based on this exception/
  */
-class ConfigException extends RuntimeException {}
+class ConfigException extends RuntimeException
+{
+}

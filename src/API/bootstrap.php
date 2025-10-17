@@ -38,7 +38,7 @@ $app->env = function () {
     return getenv('APPLICATION_ENV') ?: 'production';
 };
 
-// Configurations
+// Load configurations
 $app->config = ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . strtolower($app->name) . '.php');
 
 // Timezone settings
