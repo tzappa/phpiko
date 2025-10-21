@@ -199,7 +199,9 @@ class Route implements RequestHandlerInterface
         if (empty($this->acceptedMethods)) {
             return true;
         }
-
+        if ($requestMethod === 'HEAD') {
+            $requestMethod = 'GET';
+        }
         return in_array($requestMethod, $this->acceptedMethods);
     }
 
