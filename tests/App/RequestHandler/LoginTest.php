@@ -48,6 +48,10 @@ class LoginTest extends TestCase
         $constructor = $reflection->getConstructor();
 
         $this->assertNotNull($constructor, 'Login class should have a constructor');
-        $this->assertEquals(5, $constructor->getNumberOfRequiredParameters(), 'Login constructor should have 5 required parameters');
+        $this->assertEquals(
+            5,
+            $constructor->getNumberOfRequiredParameters(),
+            'Login constructor should have 5 required parameters'
+        );
     }
 }

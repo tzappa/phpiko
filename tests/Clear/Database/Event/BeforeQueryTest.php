@@ -80,7 +80,11 @@ class BeforeQueryTest extends TestCase
 
     public function testComplexQueryString(): void
     {
-        $complexQuery = 'SELECT u.*, p.title FROM users u LEFT JOIN posts p ON u.id = p.user_id WHERE u.active = 1 AND p.published_at > ? ORDER BY u.created_at DESC LIMIT 10';
+        $complexQuery = 'SELECT u.*, p.title
+            FROM users u
+            LEFT JOIN posts p ON u.id = p.user_id
+            WHERE u.active = ? AND p.published_at > ?
+            ORDER BY u.created_at DESC LIMIT 10';
         $event = new BeforeQuery($complexQuery);
 
         $this->assertEquals($complexQuery, $event->getQueryString());

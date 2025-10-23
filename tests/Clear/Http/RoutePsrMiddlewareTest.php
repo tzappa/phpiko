@@ -15,8 +15,10 @@ use PHPUnit\Framework\TestCase;
 
 class CheckLoginRequired implements MiddlewareInterface
 {
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-    {
+    public function process(
+        ServerRequestInterface $request,
+        RequestHandlerInterface $handler
+    ): ResponseInterface {
         if (empty($request->getAttribute('user_id'))) {
             return new Response('Login required');
         }

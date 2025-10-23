@@ -81,7 +81,12 @@ class BeforeExecTest extends TestCase
 
     public function testComplexQueryString(): void
     {
-        $complexQuery = 'SELECT u.*, p.title, c.name as category_name FROM users u LEFT JOIN posts p ON u.id = p.user_id LEFT JOIN categories c ON p.category_id = c.id WHERE u.active = 1 AND p.published_at > ? ORDER BY u.created_at DESC LIMIT 10';
+        $complexQuery = 'SELECT u.*, p.title, c.name as category_name
+            FROM users u
+            LEFT JOIN posts p ON u.id = p.user_id
+            LEFT JOIN categories c ON p.category_id = c.id
+            WHERE u.active = ? AND p.published_at > ?
+            ORDER BY u.created_at DESC LIMIT 10';
         $event = new BeforeExec($complexQuery);
 
         $this->assertEquals($complexQuery, $event->getQueryString());
@@ -106,7 +111,8 @@ class BeforeExecTest extends TestCase
 
     public function testMultiStatementQuery(): void
     {
-        $multiQuery = 'CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT); INSERT INTO users (name) VALUES ("John"); SELECT * FROM users;';
+        $multiQuery = 'CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT);
+            INSERT INTO users (name) VALUES ("John"); SELECT * FROM users;';
         $event = new BeforeExec($multiQuery);
 
         $this->assertEquals($multiQuery, $event->getQueryString());

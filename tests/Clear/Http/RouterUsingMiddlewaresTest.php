@@ -1,18 +1,17 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Router Tests with middlewares
  *
  * @package Clear
  */
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
 use Clear\Http\Router;
 use Clear\Http\Route;
-use Clear\Http\Exception\NotFoundException;
 use Laminas\Diactoros\ServerRequestFactory as RequestFactory;
 use Laminas\Diactoros\Response\TextResponse;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -177,14 +176,20 @@ class RouterUsingMiddlewaresTest extends TestCase
         $router = new Router();
         $group = $router->group('/group1');
         $group->middleware(new class implements MiddlewareInterface {
-            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-            {
-                return $handler->handle($request)->withAddedHeader('X-Group1', 'm1')->withAddedHeader('X-All', 'g1m1');
+            public function process(
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler
+            ): ResponseInterface {
+                return $handler->handle($request)
+                    ->withAddedHeader('X-Group1', 'm1')
+                    ->withAddedHeader('X-All', 'g1m1');
             }
         });
         $group->middleware(new class implements MiddlewareInterface {
-            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-            {
+            public function process(
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler
+            ): ResponseInterface {
                 return $handler->handle($request)->withAddedHeader('X-Group1', 'm2')->withAddedHeader('X-All', 'g1m2');
             }
         });
@@ -192,14 +197,18 @@ class RouterUsingMiddlewaresTest extends TestCase
         // $group2 = $group->group('/group{id:\d+}');
         $group2 = $group->group('/group2');
         $group2->middleware(new class implements MiddlewareInterface {
-            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-            {
+            public function process(
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler
+            ): ResponseInterface {
                 return $handler->handle($request)->withAddedHeader('X-Group2', 'm1')->withAddedHeader('X-All', 'g2m1');
             }
         });
         $group2->middleware(new class implements MiddlewareInterface {
-            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-            {
+            public function process(
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler
+            ): ResponseInterface {
                 return $handler->handle($request)->withAddedHeader('X-Group2', 'm2')->withAddedHeader('X-All', 'g2m2');
             }
         });
@@ -209,14 +218,18 @@ class RouterUsingMiddlewaresTest extends TestCase
         });
 
         $route->middleware(new class implements MiddlewareInterface {
-            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-            {
+            public function process(
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler
+            ): ResponseInterface {
                 return $handler->handle($request)->withAddedHeader('X-Route', 'm1')->withAddedHeader('X-All', 'r1m1');
             }
         });
         $route->middleware(new class implements MiddlewareInterface {
-            public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
-            {
+            public function process(
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler
+            ): ResponseInterface {
                 return $handler->handle($request)->withAddedHeader('X-Route', 'm2')->withAddedHeader('X-All', 'r1m2');
             }
         });

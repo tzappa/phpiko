@@ -75,7 +75,7 @@ $app->database = function () use ($app) {
         $db = new PDO($dsn, $app->config->get('database.user', ''), $app->config->get('database.pass', ''), $options);
     } catch (PDOException $e) {
         $app->logger->log('emergency', 'PDOException: ' . $e->getMessage());
-        exit;
+        return null;
     }
 
     // Sets the Database connection to be on read/write or only in read mode.

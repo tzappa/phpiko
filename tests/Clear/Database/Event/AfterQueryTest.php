@@ -108,7 +108,11 @@ class AfterQueryTest extends TestCase
 
     public function testComplexQueryString(): void
     {
-        $complexQuery = 'SELECT u.*, p.title FROM users u LEFT JOIN posts p ON u.id = p.user_id WHERE u.active = 1 ORDER BY u.created_at DESC LIMIT 10';
+        $complexQuery = 'SELECT u.*, p.title
+            FROM users u
+            LEFT JOIN posts p ON u.id = p.user_id
+            WHERE u.active = 1
+            ORDER BY u.created_at DESC LIMIT 10';
         $event = new AfterQuery($complexQuery, $this->statement);
 
         $this->assertEquals($complexQuery, $event->getQueryString());

@@ -1,12 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Check the route can build the URI path
  *
  * @package Clear
  */
+
+declare(strict_types=1);
 
 namespace Tests\Http;
 

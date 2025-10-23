@@ -121,7 +121,11 @@ class AfterExecTest extends TestCase
 
     public function testComplexQueryString(): void
     {
-        $complexQuery = 'SELECT u.*, p.title FROM users u LEFT JOIN posts p ON u.id = p.user_id WHERE u.active = 1 ORDER BY u.created_at DESC LIMIT 10';
+        $complexQuery = 'SELECT u.*, p.title
+            FROM users u
+            LEFT JOIN posts p ON u.id = p.user_id
+            WHERE u.active = ?
+            ORDER BY u.created_at DESC LIMIT 10';
         $result = 5;
         $event = new AfterExec($complexQuery, $result);
 
@@ -167,7 +171,8 @@ class AfterExecTest extends TestCase
 
     public function testMultiStatementQuery(): void
     {
-        $multiQuery = 'CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT); INSERT INTO users (name) VALUES ("John"); SELECT * FROM users;';
+        $multiQuery = 'CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT);
+            INSERT INTO users (name) VALUES ("John"); SELECT * FROM users;';
         $result = 1;
         $event = new AfterExec($multiQuery, $result);
 

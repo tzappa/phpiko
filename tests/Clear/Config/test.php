@@ -1,11 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Demo file for PHP Config
+ *
  * @package Clear
  */
+
+declare(strict_types=1);
 
 return [
     "str"     => "value",

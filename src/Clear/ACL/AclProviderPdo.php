@@ -38,8 +38,12 @@ final class AclProviderPdo implements AclProviderInterface
      *
      * @param string $table
      */
-    public function setTableNames(string $permissions = 'acl_permissions', string $roles = 'acl_roles', string $rolePermissions = 'acl_role_permissions', string $grants = 'acl_grants')
-    {
+    public function setTableNames(
+        string $permissions = 'acl_permissions',
+        string $roles = 'acl_roles',
+        string $rolePermissions = 'acl_role_permissions',
+        string $grants = 'acl_grants'
+    ): void {
         // start with letter or underscore then letter, number or underscore
         $regEx = '/\G[a-zA-Z_][a-zA-Z0-9_]*\Z/';
         if (!preg_match($regEx, $permissions)) {

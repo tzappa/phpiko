@@ -38,7 +38,10 @@ class SlugTest extends TestCase
 
     public function testTransliterateCyrillic()
     {
-        $this->assertEquals('lisa-an-lisa-ann-ah-kakva-sam-antilopa-gazela-s-nay-yakata', Slug::fromText('Лиса -Ан(Lisa-Ann)! Ах каква съм антилопа, гъзела... с най-яката'));
+        $this->assertEquals(
+            'lisa-an-lisa-ann-ah-kakva-sam-antilopa-gazela-s-nay-yakata',
+            Slug::fromText('Лиса -Ан(Lisa-Ann)! Ах каква съм антилопа, гъзела... с най-яката')
+        );
     }
 
     public function testDoubleCyrillicToOneLatin()

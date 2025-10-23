@@ -168,7 +168,11 @@ class AfterExecuteTest extends TestCase
 
     public function testComplexQueryWithParams(): void
     {
-        $complexQuery = 'SELECT u.*, p.title FROM users u LEFT JOIN posts p ON u.id = p.user_id WHERE u.active = ? AND p.published_at > ? ORDER BY u.created_at DESC LIMIT ?';
+        $complexQuery = 'SELECT u.*, p.title
+            FROM users u
+            LEFT JOIN posts p ON u.id = p.user_id
+            WHERE u.active = ? AND p.published_at > ?
+            ORDER BY u.created_at DESC LIMIT ?';
         $params = [true, '2023-01-01', 10];
         $event = new AfterExecute($complexQuery, $params, true);
 

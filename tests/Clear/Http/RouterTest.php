@@ -1,26 +1,28 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Router Tests
  *
  * @package Clear
  */
 
+declare(strict_types=1);
+
 namespace Tests\Http;
 
 use Clear\Http\Router;
 use Clear\Http\Exception\NotFoundException;
-use Psr\Http\Message\ServerRequestInterface;
+use Clear\Http\HttpException;
 use Laminas\Diactoros\ServerRequestFactory as RequestFactory;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 #[CoversClass(Router::class)]
 #[CoversClass(\Clear\Http\Route::class)]
-#[CoversClass(\Clear\Http\Exception\NotFoundException::class)]
-#[CoversClass(\Clear\Http\HttpException::class)]
+#[CoversClass(NotFoundException::class)]
+#[CoversClass(HttpException::class)]
 class RouterTest extends TestCase
 {
     public function testRouteMatch()
@@ -171,7 +173,7 @@ class RouterTest extends TestCase
     public function testRouterWithRequestHandlerInterface()
     {
         $class = new class implements \Psr\Http\Server\RequestHandlerInterface {
-            public function handle(\Psr\Http\Message\ServerRequestInterface $request): \Psr\Http\Message\ResponseInterface
+            public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 return new \Laminas\Diactoros\Response\TextResponse('Hello World');
             }
@@ -185,7 +187,7 @@ class RouterTest extends TestCase
     public function testRouterWithCallbackReturningRequestHandlerInterface()
     {
         $class = new class implements \Psr\Http\Server\RequestHandlerInterface {
-            public function handle(\Psr\Http\Message\ServerRequestInterface $request): \Psr\Http\Message\ResponseInterface
+            public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 return new \Laminas\Diactoros\Response\TextResponse('Hello World');
             }

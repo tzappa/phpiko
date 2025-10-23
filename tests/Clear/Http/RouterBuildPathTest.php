@@ -1,12 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Check the route can build the URI path
  *
  * @package Clear
  */
+
+declare(strict_types=1);
 
 namespace Tests\Http;
 
@@ -55,16 +55,26 @@ class RouterBuildPathTest extends TestCase
     public function testBuildPathOnDynamicWithRegEx()
     {
         $router = new Router();
-        $router->map('GET', '/post/{id:\d+}-{slug:[a-z0-9_\-]+}.html', function () {
-        }, 'post');
+        $router->map(
+            'GET',
+            '/post/{id:\d+}-{slug:[a-z0-9_\-]+}.html',
+            function () {
+            },
+            'post'
+        );
         $this->assertEquals('/post/42-clear-router.html', $router->buildPath('post', ['id' => '42', 'slug' => 'clear-router']));
     }
 
     public function testBuildPathThrowsExceptionWhenParamValueDoesntMatchRegex()
     {
         $router = new Router();
-        $router->map('GET', '/post/{id:\d+}-{slug:[a-z0-9_\-]+}.html', function () {
-        }, 'post');
+        $router->map(
+            'GET',
+            '/post/{id:\d+}-{slug:[a-z0-9_\-]+}.html',
+            function () {
+            },
+            'post'
+        );
         $this->expectException(\InvalidArgumentException::class);
         $router->buildPath('post', ['id' => 'word', 'slug' => 'clear-router']);
     }

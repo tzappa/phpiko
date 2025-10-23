@@ -1,12 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * Router Tests
  *
  * @package Clear
  */
+
+declare(strict_types=1);
 
 namespace Tests\Http;
 
