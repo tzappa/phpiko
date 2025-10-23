@@ -35,7 +35,9 @@ class RoleCollectionTest extends TestCase
 
     public function testOffsetSet()
     {
-        $rc = new RoleCollection([new Role(1, 'Manage Users', new PermissionCollection()), new Role(3, 'Statistics', new PermissionCollection())]);
+        $permissionCollection = new PermissionCollection();
+        $role = new Role(3, 'Statistics', $permissionCollection);
+        $rc = new RoleCollection([new Role(1, 'Manage Users', $permissionCollection), $role]);
         $rc["foo"] = new Role(2, 'Foo', new PermissionCollection());
         $this->assertEquals(3, count($rc));
     }

@@ -283,7 +283,9 @@ class CheckPasswordStrengthTest extends TestCase
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
-        $this->assertEquals($expectedLabel, $data['strengthLabel'], "Score $score should map to $expectedLabel");
-        $this->assertEquals($expectedLabel, $data['feedback'], "Feedback should be $expectedLabel when no warning provided");
+        $message = "Score $score should map to $expectedLabel";
+        $this->assertEquals($expectedLabel, $data['strengthLabel'], $message);
+        $message = "Feedback should be $expectedLabel when no warning provided";
+        $this->assertEquals($expectedLabel, $data['feedback'], $message);
     }
 }

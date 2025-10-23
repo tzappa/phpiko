@@ -93,23 +93,23 @@ INSERT INTO acl_permissions (id, object, operation) VALUES (6,  'Users', 'assign
 INSERT INTO acl_permissions (id, object, operation) VALUES (7,  'Roles', 'list');
 INSERT INTO acl_permissions (id, object, operation) VALUES (8,  'Roles', 'manage');
 INSERT INTO acl_permissions (id, object, operation) VALUES (9,  'Users', 'login-as');
-INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (1,  1, 1);  -- 'Manage Users' can List Users
-INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (2,  1, 2);  -- 'Manage Users' can Change State for Users
-INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (3,  1, 3);  -- 'Manage Users' can Create Users
-INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (4,  1, 4);  -- 'Manage Users' can Edit Users
-INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (5,  1, 5);  -- 'Manage Users' can Delete Users
-INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (6,  1, 6);  -- 'Manage Users' can Assign user to a role
-INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (7,  1, 7);  -- 'Manage Users' can List Roles
-INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (8,  2, 1);  -- 'Statistics' can List Users
-INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (9,  2, 7);  -- 'Statistics' can List Roles
-INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (10, 3, 9);  -- 'Login As' role to Login as user
-INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (11, 4, 7);  -- 'Manage Roles' can List Roles
-INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (12, 4, 8);  -- 'Manage Roles' can edit role, add/remove permissions for a role
-INSERT INTO acl_grants (id, ref_id, role_id) VALUES (1, {$this->user3}, 1); -- user 3 can 'Manage Users'
-INSERT INTO acl_grants (id, ref_id, role_id) VALUES (2, {$this->user3}, 2); -- user 3 can 'Statistics'
-INSERT INTO acl_grants (id, ref_id, role_id) VALUES (3, {$this->user1}, 2); -- user 1 can use 'Statistics'
-INSERT INTO acl_grants (id, ref_id, role_id) VALUES (4, {$this->user3}, 3); -- user 3 can 'Login as'
-INSERT INTO acl_grants (id, ref_id, role_id) VALUES (5, {$this->user3}, 4); -- user 3 can 'Manage Roles'
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (1,  1, 1);
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (2,  1, 2);
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (3,  1, 3);
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (4,  1, 4);
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (5,  1, 5);
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (6,  1, 6);
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (7,  1, 7);
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (8,  2, 1);
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (9,  2, 7);
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (10, 3, 9);
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (11, 4, 7);
+INSERT INTO acl_role_permissions (id, role_id, permission_id) VALUES (12, 4, 8);
+INSERT INTO acl_grants (id, ref_id, role_id) VALUES (1, {$this->user3}, 1);
+INSERT INTO acl_grants (id, ref_id, role_id) VALUES (2, {$this->user3}, 2);
+INSERT INTO acl_grants (id, ref_id, role_id) VALUES (3, {$this->user1}, 2);
+INSERT INTO acl_grants (id, ref_id, role_id) VALUES (4, {$this->user3}, 3);
+INSERT INTO acl_grants (id, ref_id, role_id) VALUES (5, {$this->user3}, 4);
         ";
         $db->exec($schema);
         $db->exec($data);
