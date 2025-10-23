@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(\Clear\Config\Parser\AbstractFileReader::class)]
 class FactoryTest extends TestCase
 {
-    public function testCreateFromArray()
+    public function testCreateFromArray(): void
     {
         $data = [
             'key' => 'value',
@@ -38,7 +38,7 @@ class FactoryTest extends TestCase
         $this->assertSame('subvalue', $config->get('nested.subkey'));
     }
 
-    public function testCreateFromIniFile()
+    public function testCreateFromIniFile(): void
     {
         $config = Factory::create(__DIR__ . '/Parser/test.ini');
 
@@ -47,7 +47,7 @@ class FactoryTest extends TestCase
         $this->assertSame('mysql', $config->get('db.type'));
     }
 
-    public function testCreateFromJsonFile()
+    public function testCreateFromJsonFile(): void
     {
         $config = Factory::create(__DIR__ . '/Parser/test.json');
 
@@ -56,7 +56,7 @@ class FactoryTest extends TestCase
         $this->assertSame('mysql', $config->get('db.type'));
     }
 
-    public function testCreateFromPhpFile()
+    public function testCreateFromPhpFile(): void
     {
         $config = Factory::create(__DIR__ . '/test_config.php');
 
@@ -65,7 +65,7 @@ class FactoryTest extends TestCase
         $this->assertSame('mysql', $config->get('db.type'));
     }
 
-    public function testCreateFromFileWithoutExtension()
+    public function testCreateFromFileWithoutExtension(): void
     {
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('Unavailable file');
@@ -73,7 +73,7 @@ class FactoryTest extends TestCase
         Factory::create(__DIR__ . '/test');
     }
 
-    public function testCreateFromUnsupportedFileExtension()
+    public function testCreateFromUnsupportedFileExtension(): void
     {
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('Parser unavailable for file with extension xml');
@@ -89,7 +89,7 @@ class FactoryTest extends TestCase
         }
     }
 
-    public function testCreateFromNonExistentFile()
+    public function testCreateFromNonExistentFile(): void
     {
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('Unavailable file');
@@ -97,7 +97,7 @@ class FactoryTest extends TestCase
         Factory::create('/non/existent/file.ini');
     }
 
-    public function testCreateFromNonFile()
+    public function testCreateFromNonFile(): void
     {
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('Unavailable file');
@@ -105,7 +105,7 @@ class FactoryTest extends TestCase
         Factory::create(__DIR__); // Directory, not file
     }
 
-    public function testCreateFromString()
+    public function testCreateFromString(): void
     {
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('Unavailable file');
@@ -113,28 +113,28 @@ class FactoryTest extends TestCase
         Factory::create('just a string');
     }
 
-    public function testCreateFromNull()
+    public function testCreateFromNull(): void
     {
         $this->expectException(\TypeError::class);
 
         Factory::create(null);
     }
 
-    public function testCreateFromBoolean()
+    public function testCreateFromBoolean(): void
     {
         $this->expectException(\TypeError::class);
 
         Factory::create(true);
     }
 
-    public function testCreateFromInteger()
+    public function testCreateFromInteger(): void
     {
         $this->expectException(\TypeError::class);
 
         Factory::create(123);
     }
 
-    public function testCreateFromObject()
+    public function testCreateFromObject(): void
     {
         $this->expectException(\TypeError::class);
 

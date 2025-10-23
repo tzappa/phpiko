@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Route::class)]
 class RouteMatchTest extends TestCase
 {
-    public function testRoot()
+    public function testRoot(): void
     {
         $route = new Route('GET', '/', function () {
             //
@@ -25,7 +25,7 @@ class RouteMatchTest extends TestCase
         $this->assertTrue($route->match('GET', '/'));
     }
 
-    public function testFailsIfMethodDoesNotMatch()
+    public function testFailsIfMethodDoesNotMatch(): void
     {
         $route = new Route('GET', '/', function () {
             //
@@ -33,7 +33,7 @@ class RouteMatchTest extends TestCase
         $this->assertFalse($route->match('POST', '/'));
     }
 
-    public function testFailsIfPathDoesNotMatch()
+    public function testFailsIfPathDoesNotMatch(): void
     {
         $route = new Route('GET', '/foo', function () {
             //
@@ -41,7 +41,7 @@ class RouteMatchTest extends TestCase
         $this->assertFalse($route->match('GET', '/bar'));
     }
 
-    public function testMatchNotRootPath()
+    public function testMatchNotRootPath(): void
     {
         $route = new Route('GET', '/user', function () {
             //
@@ -52,7 +52,7 @@ class RouteMatchTest extends TestCase
         $this->assertFalse($route->match('GET', '/user/42'));
     }
 
-    public function testMatchNotRootPathWithPostMethod()
+    public function testMatchNotRootPathWithPostMethod(): void
     {
 
         $route = new Route('POST', '/user', function () {
@@ -66,7 +66,7 @@ class RouteMatchTest extends TestCase
         $this->assertFalse($route->match('GET', '/user/42'));
     }
 
-    public function testMatchAcceptAllMethods()
+    public function testMatchAcceptAllMethods(): void
     {
 
         $route = new Route('*', '/user', function () {
@@ -80,7 +80,7 @@ class RouteMatchTest extends TestCase
         $this->assertFalse($route->match('GET', '/user/42'));
     }
 
-    public function testRouteMatchWithMultipleMethods()
+    public function testRouteMatchWithMultipleMethods(): void
     {
         $route = new Route('GET|POST', '/user', function () {
             //
@@ -93,7 +93,7 @@ class RouteMatchTest extends TestCase
         $this->assertFalse($route->match('DELETE', '/user/42'));
     }
 
-    public function testRouteMethodIsCaseSensitive()
+    public function testRouteMethodIsCaseSensitive(): void
     {
         $route = new Route('get', '/', function () {
             //
@@ -110,7 +110,7 @@ class RouteMatchTest extends TestCase
         $this->assertFalse($route->match('POST', '/user'));
     }
 
-    public function testRouteMatchDynamicParams()
+    public function testRouteMatchDynamicParams(): void
     {
         $route = new Route('GET', '/user/{id}', function () {
             //
@@ -137,7 +137,7 @@ class RouteMatchTest extends TestCase
         $this->assertFalse($route->match('GET', '/user/42/43'));
     }
 
-    public function testRouteMethodCannotBeEmpty()
+    public function testRouteMethodCannotBeEmpty(): void
     {
 
         $this->expectException(\InvalidArgumentException::class);
@@ -147,7 +147,7 @@ class RouteMatchTest extends TestCase
         });
     }
 
-    public function testRouteMatchSeveralDynamicParams()
+    public function testRouteMatchSeveralDynamicParams(): void
     {
         $route = new Route('GET', '/user/{id}/post/{post}', function () {
             //
@@ -168,7 +168,7 @@ class RouteMatchTest extends TestCase
         $this->assertFalse($route->match('GET', '/user/42/post/1/2'));
     }
 
-    public function testRouteMatchSeveralDynamicParamsInOneSegment()
+    public function testRouteMatchSeveralDynamicParamsInOneSegment(): void
     {
         $route = new Route('GET', '/user/{id}-{post}', function () {
             //
@@ -188,7 +188,7 @@ class RouteMatchTest extends TestCase
         $this->assertFalse($route->match('GET', '/user/42-1/1-2'));
     }
 
-    public function testRouteMatchDynamicParamsWithRegex()
+    public function testRouteMatchDynamicParamsWithRegex(): void
     {
         $route = new Route('GET', '/user/{id:\d+}', function () {
             //
@@ -213,7 +213,7 @@ class RouteMatchTest extends TestCase
         $this->assertFalse($route->match('GET', '/user/42/43'));
     }
 
-    public function testRouteMatchSeveralDynamicParamsWithRegex()
+    public function testRouteMatchSeveralDynamicParamsWithRegex(): void
     {
         $route = new Route('GET', '/post/{id:\d+}-{name:[a-z\-]+}', function () {
             //

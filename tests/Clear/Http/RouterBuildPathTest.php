@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(\Clear\Http\Route::class)]
 class RouterBuildPathTest extends TestCase
 {
-    public function testRouteBuildOnNoDynamicPaths()
+    public function testRouteBuildOnNoDynamicPaths(): void
     {
         $router = new Router();
         $router->map('GET', '/', function () {
@@ -26,7 +26,7 @@ class RouterBuildPathTest extends TestCase
         $this->assertEquals('/', $router->buildPath('home'));
     }
 
-    public function testRouteBuildOnDynamicPaths()
+    public function testRouteBuildOnDynamicPaths(): void
     {
         $router = new Router();
         $router->map('GET', '/hello/{name}/{surname}', function () {
@@ -34,7 +34,7 @@ class RouterBuildPathTest extends TestCase
         $this->assertEquals('/hello/John/Doe', $router->buildPath('hello', ['name' => 'John', 'surname' => 'Doe']));
     }
 
-    public function testBuildPathThrowsExceptionIfNotEnougthParams()
+    public function testBuildPathThrowsExceptionIfNotEnougthParams(): void
     {
         $router = new Router();
         $router->map('GET', '/hello/{name}/{surname}', function () {
@@ -43,7 +43,7 @@ class RouterBuildPathTest extends TestCase
         $router->buildPath('hello', ['name' => 'John']);
     }
 
-    public function testBuildPathThrowsExceptionIfNotEnougthParams2()
+    public function testBuildPathThrowsExceptionIfNotEnougthParams2(): void
     {
         $router = new Router();
         $router->map('GET', '/hello/{name}/{surname}', function () {
@@ -52,7 +52,7 @@ class RouterBuildPathTest extends TestCase
         $router->buildPath('hello', ['surname' => 'Doe']);
     }
 
-    public function testBuildPathOnDynamicWithRegEx()
+    public function testBuildPathOnDynamicWithRegEx(): void
     {
         $router = new Router();
         $router->map(
@@ -65,7 +65,7 @@ class RouterBuildPathTest extends TestCase
         $this->assertEquals('/post/42-clear-router.html', $router->buildPath('post', ['id' => '42', 'slug' => 'clear-router']));
     }
 
-    public function testBuildPathThrowsExceptionWhenParamValueDoesntMatchRegex()
+    public function testBuildPathThrowsExceptionWhenParamValueDoesntMatchRegex(): void
     {
         $router = new Router();
         $router->map(
@@ -79,7 +79,7 @@ class RouterBuildPathTest extends TestCase
         $router->buildPath('post', ['id' => 'word', 'slug' => 'clear-router']);
     }
 
-    public function testBuildRoute()
+    public function testBuildRoute(): void
     {
         $router = new Router();
         $router->map('GET', '/users', function ($request) {
@@ -88,7 +88,7 @@ class RouterBuildPathTest extends TestCase
         $this->assertEquals('/users', $router->buildPath('users'));
     }
 
-    public function testBuildRouteWithParams()
+    public function testBuildRouteWithParams(): void
     {
         $router = new Router();
         $router->map('GET', '/users/{id:\d+}', function ($request) {
@@ -97,7 +97,7 @@ class RouterBuildPathTest extends TestCase
         $this->assertEquals('/users/42', $router->buildPath('users', ['id' => 42]));
     }
 
-    public function testBuildRouteWithParamsExceptionOnMissingParam()
+    public function testBuildRouteWithParamsExceptionOnMissingParam(): void
     {
         $router = new Router();
         $router->map('GET', '/users/{id:\d+}', function ($request) {
@@ -107,7 +107,7 @@ class RouterBuildPathTest extends TestCase
         $router->buildPath('users');
     }
 
-    public function testBuildRouteWithParamsExceptionOnWrongParamValue()
+    public function testBuildRouteWithParamsExceptionOnWrongParamValue(): void
     {
         $router = new Router();
         $router->map('GET', '/users/{id:\d+}', function ($request) {
@@ -117,7 +117,7 @@ class RouterBuildPathTest extends TestCase
         $router->buildPath('users', ['name' => 'John']);
     }
 
-    public function testRouteNameNotFound()
+    public function testRouteNameNotFound(): void
     {
         $router = new Router();
         $this->expectException(\Exception::class);

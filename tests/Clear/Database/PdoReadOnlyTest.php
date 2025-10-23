@@ -33,35 +33,35 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(PdoStatementExt::class)]
 class PdoReadOnlyTest extends TestCase
 {
-    public function testCreate()
+    public function testCreate(): void
     {
         $this->assertNotEmpty(new PdoExt('sqlite::memory:'));
     }
 
-    public function testPdoImplementsPdoInterface()
+    public function testPdoImplementsPdoInterface(): void
     {
         $this->assertTrue(new PdoExt('sqlite::memory:') instanceof PdoInterface);
     }
 
-    public function testMyPdoExtendsPdo()
+    public function testMyPdoExtendsPdo(): void
     {
         $this->assertTrue(new PdoExt('sqlite::memory:') instanceof \PDO);
     }
 
-    public function testSetAndGetStateMethodsExists()
+    public function testSetAndGetStateMethodsExists(): void
     {
         $db = new PdoExt('sqlite::memory:');
         $this->assertTrue(method_exists($db, 'setState'));
         $this->assertTrue(method_exists($db, 'getState'));
     }
 
-    public function testSetStateReturnsSelf()
+    public function testSetStateReturnsSelf(): void
     {
         $db = new PdoExt('sqlite::memory:');
         $this->assertSame($db, $db->setState(PdoExt::STATE_READ_ONLY));
     }
 
-    public function testSetAndGetStateMethods()
+    public function testSetAndGetStateMethods(): void
     {
         $db = new PdoExt('sqlite::memory:');
         $this->assertSame(PdoExt::STATE_READ_ONLY, $db->setState(PdoExt::STATE_READ_ONLY)->getState());
@@ -70,7 +70,7 @@ class PdoReadOnlyTest extends TestCase
     }
 
 
-    public function testInsertUpdateDeleteInReadWriteMode()
+    public function testInsertUpdateDeleteInReadWriteMode(): void
     {
         $db = new PdoExt('sqlite::memory:');
         $db->exec('CREATE TABLE test (id INTEGER NOT NULL)');
@@ -99,7 +99,7 @@ class PdoReadOnlyTest extends TestCase
         $this->assertEmpty($res);
     }
 
-    public function testInsertInReadOnlyModeFails()
+    public function testInsertInReadOnlyModeFails(): void
     {
         $db = new PdoExt('sqlite::memory:');
         $db->exec('CREATE TABLE test (id INTEGER NOT NULL)');
@@ -112,7 +112,7 @@ class PdoReadOnlyTest extends TestCase
         $this->assertEmpty($res);
     }
 
-    public function testUpdateAndDeleteInReadOnlyModeFails()
+    public function testUpdateAndDeleteInReadOnlyModeFails(): void
     {
         $db = new PdoExt('sqlite::memory:');
         $db->exec('CREATE TABLE test (id INTEGER NOT NULL)');
@@ -132,7 +132,7 @@ class PdoReadOnlyTest extends TestCase
         $this->assertEquals(false, $res);
     }
 
-    public function testSelectInUnavailableModeFails()
+    public function testSelectInUnavailableModeFails(): void
     {
         $db = new PdoExt('sqlite::memory:');
         $db->exec('CREATE TABLE test (id INTEGER NOT NULL)');

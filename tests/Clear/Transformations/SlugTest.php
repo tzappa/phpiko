@@ -11,32 +11,32 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Slug::class)]
 class SlugTest extends TestCase
 {
-    public function testNoUppercase()
+    public function testNoUppercase(): void
     {
         $this->assertEquals('nouppercase', Slug::fromText('NoUpperCase'));
     }
 
-    public function testSpaceConvert()
+    public function testSpaceConvert(): void
     {
         $this->assertEquals('no-spaces', Slug::fromText('no spaces'));
     }
 
-    public function testNoDoubleHyphen()
+    public function testNoDoubleHyphen(): void
     {
         $this->assertEquals('no-double-spaces', Slug::fromText('no  double       spaces'));
     }
 
-    public function testNoTrailingHyphens()
+    public function testNoTrailingHyphens(): void
     {
         $this->assertEquals('trim-hyphens', Slug::fromText(' trim hyphens   '));
     }
 
-    public function testReplaceSpecialChars()
+    public function testReplaceSpecialChars(): void
     {
         $this->assertEquals('hi-5', Slug::fromText('~!@#$%^&*()_+|\}{Hi 5<>,./?)'));
     }
 
-    public function testTransliterateCyrillic()
+    public function testTransliterateCyrillic(): void
     {
         $this->assertEquals(
             'lisa-an-lisa-ann-ah-kakva-sam-antilopa-gazela-s-nay-yakata',
@@ -44,7 +44,7 @@ class SlugTest extends TestCase
         );
     }
 
-    public function testDoubleCyrillicToOneLatin()
+    public function testDoubleCyrillicToOneLatin(): void
     {
         $this->assertEquals('iskam-sex', Slug::fromText('Искам секс'));
     }

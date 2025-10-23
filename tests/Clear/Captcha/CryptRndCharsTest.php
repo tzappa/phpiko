@@ -38,27 +38,27 @@ class CryptRndCharsTest extends TestCase
         ];
     }
 
-    public function testConstructorWithValidSecret()
+    public function testConstructorWithValidSecret(): void
     {
         $captcha = new CryptRndChars($this->provider, $this->secret);
         $this->assertInstanceOf(CryptRndChars::class, $captcha);
     }
 
-    public function testConstructorWithShortSecret()
+    public function testConstructorWithShortSecret(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Secret key must be at least 32 characters long');
         new CryptRndChars($this->provider, 'short');
     }
 
-    public function testConstructorWithUnsupportedCipher()
+    public function testConstructorWithUnsupportedCipher(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cipher unsupported-cipher is not supported');
         new CryptRndChars($this->provider, $this->secret, ['cipher' => 'unsupported-cipher']);
     }
 
-    public function testCreateGeneratesCode()
+    public function testCreateGeneratesCode(): void
     {
         $captcha = new CryptRndChars($this->provider, $this->secret, $this->config);
         $captcha->create();
@@ -67,7 +67,7 @@ class CryptRndCharsTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testGetImageReturnsBinaryData()
+    public function testGetImageReturnsBinaryData(): void
     {
         $captcha = new CryptRndChars($this->provider, $this->secret, $this->config);
         $captcha->create();
@@ -80,7 +80,7 @@ class CryptRndCharsTest extends TestCase
         $this->assertStringStartsWith("\xFF\xD8", $image);
     }
 
-    public function testGetChecksumReturnsEncryptedString()
+    public function testGetChecksumReturnsEncryptedString(): void
     {
         $captcha = new CryptRndChars($this->provider, $this->secret, $this->config);
         $captcha->create();
@@ -97,7 +97,7 @@ class CryptRndCharsTest extends TestCase
         $this->assertCount(2, $parts);
     }
 
-    public function testGetChecksumWithoutCreateThrowsException()
+    public function testGetChecksumWithoutCreateThrowsException(): void
     {
         $captcha = new CryptRndChars($this->provider, $this->secret, $this->config);
 
@@ -106,7 +106,7 @@ class CryptRndCharsTest extends TestCase
         $captcha->getChecksum();
     }
 
-    public function testVerifyWithCorrectCode()
+    public function testVerifyWithCorrectCode(): void
     {
         $captcha = new CryptRndChars($this->provider, $this->secret, $this->config);
         $captcha->create();
@@ -125,7 +125,7 @@ class CryptRndCharsTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testVerifyWithWrongCode()
+    public function testVerifyWithWrongCode(): void
     {
         $captcha = new CryptRndChars($this->provider, $this->secret, $this->config);
         $captcha->create();
@@ -139,7 +139,7 @@ class CryptRndCharsTest extends TestCase
         $this->assertEquals('Wrong code', $captcha->getLastErrorMessage());
     }
 
-    public function testVerifyWithEmptyCode()
+    public function testVerifyWithEmptyCode(): void
     {
         $captcha = new CryptRndChars($this->provider, $this->secret, $this->config);
         $captcha->create();
@@ -150,7 +150,7 @@ class CryptRndCharsTest extends TestCase
         $this->assertEquals('Enter code from the image', $captcha->getLastErrorMessage());
     }
 
-    public function testVerifyWithEmptyChecksum()
+    public function testVerifyWithEmptyChecksum(): void
     {
         $captcha = new CryptRndChars($this->provider, $this->secret, $this->config);
         $captcha->create();
@@ -160,7 +160,7 @@ class CryptRndCharsTest extends TestCase
         $this->assertEquals('Checksum missing', $captcha->getLastErrorMessage());
     }
 
-    public function testVerifyWithInvalidChecksumFormat()
+    public function testVerifyWithInvalidChecksumFormat(): void
     {
         $captcha = new CryptRndChars($this->provider, $this->secret, $this->config);
         $captcha->create();
@@ -170,7 +170,7 @@ class CryptRndCharsTest extends TestCase
         $this->assertEquals('Checksum mismatch', $captcha->getLastErrorMessage());
     }
 
-    public function testVerifyWithExpiredCode()
+    public function testVerifyWithExpiredCode(): void
     {
         $config = array_merge($this->config, ['lifetime' => 1]); // 1 second lifetime
         $captcha = new CryptRndChars($this->provider, $this->secret, $config);
@@ -190,7 +190,7 @@ class CryptRndCharsTest extends TestCase
         $this->assertEquals('Code expired', $captcha->getLastErrorMessage());
     }
 
-    public function testVerifyWithUsedChecksum()
+    public function testVerifyWithUsedChecksum(): void
     {
         $captcha = new CryptRndChars($this->provider, $this->secret, $this->config);
         $captcha->create();
@@ -214,7 +214,7 @@ class CryptRndCharsTest extends TestCase
         $this->assertTrue($result2);
     }
 
-    public function testGetLastErrorMessage()
+    public function testGetLastErrorMessage(): void
     {
         $captcha = new CryptRndChars($this->provider, $this->secret, $this->config);
 
@@ -226,7 +226,7 @@ class CryptRndCharsTest extends TestCase
         $this->assertNotEmpty($captcha->getLastErrorMessage());
     }
 
-    public function testCustomConfiguration()
+    public function testCustomConfiguration(): void
     {
         $customConfig = [
             'width' => 200,
@@ -245,7 +245,7 @@ class CryptRndCharsTest extends TestCase
         $this->assertNotEmpty($image);
     }
 
-    public function testCodeGenerationWithDifferentLengths()
+    public function testCodeGenerationWithDifferentLengths(): void
     {
         $lengths = [3, 5, 8, 10];
 
@@ -263,7 +263,7 @@ class CryptRndCharsTest extends TestCase
         }
     }
 
-    public function testCodeGenerationWithDifferentCharsets()
+    public function testCodeGenerationWithDifferentCharsets(): void
     {
         $charsets = [
             '0123456789',

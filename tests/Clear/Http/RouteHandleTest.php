@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Route::class)]
 class RouteHandleTest extends TestCase
 {
-    public function testRouteHandle()
+    public function testRouteHandle(): void
     {
         // create anonimous class
         $page = new class implements RequestHandlerInterface {
@@ -31,7 +31,7 @@ class RouteHandleTest extends TestCase
         $this->assertEquals('Page', (string) $route->handle($request)->getBody());
     }
 
-    public function testRouteExecWithParams()
+    public function testRouteExecWithParams(): void
     {
         $page = new class implements RequestHandlerInterface
         {

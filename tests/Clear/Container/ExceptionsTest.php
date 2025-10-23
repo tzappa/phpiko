@@ -19,17 +19,17 @@ use Psr\Container\NotFoundExceptionInterface;
 #[CoversClass(NotFoundException::class)]
 class ExceptionsTest extends TestCase
 {
-    public function testContainerExceptionImplementsPsrContainerExceptionInterface()
+    public function testContainerExceptionImplementsPsrContainerExceptionInterface(): void
     {
         $this->assertTrue(new ContainerException() instanceof ContainerExceptionInterface);
     }
 
-    public function testNotFoundExceptionImplementsPsrContainerNotFoundExceptionInterface()
+    public function testNotFoundExceptionImplementsPsrContainerNotFoundExceptionInterface(): void
     {
         $this->assertTrue(new NotFoundException() instanceof NotFoundExceptionInterface);
     }
 
-    public function testNotFoundExceptionExtendsContainerException()
+    public function testNotFoundExceptionExtendsContainerException(): void
     {
         $this->assertTrue(new NotFoundException() instanceof ContainerException);
     }

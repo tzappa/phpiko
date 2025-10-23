@@ -38,19 +38,19 @@ class AclTest extends TestCase
         $this->acl = new Acl(new AclProviderPdo($this->db));
     }
 
-    public function testCreateAcl()
+    public function testCreateAcl(): void
     {
         $this->assertNotEmpty($this->acl);
     }
 
     #[Depends('testCreateAcl')]
-    public function testCreateCountPermissions()
+    public function testCreateCountPermissions(): void
     {
         $this->assertSame($this->permissionsCount, $this->acl->countPermissions());
     }
 
     #[Depends('testCreateCountPermissions')]
-    public function testGetAllPermissions()
+    public function testGetAllPermissions(): void
     {
         $perms = $this->acl->getAllPermissions();
         $this->assertInstanceOf(PermissionCollection::class, $perms);
@@ -58,7 +58,7 @@ class AclTest extends TestCase
     }
 
     #[Depends('testCreateAcl')]
-    public function testCheckUserPermission()
+    public function testCheckUserPermission(): void
     {
         $this->assertFalse($this->acl->checkUserPermission(999, 'Users', 'list'));
         $this->assertTrue($this->acl->checkUserPermission($this->user3, 'Users', 'list'));
@@ -68,13 +68,13 @@ class AclTest extends TestCase
     }
 
     #[Depends('testCreateAcl')]
-    public function testCountRoles()
+    public function testCountRoles(): void
     {
         $this->assertEquals($this->rolesCount, $this->acl->countRoles());
     }
 
     #[Depends('testCountRoles')]
-    public function testListRoles()
+    public function testListRoles(): void
     {
         $roles = $this->acl->listRoles();
         $this->assertEquals($this->rolesCount, count($roles));
@@ -82,7 +82,7 @@ class AclTest extends TestCase
     }
 
     #[Depends('testListRoles')]
-    public function testGetRole()
+    public function testGetRole(): void
     {
         $roles = $this->acl->listRoles();
         foreach ($roles as $role) {
@@ -92,7 +92,7 @@ class AclTest extends TestCase
 
     #[Depends('testListRoles')]
     #[Depends('testGetRole')]
-    public function testRenameRole()
+    public function testRenameRole(): void
     {
         $roles = $this->acl->listRoles();
         $role = $roles[0];
@@ -104,7 +104,7 @@ class AclTest extends TestCase
     }
 
     #[Depends('testRenameRole')]
-    public function testRenameRoleWithNoName()
+    public function testRenameRoleWithNoName(): void
     {
         $roles = $this->acl->listRoles();
         $role = $roles[0];
@@ -113,7 +113,7 @@ class AclTest extends TestCase
     }
 
     #[Depends('testRenameRole')]
-    public function testRenameRoleWithExistingName()
+    public function testRenameRoleWithExistingName(): void
     {
         $roles = $this->acl->listRoles();
         $role = $roles[0];
@@ -124,7 +124,7 @@ class AclTest extends TestCase
 
     #[Depends('testCountRoles')]
     #[Depends('testGetRole')]
-    public function testCreateRole()
+    public function testCreateRole(): void
     {
         $countRoles = $this->acl->countRoles();
         $role = $this->acl->createRole('phpunit role');
@@ -135,21 +135,21 @@ class AclTest extends TestCase
     }
 
     #[Depends('testCreateRole')]
-    public function testCreateRoleWithNoName()
+    public function testCreateRoleWithNoName(): void
     {
         $this->expectException(AclException::class);
         $this->acl->createRole('');
     }
 
     #[Depends('testCreateRole')]
-    public function testCreateRoleWithZeroName()
+    public function testCreateRoleWithZeroName(): void
     {
         $this->assertInstanceOf(RoleInterface::class, $this->acl->createRole('0'));
     }
 
     #[Depends('testListRoles')]
     #[Depends('testCreateRole')]
-    public function testCreateRoleWithSameName()
+    public function testCreateRoleWithSameName(): void
     {
         $roles = $this->acl->listRoles();
         $role = $roles[0];
@@ -161,7 +161,7 @@ class AclTest extends TestCase
     #[Depends('testCountRoles')]
     #[Depends('testListRoles')]
     #[Depends('testGetRole')]
-    public function testDeleteRole()
+    public function testDeleteRole(): void
     {
         $countRoles = $this->acl->countRoles();
         $roles = $this->acl->listRoles();
@@ -174,7 +174,7 @@ class AclTest extends TestCase
     }
 
     #[Depends('testListRoles')]
-    public function testCountRefsWithRole()
+    public function testCountRefsWithRole(): void
     {
         $roles = $this->acl->listRoles();
         $role = $roles[0];
@@ -186,7 +186,7 @@ class AclTest extends TestCase
 
     #[Depends('testListRoles')]
     #[Depends('testCountRefsWithRole')]
-    public function testListUsersWithRole()
+    public function testListUsersWithRole(): void
     {
         $roles = $this->acl->listRoles();
         $role = $roles[0];
@@ -197,7 +197,7 @@ class AclTest extends TestCase
         $this->assertSame($this->acl->countUsersWithRole($roleId), count($list));
     }
 
-    public function testGetUserRoles()
+    public function testGetUserRoles(): void
     {
         $user2Roles = $this->acl->getUserRoles($this->user2);
         $this->assertEmpty($user2Roles);
@@ -207,7 +207,7 @@ class AclTest extends TestCase
 
     #[Depends('testListRoles')]
     #[Depends('testGetUserRoles')]
-    public function testAssignRoleToUser()
+    public function testAssignRoleToUser(): void
     {
         $user2Roles = $this->acl->getUserRoles($this->user2);
         $this->assertEmpty($user2Roles);
@@ -224,7 +224,7 @@ class AclTest extends TestCase
     }
 
     #[Depends('testGetUserRoles')]
-    public function testRevokeRoleFromUser()
+    public function testRevokeRoleFromUser(): void
     {
         $user1Roles = $this->acl->getUserRoles($this->user1);
         $this->assertNotEmpty($user1Roles);

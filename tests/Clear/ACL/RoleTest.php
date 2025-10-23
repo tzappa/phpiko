@@ -21,12 +21,12 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(PermissionCollection::class)]
 class RoleTest extends TestCase
 {
-    public function testRoleImplementsRoleInterface()
+    public function testRoleImplementsRoleInterface(): void
     {
         $this->assertInstanceOf(RoleInterface::class, new Role(1, 'Manager', new PermissionCollection()));
     }
 
-    public function testConstructorValidation()
+    public function testConstructorValidation(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Role name cannot be empty');
@@ -34,7 +34,7 @@ class RoleTest extends TestCase
     }
 
     #[Depends('testRoleImplementsRoleInterface')]
-    public function testGetValues()
+    public function testGetValues(): void
     {
         $permission1 = new Permission(1, 'Users', 'access');
         $permission2 = new Permission(2, 'Users', 'edit');
@@ -46,7 +46,7 @@ class RoleTest extends TestCase
     }
 
     #[Depends('testGetValues')]
-    public function testWithCallbackPermissions()
+    public function testWithCallbackPermissions(): void
     {
         $getPermissions = function ($roleId) {
             $permission1 = new Permission(1, 'Users', 'access');

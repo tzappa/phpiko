@@ -34,20 +34,20 @@ class AclProviderPdoTest extends TestCase
         $this->setUpDb();
         $this->provider = new AclProviderPdo($this->db);
     }
-    public function testCountPermissions()
+    public function testCountPermissions(): void
     {
         $cnt = $this->provider->countPermissions();
         $this->assertNotEmpty($cnt);
         $this->assertEquals($this->permissionsCount, $cnt);
     }
 
-    public function testCountRoles()
+    public function testCountRoles(): void
     {
         $cnt = $this->provider->countRoles();
         $this->assertEquals($this->rolesCount, $cnt);
     }
 
-    public function testGetRole()
+    public function testGetRole(): void
     {
         $role = $this->provider->getRole(1);
         $this->assertInstanceOf(RoleInterface::class, $role);
@@ -55,13 +55,13 @@ class AclProviderPdoTest extends TestCase
         $this->assertNotEmpty($role->getName());
     }
 
-    public function testGetUnavailableRoleReturnsNull()
+    public function testGetUnavailableRoleReturnsNull(): void
     {
         $role = $this->provider->getRole(9999);
         $this->assertNull($role);
     }
 
-    public function testGetRolePermissions()
+    public function testGetRolePermissions(): void
     {
         $permissions = $this->provider->getRolePermissions(1);
         $this->assertInstanceOf(PermissionCollection::class, $permissions);
@@ -69,7 +69,7 @@ class AclProviderPdoTest extends TestCase
 
     #[Depends('testGetRole')]
     #[Depends('testGetRolePermissions')]
-    public function testGetRoleWithPermissions()
+    public function testGetRoleWithPermissions(): void
     {
         $role = $this->provider->getRole(1);
         $permissions = $this->provider->getRolePermissions(1);
@@ -77,7 +77,7 @@ class AclProviderPdoTest extends TestCase
     }
 
     #[Depends('testCountRoles')]
-    public function testListRoles()
+    public function testListRoles(): void
     {
         $roles = $this->provider->listRoles();
         $this->assertInstanceOf(RoleCollection::class, $roles);
@@ -86,7 +86,7 @@ class AclProviderPdoTest extends TestCase
         $this->assertInstanceOf(RoleInterface::class, $roles[1]);
     }
 
-    public function testGetRefPermissions()
+    public function testGetRefPermissions(): void
     {
         $pc = $this->provider->getRefPermissions($this->user2);
         $this->assertEmpty($pc);
@@ -96,13 +96,13 @@ class AclProviderPdoTest extends TestCase
     }
 
     #[Depends('testGetRefPermissions')]
-    public function testGetRefPermissionsReturnsCollection()
+    public function testGetRefPermissionsReturnsCollection(): void
     {
         $pc = $this->provider->getRefPermissions($this->user1);
         $this->assertInstanceOf(PermissionCollection::class, $pc);
     }
 
-    public function testGetRoleRefs()
+    public function testGetRoleRefs(): void
     {
         $role = 1;
         $users = $this->provider->getRoleRefs($role);
@@ -111,7 +111,7 @@ class AclProviderPdoTest extends TestCase
     }
 
     #[Depends('testGetRoleRefs')]
-    public function testCountRefssWithRole()
+    public function testCountRefssWithRole(): void
     {
         $role = 1;
         $users = $this->provider->getRoleRefs($role);
@@ -120,7 +120,7 @@ class AclProviderPdoTest extends TestCase
         $this->assertEquals(count($users), $cnt);
     }
 
-    public function testGetRefRoles()
+    public function testGetRefRoles(): void
     {
         // no roles for this user
         $roles = $this->provider->getRefRoles($this->user2);
@@ -133,7 +133,7 @@ class AclProviderPdoTest extends TestCase
     }
 
     #[Depends('testGetRefRoles')]
-    public function testAddRefRole()
+    public function testAddRefRole(): void
     {
         $role = 1;
         $this->provider->addRefRole($this->user2, 1);
@@ -143,7 +143,7 @@ class AclProviderPdoTest extends TestCase
     }
 
     #[Depends('testGetRefRoles')]
-    public function testRefUserRole()
+    public function testRefUserRole(): void
     {
         $roles = $this->provider->getRefRoles($this->user1);
         $cnt = count($roles);
@@ -153,7 +153,7 @@ class AclProviderPdoTest extends TestCase
         $this->assertEquals($cnt - 1, count($roles));
     }
 
-    public function testDelateAllUsers()
+    public function testDelateAllUsers(): void
     {
         $users = $this->provider->getRoleRefs(2);
         $this->assertCount(2, $users);

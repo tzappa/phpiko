@@ -16,12 +16,12 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Ini::class)]
 class IniEnhancedTest extends TestCase
 {
-    public function testIniIsParser()
+    public function testIniIsParser(): void
     {
         $this->assertInstanceOf(ParserInterface::class, new Ini());
     }
 
-    public function testFromStringWithValidIni()
+    public function testFromStringWithValidIni(): void
     {
         $parser = new Ini();
         $iniString = <<<INI
@@ -54,7 +54,7 @@ INI;
         $this->assertSame('debug', $arr['api']['log']['level']);
     }
 
-    public function testFromStringWithSections()
+    public function testFromStringWithSections(): void
     {
         $parser = new Ini();
         $iniString = <<<INI
@@ -87,7 +87,7 @@ INI;
         $this->assertSame('debug', $arr['api']['log']['level']);
     }
 
-    public function testFromStringWithEmptyString()
+    public function testFromStringWithEmptyString(): void
     {
         $parser = new Ini();
         $arr = $parser->fromString('');
@@ -96,7 +96,7 @@ INI;
         $this->assertEmpty($arr);
     }
 
-    public function testFromStringWithWhitespaceOnly()
+    public function testFromStringWithWhitespaceOnly(): void
     {
         $parser = new Ini();
         $arr = $parser->fromString("   \n\t  \n  ");
@@ -105,7 +105,7 @@ INI;
         $this->assertEmpty($arr);
     }
 
-    public function testFromStringWithComments()
+    public function testFromStringWithComments(): void
     {
         $parser = new Ini();
         $iniString = <<<INI
@@ -127,7 +127,7 @@ INI;
         $this->assertSame(3306, $arr['db']['port']);
     }
 
-    public function testFromStringWithBooleanValues()
+    public function testFromStringWithBooleanValues(): void
     {
         $parser = new Ini();
         $iniString = <<<INI
@@ -154,7 +154,7 @@ INI;
         $this->assertSame(false, $arr['no_val']);
     }
 
-    public function testFromStringWithNumericValues()
+    public function testFromStringWithNumericValues(): void
     {
         $parser = new Ini();
         $iniString = <<<INI
@@ -173,7 +173,7 @@ INI;
         $this->assertSame(0, $arr['zero']);
     }
 
-    public function testFromStringWithQuotedValues()
+    public function testFromStringWithQuotedValues(): void
     {
         $parser = new Ini();
         $iniString = <<<INI
@@ -192,7 +192,7 @@ INI;
         $this->assertSame('quoted "with" double', $arr['mixed2']);
     }
 
-    public function testFromStringWithEmptyValues()
+    public function testFromStringWithEmptyValues(): void
     {
         $parser = new Ini();
         $iniString = <<<INI
@@ -211,7 +211,7 @@ INI;
         $this->assertSame(' ', $arr['space']);
     }
 
-    public function testFromStringWithMalformedIni()
+    public function testFromStringWithMalformedIni(): void
     {
         $parser = new Ini();
 
@@ -224,7 +224,7 @@ INI;
         error_reporting($oldErrorReporting);
     }
 
-    public function testFromStringWithInvalidSyntax()
+    public function testFromStringWithInvalidSyntax(): void
     {
         $parser = new Ini();
 
@@ -237,7 +237,7 @@ INI;
         error_reporting($oldErrorReporting);
     }
 
-    public function testFromFileWithValidIniFile()
+    public function testFromFileWithValidIniFile(): void
     {
         $parser = new Ini();
         $arr = $parser->fromFile(__DIR__ . '/test.ini');
@@ -248,7 +248,7 @@ INI;
         $this->assertSame(3306, $arr['db']['port']);
     }
 
-    public function testFromFileWithNonExistentFile()
+    public function testFromFileWithNonExistentFile(): void
     {
         $parser = new Ini();
 
@@ -258,7 +258,7 @@ INI;
         $parser->fromFile('/non/existent/file.ini');
     }
 
-    public function testFromFileWithUnreadableFile()
+    public function testFromFileWithUnreadableFile(): void
     {
         // Create a temporary file and make it unreadable
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.ini';

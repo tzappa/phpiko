@@ -16,14 +16,14 @@ use Psr\Log\LoggerInterface;
 #[UsesClass(ListenerProvider::class)]
 class DispatcherTest extends TestCase
 {
-    public function testCanCreateDispatcher()
+    public function testCanCreateDispatcher(): void
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
         $this->assertInstanceOf(Dispatcher::class, $dispatcher);
     }
 
-    public function testCanCreateDispatcherWithLogger()
+    public function testCanCreateDispatcherWithLogger(): void
     {
         $provider = new ListenerProvider();
         $logger = $this->createMock(LoggerInterface::class);
@@ -31,7 +31,7 @@ class DispatcherTest extends TestCase
         $this->assertInstanceOf(Dispatcher::class, $dispatcher);
     }
 
-    public function testDispatchSimpleEvent()
+    public function testDispatchSimpleEvent(): void
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
@@ -43,7 +43,7 @@ class DispatcherTest extends TestCase
         $this->assertSame('initial', $result->getValue());
     }
 
-    public function testDispatchEventWithListeners()
+    public function testDispatchEventWithListeners(): void
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
@@ -68,7 +68,7 @@ class DispatcherTest extends TestCase
         $this->assertSame(['listener1', 'listener2'], $callOrder);
     }
 
-    public function testDispatchStoppableEvent()
+    public function testDispatchStoppableEvent(): void
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
@@ -94,7 +94,7 @@ class DispatcherTest extends TestCase
         $this->assertSame(['listener1'], $callOrder);
     }
 
-    public function testDispatchStoppableEventAlreadyStopped()
+    public function testDispatchStoppableEventAlreadyStopped(): void
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
@@ -116,7 +116,7 @@ class DispatcherTest extends TestCase
         $this->assertSame([], $callOrder);
     }
 
-    public function testDispatchEventWithNoListeners()
+    public function testDispatchEventWithNoListeners(): void
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);

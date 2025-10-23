@@ -42,7 +42,8 @@
             "phpunit"
         ],
         "lint": "phpcs --standard=PSR12 src tests",
-        "lint:fix": "phpcbf --standard=PSR12 src tests"
+        "lint:fix": "phpcbf --standard=PSR12 src tests",
+        "analyse": "phpstan analyse src tests --level=max"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

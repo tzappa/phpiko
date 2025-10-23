@@ -27,33 +27,33 @@ class ServiceTest extends TestCase
         $this->service = new CounterService($this->provider);
     }
 
-    public function testCreateService()
+    public function testCreateService(): void
     {
         $this->assertNotEmpty($this->service);
     }
 
     #[Depends('testCreateService')]
-    public function testGet()
+    public function testGet(): void
     {
         $this->assertNotEmpty($this->service->get(1));
         $this->assertNotEmpty($this->service->get('users'));
     }
 
     #[Depends('testGet')]
-    public function testGetReturnsValue()
+    public function testGetReturnsValue(): void
     {
         $this->assertSame(22, $this->service->get(1));
         $this->assertSame(3, $this->service->get('users'));
     }
 
     #[Depends('testGetReturnsValue')]
-    public function testGetReturnsZeroIfTheCounterNotFound()
+    public function testGetReturnsZeroIfTheCounterNotFound(): void
     {
         $this->assertSame(0, $this->service->get(666));
     }
 
     #[Depends('testCreateService')]
-    public function testIncrementReturnsValue()
+    public function testIncrementReturnsValue(): void
     {
         $this->assertNotEmpty($this->service->inc(1));
         $this->assertNotEmpty($this->service->inc('users'));
@@ -61,21 +61,21 @@ class ServiceTest extends TestCase
 
     #[Depends('testIncrementReturnsValue')]
     #[Depends('testGetReturnsValue')]
-    public function testIncrementReturnsIncrementedValue()
+    public function testIncrementReturnsIncrementedValue(): void
     {
         $current = $this->service->get(1);
         $this->assertEquals($current + 1, $this->service->inc(1));
     }
 
     #[Depends('testIncrementReturnsIncrementedValue')]
-    public function testIncrementReturnsIncrementedValue2()
+    public function testIncrementReturnsIncrementedValue2(): void
     {
         $current = $this->service->get('users');
         $this->assertEquals($current + 1, $this->service->inc('users'));
     }
 
     #[Depends('testGetReturnsZeroIfTheCounterNotFound')]
-    public function testIncrementUnknownCounterReturns1()
+    public function testIncrementUnknownCounterReturns1(): void
     {
         $current = $this->service->get(666);
         $this->assertEquals($current + 1, $this->service->inc(666));
@@ -83,7 +83,7 @@ class ServiceTest extends TestCase
     }
 
     #[Depends('testIncrementUnknownCounterReturns1')]
-    public function testIncrementCreatesNewCounter()
+    public function testIncrementCreatesNewCounter(): void
     {
         $this->service->inc('new');
         $this->service->inc('new');
@@ -93,7 +93,7 @@ class ServiceTest extends TestCase
 
     #[Depends('testCreateService')]
     #[Depends('testGetReturnsValue')]
-    public function testSetValue()
+    public function testSetValue(): void
     {
         $value = 123;
         $res = $this->service->set('users', $value);

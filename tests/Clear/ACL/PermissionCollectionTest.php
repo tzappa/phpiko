@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(Permission::class)]
 class PermissionCollectionTest extends TestCase
 {
-    public function testPermissionCollection()
+    public function testPermissionCollection(): void
     {
         $pc = new PermissionCollection([
             new Permission(1, 'Users', 'list'),
@@ -32,7 +32,7 @@ class PermissionCollectionTest extends TestCase
         $this->assertEquals('list', $pc[0]->getOperation());
     }
 
-    public function testOffsetSet()
+    public function testOffsetSet(): void
     {
         $pc = new PermissionCollection([new Permission(1, 'Users', 'list'), new Permission(3, 'Users', 'delete')]);
         $pc["foo"] = new Permission(2, 'Foo', 'access');
@@ -40,7 +40,7 @@ class PermissionCollectionTest extends TestCase
     }
 
     #[Depends('testPermissionCollection', 'testOffsetSet')]
-    public function testPermissionCollectionThrowsExceptionIfNotPermissionInstanceIsGiven()
+    public function testPermissionCollectionThrowsExceptionIfNotPermissionInstanceIsGiven(): void
     {
         $pc = new PermissionCollection([
             new Permission(1, 'Users', 'list'),
@@ -52,7 +52,7 @@ class PermissionCollectionTest extends TestCase
     }
 
     #[Depends('testPermissionCollectionThrowsExceptionIfNotPermissionInstanceIsGiven')]
-    public function testPermissionCollectionThrowsExceptionIfNotPermissionInstanceIsGivenOnCreate()
+    public function testPermissionCollectionThrowsExceptionIfNotPermissionInstanceIsGivenOnCreate(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $pc = new PermissionCollection([

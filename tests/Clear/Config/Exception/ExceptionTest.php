@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(FileException::class)]
 class ExceptionTest extends TestCase
 {
-    public function testConfigExceptionIsRuntimeException()
+    public function testConfigExceptionIsRuntimeException(): void
     {
         $exception = new ConfigException('Test message');
 
@@ -27,7 +27,7 @@ class ExceptionTest extends TestCase
         $this->assertInstanceOf(\Throwable::class, $exception);
     }
 
-    public function testConfigExceptionWithMessage()
+    public function testConfigExceptionWithMessage(): void
     {
         $message = 'Test configuration error';
         $exception = new ConfigException($message);
@@ -37,7 +37,7 @@ class ExceptionTest extends TestCase
         $this->assertNull($exception->getPrevious());
     }
 
-    public function testConfigExceptionWithMessageAndCode()
+    public function testConfigExceptionWithMessageAndCode(): void
     {
         $message = 'Test configuration error';
         $code = 123;
@@ -48,7 +48,7 @@ class ExceptionTest extends TestCase
         $this->assertNull($exception->getPrevious());
     }
 
-    public function testConfigExceptionWithMessageCodeAndPrevious()
+    public function testConfigExceptionWithMessageCodeAndPrevious(): void
     {
         $message = 'Test configuration error';
         $code = 123;
@@ -60,7 +60,7 @@ class ExceptionTest extends TestCase
         $this->assertSame($previous, $exception->getPrevious());
     }
 
-    public function testConfigExceptionWithEmptyMessage()
+    public function testConfigExceptionWithEmptyMessage(): void
     {
         $exception = new ConfigException('');
 
@@ -68,7 +68,7 @@ class ExceptionTest extends TestCase
         $this->assertSame(0, $exception->getCode());
     }
 
-    public function testConfigExceptionWithLongMessage()
+    public function testConfigExceptionWithLongMessage(): void
     {
         $longMessage = str_repeat('A', 1000);
         $exception = new ConfigException($longMessage);
@@ -76,7 +76,7 @@ class ExceptionTest extends TestCase
         $this->assertSame($longMessage, $exception->getMessage());
     }
 
-    public function testConfigExceptionWithSpecialCharacters()
+    public function testConfigExceptionWithSpecialCharacters(): void
     {
         $message = 'Special chars: éñü中文😀\t\n\r';
         $exception = new ConfigException($message);
@@ -84,7 +84,7 @@ class ExceptionTest extends TestCase
         $this->assertSame($message, $exception->getMessage());
     }
 
-    public function testParserExceptionIsConfigException()
+    public function testParserExceptionIsConfigException(): void
     {
         $exception = new ParserException('Test parser error');
 
@@ -94,7 +94,7 @@ class ExceptionTest extends TestCase
         $this->assertInstanceOf(\Throwable::class, $exception);
     }
 
-    public function testParserExceptionWithMessage()
+    public function testParserExceptionWithMessage(): void
     {
         $message = 'JSON parse error';
         $exception = new ParserException($message);
@@ -104,7 +104,7 @@ class ExceptionTest extends TestCase
         $this->assertNull($exception->getPrevious());
     }
 
-    public function testParserExceptionWithMessageAndCode()
+    public function testParserExceptionWithMessageAndCode(): void
     {
         $message = 'INI parse error';
         $code = 456;
@@ -115,7 +115,7 @@ class ExceptionTest extends TestCase
         $this->assertNull($exception->getPrevious());
     }
 
-    public function testParserExceptionWithMessageCodeAndPrevious()
+    public function testParserExceptionWithMessageCodeAndPrevious(): void
     {
         $message = 'Parser error';
         $code = 789;
@@ -127,7 +127,7 @@ class ExceptionTest extends TestCase
         $this->assertSame($previous, $exception->getPrevious());
     }
 
-    public function testParserExceptionWithEmptyMessage()
+    public function testParserExceptionWithEmptyMessage(): void
     {
         $exception = new ParserException('');
 
@@ -135,7 +135,7 @@ class ExceptionTest extends TestCase
         $this->assertSame(0, $exception->getCode());
     }
 
-    public function testFileExceptionIsConfigException()
+    public function testFileExceptionIsConfigException(): void
     {
         $exception = new FileException('Test file error');
 
@@ -145,7 +145,7 @@ class ExceptionTest extends TestCase
         $this->assertInstanceOf(\Throwable::class, $exception);
     }
 
-    public function testFileExceptionWithMessage()
+    public function testFileExceptionWithMessage(): void
     {
         $message = 'File not found';
         $exception = new FileException($message);
@@ -155,7 +155,7 @@ class ExceptionTest extends TestCase
         $this->assertNull($exception->getPrevious());
     }
 
-    public function testFileExceptionWithMessageAndCode()
+    public function testFileExceptionWithMessageAndCode(): void
     {
         $message = 'File unreadable';
         $code = 999;
@@ -166,7 +166,7 @@ class ExceptionTest extends TestCase
         $this->assertNull($exception->getPrevious());
     }
 
-    public function testFileExceptionWithMessageCodeAndPrevious()
+    public function testFileExceptionWithMessageCodeAndPrevious(): void
     {
         $message = 'File error';
         $code = 111;
@@ -178,7 +178,7 @@ class ExceptionTest extends TestCase
         $this->assertSame($previous, $exception->getPrevious());
     }
 
-    public function testFileExceptionWithEmptyMessage()
+    public function testFileExceptionWithEmptyMessage(): void
     {
         $exception = new FileException('');
 
@@ -186,7 +186,7 @@ class ExceptionTest extends TestCase
         $this->assertSame(0, $exception->getCode());
     }
 
-    public function testExceptionChaining()
+    public function testExceptionChaining(): void
     {
         $rootCause = new \Exception('Root cause');
         $fileException = new FileException('File error', 0, $rootCause);
@@ -198,7 +198,7 @@ class ExceptionTest extends TestCase
         $this->assertSame($rootCause, $fileException->getPrevious());
     }
 
-    public function testExceptionToString()
+    public function testExceptionToString(): void
     {
         $exception = new ConfigException('Test message', 123);
         $string = (string) $exception;
@@ -207,7 +207,7 @@ class ExceptionTest extends TestCase
         $this->assertStringContainsString('Test message', $string);
     }
 
-    public function testParserExceptionToString()
+    public function testParserExceptionToString(): void
     {
         $exception = new ParserException('Parser error', 456);
         $string = (string) $exception;
@@ -216,7 +216,7 @@ class ExceptionTest extends TestCase
         $this->assertStringContainsString('Parser error', $string);
     }
 
-    public function testFileExceptionToString()
+    public function testFileExceptionToString(): void
     {
         $exception = new FileException('File error', 789);
         $string = (string) $exception;
@@ -225,14 +225,14 @@ class ExceptionTest extends TestCase
         $this->assertStringContainsString('File error', $string);
     }
 
-    public function testExceptionWithNullMessage()
+    public function testExceptionWithNullMessage(): void
     {
         $exception = new ConfigException('');
 
         $this->assertSame('', $exception->getMessage());
     }
 
-    public function testExceptionWithNegativeCode()
+    public function testExceptionWithNegativeCode(): void
     {
         $exception = new ConfigException('Test', -1);
 
@@ -240,7 +240,7 @@ class ExceptionTest extends TestCase
         $this->assertSame(-1, $exception->getCode());
     }
 
-    public function testExceptionWithLargeCode()
+    public function testExceptionWithLargeCode(): void
     {
         $exception = new ConfigException('Test', PHP_INT_MAX);
 

@@ -36,22 +36,22 @@ use PDO;
 #[CoversClass(BeforeExecute::class)]
 class PdoExtTest extends TestCase
 {
-    public function testCreate()
+    public function testCreate(): void
     {
         $this->assertNotEmpty(new PdoExt('sqlite::memory:'));
     }
 
-    public function testPdoImplementsPdoInterface()
+    public function testPdoImplementsPdoInterface(): void
     {
         $this->assertTrue(new PdoExt('sqlite::memory:') instanceof PdoInterface);
     }
 
-    public function testMyPdoExtendsPdo()
+    public function testMyPdoExtendsPdo(): void
     {
         $this->assertTrue(new PdoExt('sqlite::memory:') instanceof PDO);
     }
 
-    public function testInsertUpdateDelete()
+    public function testInsertUpdateDelete(): void
     {
         $db = new PdoExt('sqlite::memory:');
         $db->exec('CREATE TABLE test (id INTEGER NOT NULL)');
@@ -80,7 +80,7 @@ class PdoExtTest extends TestCase
         $this->assertEmpty($res);
     }
 
-    public function testExecEvents()
+    public function testExecEvents(): void
     {
         $dispatcher = $this->createMock(EventDispatcherInterface::class);
         $db = new PdoExt('sqlite::memory:');
@@ -88,7 +88,7 @@ class PdoExtTest extends TestCase
         $dispatcher->expects($this->exactly(2))->method('dispatch');
         $db->exec('CREATE TABLE test (id INTEGER NOT NULL)');
     }
-    public function testExecuteEvents()
+    public function testExecuteEvents(): void
     {
         $dispatcher = $this->createMock(EventDispatcherInterface::class);
         $db = new PdoExt('sqlite::memory:');
@@ -100,7 +100,7 @@ class PdoExtTest extends TestCase
         $sth->execute();
     }
 
-    public function testQueryEvents()
+    public function testQueryEvents(): void
     {
         $dispatcher = $this->createMock(EventDispatcherInterface::class);
         $db = new PdoExt('sqlite::memory:');

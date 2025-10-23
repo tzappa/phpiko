@@ -16,18 +16,18 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(FakeTemplate::class)]
 class FakeTemplateTest extends TestCase
 {
-    public function testFakeTemplateImplementsTemplateInterface()
+    public function testFakeTemplateImplementsTemplateInterface(): void
     {
         $this->assertInstanceOf(TemplateInterface::class, new FakeTemplate());
     }
 
-    public function testAssignReturnsSelf()
+    public function testAssignReturnsSelf(): void
     {
         $fake = new FakeTemplate();
         $this->assertEquals($fake, $fake->assign('testkey', 'one'));
     }
 
-    public function testAssign()
+    public function testAssign(): void
     {
         $fake = new FakeTemplate();
 
@@ -37,7 +37,7 @@ class FakeTemplateTest extends TestCase
         $this->assertSame('{"testkey":"test"}', $res);
     }
 
-    public function testAssignRewritesSameKey()
+    public function testAssignRewritesSameKey(): void
     {
         $fake = new FakeTemplate();
 
@@ -47,7 +47,7 @@ class FakeTemplateTest extends TestCase
         $this->assertSame(json_encode(['testkey' => 'other']), $res);
     }
 
-    public function testLoad()
+    public function testLoad(): void
     {
         $fake = new FakeTemplate();
 
@@ -55,7 +55,7 @@ class FakeTemplateTest extends TestCase
         $this->assertSame('template1', $fake->loadedTemplate);
     }
 
-    public function testRegisterFunctionRetursSelf()
+    public function testRegisterFunctionRetursSelf(): void
     {
         $fake = new FakeTemplate();
         $this->assertEquals($fake, $fake->registerFunction('test', function () {

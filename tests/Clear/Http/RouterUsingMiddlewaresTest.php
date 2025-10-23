@@ -43,7 +43,7 @@ function checkForbidden(ServerRequestInterface $request, $handler)
 #[CoversClass(\Clear\Http\CallbackRequestHandler::class)]
 class RouterUsingMiddlewaresTest extends TestCase
 {
-    public function testMiddlewareReturnsRouter()
+    public function testMiddlewareReturnsRouter(): void
     {
         $router = new Router();
         $r = $router->middleware(function (ServerRequestInterface $request, $handler) {
@@ -53,7 +53,7 @@ class RouterUsingMiddlewaresTest extends TestCase
         $this->assertEquals($router, $r);
     }
 
-    public function testMiddlewareReturnsRoute()
+    public function testMiddlewareReturnsRoute(): void
     {
         $router = new Router();
         $route = $router->map('GET', '/', function (ServerRequestInterface $request) {
@@ -66,7 +66,7 @@ class RouterUsingMiddlewaresTest extends TestCase
         $this->assertEquals($r, $route);
     }
 
-    public function testMiddlewareGeneratesResponse()
+    public function testMiddlewareGeneratesResponse(): void
     {
         $router = new Router();
         $router->map('GET', '/private', function (ServerRequestInterface $request) {
@@ -77,7 +77,7 @@ class RouterUsingMiddlewaresTest extends TestCase
         $this->assertEquals('Login required', $response);
     }
 
-    public function testMiddlewarePassesToHandler()
+    public function testMiddlewarePassesToHandler(): void
     {
         $router = new Router();
         $router->map('GET', '/private', function (ServerRequestInterface $request) {
@@ -89,7 +89,7 @@ class RouterUsingMiddlewaresTest extends TestCase
         $this->assertEquals('My Private Space', $response);
     }
 
-    public function testMiddlewareFromGroup()
+    public function testMiddlewareFromGroup(): void
     {
         $router = new Router();
         $group = $router->group('/private');
@@ -107,7 +107,7 @@ class RouterUsingMiddlewaresTest extends TestCase
         $this->assertEquals('My Profile', $response);
     }
 
-    public function testMiddlewareFromGroupAndRoute()
+    public function testMiddlewareFromGroupAndRoute(): void
     {
         $router = new Router();
         $group = $router->group('/private');
@@ -139,7 +139,7 @@ class RouterUsingMiddlewaresTest extends TestCase
         $this->assertEquals('Login required', $response);
     }
 
-    public function testMultipleGroupsWithMiddlewares()
+    public function testMultipleGroupsWithMiddlewares(): void
     {
         $router = new Router();
         $group = $router->group('/group1');
@@ -171,7 +171,7 @@ class RouterUsingMiddlewaresTest extends TestCase
         $this->assertEquals('g1m1 g1m2 g2 m1 g2 m2 r m1 r m2 Show', $response);
     }
 
-    public function testMultipleGroupsWithPsrMiddlewares()
+    public function testMultipleGroupsWithPsrMiddlewares(): void
     {
         $router = new Router();
         $group = $router->group('/group1');

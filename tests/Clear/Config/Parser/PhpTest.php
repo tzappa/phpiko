@@ -16,12 +16,12 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Php::class)]
 class PhpTest extends TestCase
 {
-    public function testPhpIsParser()
+    public function testPhpIsParser(): void
     {
         $this->assertInstanceOf(ParserInterface::class, new Php());
     }
 
-    public function testFromFileWithValidPhpFile()
+    public function testFromFileWithValidPhpFile(): void
     {
         $parser = new Php();
         $arr = $parser->fromFile(__DIR__ . '/../test_config.php');
@@ -39,7 +39,7 @@ class PhpTest extends TestCase
         $this->assertTrue($arr['api']['log']['enabled']);
     }
 
-    public function testFromFileWithNonExistentFile()
+    public function testFromFileWithNonExistentFile(): void
     {
         $parser = new Php();
 
@@ -49,7 +49,7 @@ class PhpTest extends TestCase
         $parser->fromFile('/non/existent/file.php');
     }
 
-    public function testFromFileWithFileThatDoesNotReturnArray()
+    public function testFromFileWithFileThatDoesNotReturnArray(): void
     {
         // Create a temporary PHP file that doesn't return an array
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.php';
@@ -67,7 +67,7 @@ class PhpTest extends TestCase
         }
     }
 
-    public function testFromFileWithFileThatReturnsNull()
+    public function testFromFileWithFileThatReturnsNull(): void
     {
         // Create a temporary PHP file that returns null
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.php';
@@ -85,7 +85,7 @@ class PhpTest extends TestCase
         }
     }
 
-    public function testFromFileWithFileThatReturnsString()
+    public function testFromFileWithFileThatReturnsString(): void
     {
         // Create a temporary PHP file that returns a string
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.php';
@@ -103,7 +103,7 @@ class PhpTest extends TestCase
         }
     }
 
-    public function testFromFileWithFileThatReturnsObject()
+    public function testFromFileWithFileThatReturnsObject(): void
     {
         // Create a temporary PHP file that returns an object
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.php';
@@ -121,7 +121,7 @@ class PhpTest extends TestCase
         }
     }
 
-    public function testFromFileWithFileThatReturnsInteger()
+    public function testFromFileWithFileThatReturnsInteger(): void
     {
         // Create a temporary PHP file that returns an integer
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.php';
@@ -139,7 +139,7 @@ class PhpTest extends TestCase
         }
     }
 
-    public function testFromFileWithFileThatReturnsBoolean()
+    public function testFromFileWithFileThatReturnsBoolean(): void
     {
         // Create a temporary PHP file that returns a boolean
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.php';
@@ -157,7 +157,7 @@ class PhpTest extends TestCase
         }
     }
 
-    public function testFromStringThrowsException()
+    public function testFromStringThrowsException(): void
     {
         $parser = new Php();
 
@@ -167,7 +167,7 @@ class PhpTest extends TestCase
         $parser->fromString('<?php return ["key" => "value"];');
     }
 
-    public function testFromStringWithEmptyString()
+    public function testFromStringWithEmptyString(): void
     {
         $parser = new Php();
 
@@ -177,7 +177,7 @@ class PhpTest extends TestCase
         $parser->fromString('');
     }
 
-    public function testFromStringWithValidPhpCode()
+    public function testFromStringWithValidPhpCode(): void
     {
         $parser = new Php();
 

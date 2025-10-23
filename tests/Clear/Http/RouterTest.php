@@ -25,7 +25,7 @@ use Psr\Http\Message\ServerRequestInterface;
 #[CoversClass(HttpException::class)]
 class RouterTest extends TestCase
 {
-    public function testRouteMatch()
+    public function testRouteMatch(): void
     {
         $route = new Router();
         $route->map('GET', '/', function ($request) {
@@ -35,7 +35,7 @@ class RouterTest extends TestCase
         $this->assertEquals('Hello World', $route->dispatch($request));
     }
 
-    public function testReadme()
+    public function testReadme(): void
     {
         $router = new Router();
 
@@ -112,7 +112,7 @@ class RouterTest extends TestCase
         $this->assertEquals('404 wrong/path Not Found', $router->dispatch($request));
     }
 
-    public function testNotFoundExceptionIsThrownIfNoRouteMatch()
+    public function testNotFoundExceptionIsThrownIfNoRouteMatch(): void
     {
         $router = new Router();
         $request = (new RequestFactory())->createServerRequest('GET', '/');
@@ -120,7 +120,7 @@ class RouterTest extends TestCase
         $router->dispatch($request);
     }
 
-    public function testNotFoundExceptionIsCatchedIfTheGroupPathMatchesButNoRouteIsFound()
+    public function testNotFoundExceptionIsCatchedIfTheGroupPathMatchesButNoRouteIsFound(): void
     {
         $router = new Router();
         $api = $router->group('/api');
@@ -135,7 +135,7 @@ class RouterTest extends TestCase
         $this->assertEquals('Api Get users', $response);
     }
 
-    public function testSetNamedRoutes()
+    public function testSetNamedRoutes(): void
     {
         $router = new Router();
         $router->map('GET', '/', function ($request) {
@@ -145,7 +145,7 @@ class RouterTest extends TestCase
         $this->assertEquals('Hello World', $router->dispatch($request));
     }
 
-    public function testSetNamedRouteExceptionOnDuplicateRoute()
+    public function testSetNamedRouteExceptionOnDuplicateRoute(): void
     {
         $router = new Router();
         $router->map('GET', '/', function ($request) {
@@ -157,7 +157,7 @@ class RouterTest extends TestCase
         }, 'home');
     }
 
-    public function testSetNameOnGroupExceptionOnDuplicateRoute()
+    public function testSetNameOnGroupExceptionOnDuplicateRoute(): void
     {
         $router = new Router();
         $router->map('GET', '/users', function ($request) {
@@ -170,7 +170,7 @@ class RouterTest extends TestCase
         }, 'users');
     }
 
-    public function testRouterWithRequestHandlerInterface()
+    public function testRouterWithRequestHandlerInterface(): void
     {
         $class = new class implements \Psr\Http\Server\RequestHandlerInterface {
             public function handle(ServerRequestInterface $request): ResponseInterface
@@ -184,7 +184,7 @@ class RouterTest extends TestCase
         $this->assertEquals('Hello World', (string) $router->dispatch($request)->getBody());
     }
 
-    public function testRouterWithCallbackReturningRequestHandlerInterface()
+    public function testRouterWithCallbackReturningRequestHandlerInterface(): void
     {
         $class = new class implements \Psr\Http\Server\RequestHandlerInterface {
             public function handle(ServerRequestInterface $request): ResponseInterface

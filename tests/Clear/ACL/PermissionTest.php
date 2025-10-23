@@ -16,13 +16,13 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Permission::class)]
 class PermissionTest extends TestCase
 {
-    public function testPermissionImplementsPermissionInterface()
+    public function testPermissionImplementsPermissionInterface(): void
     {
         $this->assertInstanceOf(PermissionInterface::class, new Permission(1, 'Users', 'access'));
     }
 
     #[Depends('testPermissionImplementsPermissionInterface')]
-    public function testGetValues()
+    public function testGetValues(): void
     {
         $permission = new Permission(1, 'Users', 'access');
         $this->assertSame(1, $permission->getId());

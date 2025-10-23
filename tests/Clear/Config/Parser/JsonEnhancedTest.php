@@ -16,12 +16,12 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Json::class)]
 class JsonEnhancedTest extends TestCase
 {
-    public function testJsonIsParser()
+    public function testJsonIsParser(): void
     {
         $this->assertInstanceOf(ParserInterface::class, new Json());
     }
 
-    public function testFromStringWithValidJson()
+    public function testFromStringWithValidJson(): void
     {
         $parser = new Json();
         $jsonString = '{"key":"value","db":{"type":"mysql","port":3306,"name":"clear","user":"clear","pass":""},"api":{"version":1.1,"log":{"enabled":true,"level":"debug"}}}';
@@ -40,7 +40,7 @@ class JsonEnhancedTest extends TestCase
         $this->assertSame('debug', $arr['api']['log']['level']);
     }
 
-    public function testFromStringWithEmptyObject()
+    public function testFromStringWithEmptyObject(): void
     {
         $parser = new Json();
         $arr = $parser->fromString('{}');
@@ -49,7 +49,7 @@ class JsonEnhancedTest extends TestCase
         $this->assertEmpty($arr);
     }
 
-    public function testFromStringWithNestedObjects()
+    public function testFromStringWithNestedObjects(): void
     {
         $parser = new Json();
         $jsonString = '{"level1":{"level2":{"level3":{"value":"deep"}}}}';
@@ -63,7 +63,7 @@ class JsonEnhancedTest extends TestCase
         $this->assertSame('deep', $arr['level1']['level2']['level3']['value']);
     }
 
-    public function testFromStringWithArrayValues()
+    public function testFromStringWithArrayValues(): void
     {
         $parser = new Json();
         $jsonString = '{"items":["item1","item2","item3"],"numbers":[1,2,3,4,5]}';
@@ -77,7 +77,7 @@ class JsonEnhancedTest extends TestCase
         $this->assertSame([1, 2, 3, 4, 5], $arr['numbers']);
     }
 
-    public function testFromStringWithMixedTypes()
+    public function testFromStringWithMixedTypes(): void
     {
         $parser = new Json();
         $jsonString = '{"string":"value","number":42,"float":3.14,"boolean":true,"null":null,"array":[1,2,3],"object":{"key":"value"}}';
@@ -94,7 +94,7 @@ class JsonEnhancedTest extends TestCase
         $this->assertIsArray($arr['object']);
     }
 
-    public function testFromStringWithUnicodeCharacters()
+    public function testFromStringWithUnicodeCharacters(): void
     {
         $parser = new Json();
         $jsonString = '{"unicode":"Hello 世界","emoji":"😀","special":"Special chars: \u00e9 \u00f1"}';
@@ -107,7 +107,7 @@ class JsonEnhancedTest extends TestCase
         $this->assertSame('Special chars: é ñ', $arr['special']);
     }
 
-    public function testFromStringWithEscapedCharacters()
+    public function testFromStringWithEscapedCharacters(): void
     {
         $parser = new Json();
         $jsonString = '{"quotes":"He said \\"Hello\\"","backslash":"path\\\\to\\\\file","newline":"line1\\nline2","tab":"col1\\tcol2"}';
@@ -121,7 +121,7 @@ class JsonEnhancedTest extends TestCase
         $this->assertSame("col1\tcol2", $arr['tab']);
     }
 
-    public function testFromStringWithTrailingComma()
+    public function testFromStringWithTrailingComma(): void
     {
         $parser = new Json();
 
@@ -130,7 +130,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromString('{"key":"value",}');
     }
 
-    public function testFromStringWithMissingComma()
+    public function testFromStringWithMissingComma(): void
     {
         $parser = new Json();
 
@@ -139,7 +139,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromString('{"key":"value" "another":"value"}');
     }
 
-    public function testFromStringWithUnclosedObject()
+    public function testFromStringWithUnclosedObject(): void
     {
         $parser = new Json();
 
@@ -148,7 +148,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromString('{"key":"value"');
     }
 
-    public function testFromStringWithUnclosedArray()
+    public function testFromStringWithUnclosedArray(): void
     {
         $parser = new Json();
 
@@ -157,7 +157,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromString('{"items":["item1","item2"');
     }
 
-    public function testFromStringWithInvalidEscape()
+    public function testFromStringWithInvalidEscape(): void
     {
         $parser = new Json();
 
@@ -166,7 +166,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromString('{"key":"value\\x"}');
     }
 
-    public function testFromStringWithNotObject()
+    public function testFromStringWithNotObject(): void
     {
         $parser = new Json();
 
@@ -175,7 +175,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromString('"just a string"');
     }
 
-    public function testFromStringWithArray()
+    public function testFromStringWithArray(): void
     {
         $parser = new Json();
 
@@ -186,7 +186,7 @@ class JsonEnhancedTest extends TestCase
         $this->assertSame(['array', 'not', 'object'], $arr);
     }
 
-    public function testFromStringWithNumber()
+    public function testFromStringWithNumber(): void
     {
         $parser = new Json();
 
@@ -195,7 +195,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromString('42');
     }
 
-    public function testFromStringWithBoolean()
+    public function testFromStringWithBoolean(): void
     {
         $parser = new Json();
 
@@ -204,7 +204,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromString('true');
     }
 
-    public function testFromStringWithNull()
+    public function testFromStringWithNull(): void
     {
         $parser = new Json();
 
@@ -213,7 +213,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromString('null');
     }
 
-    public function testFromStringWithEmptyString()
+    public function testFromStringWithEmptyString(): void
     {
         $parser = new Json();
 
@@ -222,7 +222,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromString('');
     }
 
-    public function testFromStringWithWhitespaceOnly()
+    public function testFromStringWithWhitespaceOnly(): void
     {
         $parser = new Json();
 
@@ -231,7 +231,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromString('   ');
     }
 
-    public function testFromStringWithMalformedJson()
+    public function testFromStringWithMalformedJson(): void
     {
         $parser = new Json();
 
@@ -240,7 +240,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromString('{"key":}');
     }
 
-    public function testFromStringWithDuplicateKeys()
+    public function testFromStringWithDuplicateKeys(): void
     {
         $parser = new Json();
         $jsonString = '{"key":"first","key":"second"}';
@@ -251,7 +251,7 @@ class JsonEnhancedTest extends TestCase
         $this->assertSame('second', $arr['key']); // Last value wins
     }
 
-    public function testFromFileWithValidJsonFile()
+    public function testFromFileWithValidJsonFile(): void
     {
         $parser = new Json();
         $arr = $parser->fromFile(__DIR__ . '/test.json');
@@ -262,7 +262,7 @@ class JsonEnhancedTest extends TestCase
         $this->assertSame(3306, $arr['db']['port']);
     }
 
-    public function testFromFileWithNonExistentFile()
+    public function testFromFileWithNonExistentFile(): void
     {
         $parser = new Json();
 
@@ -272,7 +272,7 @@ class JsonEnhancedTest extends TestCase
         $parser->fromFile('/non/existent/file.json');
     }
 
-    public function testFromFileWithUnreadableFile()
+    public function testFromFileWithUnreadableFile(): void
     {
         // Create a temporary file and make it unreadable
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.json';
@@ -292,7 +292,7 @@ class JsonEnhancedTest extends TestCase
         }
     }
 
-    public function testFromFileWithMalformedJsonFile()
+    public function testFromFileWithMalformedJsonFile(): void
     {
         // Create a temporary file with malformed JSON
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.json';

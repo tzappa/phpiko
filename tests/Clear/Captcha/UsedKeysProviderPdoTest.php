@@ -42,7 +42,7 @@ class UsedKeysProviderPdoTest extends TestCase
         $this->pdo->exec('DELETE FROM captcha_used_codes');
     }
 
-    public function testAddNewKey()
+    public function testAddNewKey(): void
     {
         $key = 'test-key-123';
         $expiresAfter = 3600; // 1 hour
@@ -61,7 +61,7 @@ class UsedKeysProviderPdoTest extends TestCase
         $this->assertNotEmpty($row['release_time']);
     }
 
-    public function testAddExistingKey()
+    public function testAddExistingKey(): void
     {
         $key = 'test-key-456';
         $expiresAfter = 3600;
@@ -75,7 +75,7 @@ class UsedKeysProviderPdoTest extends TestCase
         $this->assertFalse($result2);
     }
 
-    public function testAddExpiredKey()
+    public function testAddExpiredKey(): void
     {
         $key = 'test-key-789';
         $expiresAfter = 1; // 1 second
@@ -92,7 +92,7 @@ class UsedKeysProviderPdoTest extends TestCase
         $this->assertTrue($result2);
     }
 
-    public function testAddMultipleKeys()
+    public function testAddMultipleKeys(): void
     {
         $keys = ['key1', 'key2', 'key3', 'key4'];
         $expiresAfter = 3600;
@@ -110,7 +110,7 @@ class UsedKeysProviderPdoTest extends TestCase
         $this->assertEquals(count($keys), $count);
     }
 
-    public function testAddWithDifferentExpirationTimes()
+    public function testAddWithDifferentExpirationTimes(): void
     {
         $key1 = 'key-short';
         $key2 = 'key-long';
@@ -129,7 +129,7 @@ class UsedKeysProviderPdoTest extends TestCase
         $this->assertEquals(2, $count);
     }
 
-    public function testAddWithEmptyKey()
+    public function testAddWithEmptyKey(): void
     {
         $key = '';
         $expiresAfter = 3600;
@@ -146,7 +146,7 @@ class UsedKeysProviderPdoTest extends TestCase
         $this->assertEquals($key, $row['id']);
     }
 
-    public function testAddWithVeryLongKey()
+    public function testAddWithVeryLongKey(): void
     {
         $key = str_repeat('a', 128); // Maximum length according to schema
         $expiresAfter = 3600;
@@ -163,7 +163,7 @@ class UsedKeysProviderPdoTest extends TestCase
         $this->assertEquals($key, $row['id']);
     }
 
-    public function testAddWithZeroExpiration()
+    public function testAddWithZeroExpiration(): void
     {
         $key = 'key-zero-expiration';
         $expiresAfter = 0;
@@ -180,7 +180,7 @@ class UsedKeysProviderPdoTest extends TestCase
         $this->assertEquals($key, $row['id']);
     }
 
-    public function testAddWithNegativeExpiration()
+    public function testAddWithNegativeExpiration(): void
     {
         $key = 'key-negative-expiration';
         $expiresAfter = -3600; // Negative expiration
@@ -201,7 +201,7 @@ class UsedKeysProviderPdoTest extends TestCase
         $this->assertLessThan(time(), $releaseTime);
     }
 
-    public function testGarbageCollection()
+    public function testGarbageCollection(): void
     {
         // Add some keys with short expiration
         $keys = ['gc-key1', 'gc-key2', 'gc-key3'];
@@ -232,7 +232,7 @@ class UsedKeysProviderPdoTest extends TestCase
         $this->assertEquals('new-key', $row['id']);
     }
 
-    public function testConcurrentAddOperations()
+    public function testConcurrentAddOperations(): void
     {
         $key = 'concurrent-key';
         $expiresAfter = 3600;

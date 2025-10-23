@@ -169,7 +169,7 @@ class UsedKeysProviderCacheTest extends TestCase
         $this->cachePool->clear();
     }
 
-    public function testAddNewKey()
+    public function testAddNewKey(): void
     {
         $key = 'test-key-123';
         $expiresAfter = 3600; // 1 hour
@@ -187,7 +187,7 @@ class UsedKeysProviderCacheTest extends TestCase
         $this->assertEquals('*', $item->get());
     }
 
-    public function testAddExistingKey()
+    public function testAddExistingKey(): void
     {
         $key = 'test-key-456';
         $expiresAfter = 3600;
@@ -201,7 +201,7 @@ class UsedKeysProviderCacheTest extends TestCase
         $this->assertFalse($result2);
     }
 
-    public function testAddMultipleKeys()
+    public function testAddMultipleKeys(): void
     {
         $keys = ['key1', 'key2', 'key3', 'key4'];
         $expiresAfter = 3600;
@@ -219,7 +219,7 @@ class UsedKeysProviderCacheTest extends TestCase
         }
     }
 
-    public function testAddWithDifferentExpirationTimes()
+    public function testAddWithDifferentExpirationTimes(): void
     {
         $key1 = 'key-short';
         $key2 = 'key-long';
@@ -236,7 +236,7 @@ class UsedKeysProviderCacheTest extends TestCase
         $this->assertTrue($this->cachePool->hasItem(sha1($key2)));
     }
 
-    public function testAddWithEmptyKey()
+    public function testAddWithEmptyKey(): void
     {
         $key = '';
         $expiresAfter = 3600;
@@ -248,7 +248,7 @@ class UsedKeysProviderCacheTest extends TestCase
         $this->assertTrue($this->cachePool->hasItem(sha1($key)));
     }
 
-    public function testAddWithVeryLongKey()
+    public function testAddWithVeryLongKey(): void
     {
         $key = str_repeat('a', 1000); // Very long key
         $expiresAfter = 3600;
@@ -260,7 +260,7 @@ class UsedKeysProviderCacheTest extends TestCase
         $this->assertTrue($this->cachePool->hasItem(sha1($key)));
     }
 
-    public function testAddWithZeroExpiration()
+    public function testAddWithZeroExpiration(): void
     {
         $key = 'key-zero-expiration';
         $expiresAfter = 0;
@@ -272,7 +272,7 @@ class UsedKeysProviderCacheTest extends TestCase
         $this->assertTrue($this->cachePool->hasItem(sha1($key)));
     }
 
-    public function testAddWithNegativeExpiration()
+    public function testAddWithNegativeExpiration(): void
     {
         $key = 'key-negative-expiration';
         $expiresAfter = -3600; // Negative expiration
@@ -284,7 +284,7 @@ class UsedKeysProviderCacheTest extends TestCase
         $this->assertTrue($this->cachePool->hasItem(sha1($key)));
     }
 
-    public function testAddWithSpecialCharacters()
+    public function testAddWithSpecialCharacters(): void
     {
         $keys = [
             'key-with-dashes',
@@ -319,7 +319,7 @@ class UsedKeysProviderCacheTest extends TestCase
         }
     }
 
-    public function testAddWithUnicodeCharacters()
+    public function testAddWithUnicodeCharacters(): void
     {
         $keys = [
             'key-中文',
@@ -349,7 +349,7 @@ class UsedKeysProviderCacheTest extends TestCase
         }
     }
 
-    public function testConcurrentAddOperations()
+    public function testConcurrentAddOperations(): void
     {
         $key = 'concurrent-key';
         $expiresAfter = 3600;
@@ -368,7 +368,7 @@ class UsedKeysProviderCacheTest extends TestCase
         $this->assertFalse($results[4]);
     }
 
-    public function testCacheItemValue()
+    public function testCacheItemValue(): void
     {
         $key = 'test-value-key';
         $expiresAfter = 3600;
@@ -380,7 +380,7 @@ class UsedKeysProviderCacheTest extends TestCase
         $this->assertEquals('*', $item->get());
     }
 
-    public function testCacheItemExpiration()
+    public function testCacheItemExpiration(): void
     {
         $key = 'test-expiration-key';
         $expiresAfter = 60; // 1 minute

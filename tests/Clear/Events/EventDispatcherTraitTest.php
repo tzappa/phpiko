@@ -16,13 +16,13 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(ListenerProvider::class)]
 class EventDispatcherTraitTest extends TestCase
 {
-    public function testCanUseEventDispatcherTrait()
+    public function testCanUseEventDispatcherTrait(): void
     {
         $object = new TestClassWithTrait();
         $this->assertInstanceOf(TestClassWithTrait::class, $object);
     }
 
-    public function testSetEventDispatcher()
+    public function testSetEventDispatcher(): void
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
@@ -37,7 +37,7 @@ class EventDispatcherTraitTest extends TestCase
         $this->assertSame($event, $result);
     }
 
-    public function testDispatchWithoutSettingDispatcher()
+    public function testDispatchWithoutSettingDispatcher(): void
     {
         $object = new TestClassWithTrait();
 
@@ -47,7 +47,7 @@ class EventDispatcherTraitTest extends TestCase
         $this->assertNull($result);
     }
 
-    public function testDispatchWithDispatcher()
+    public function testDispatchWithDispatcher(): void
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
@@ -69,7 +69,7 @@ class EventDispatcherTraitTest extends TestCase
         $this->assertTrue($listenerCalled);
     }
 
-    public function testDispatchReturnsOriginalEventReference()
+    public function testDispatchReturnsOriginalEventReference(): void
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
@@ -90,7 +90,7 @@ class EventDispatcherTraitTest extends TestCase
         $this->assertSame('modified', $result->getValue());
     }
 
-    public function testMultipleDispatchCalls()
+    public function testMultipleDispatchCalls(): void
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);

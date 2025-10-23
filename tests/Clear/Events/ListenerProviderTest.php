@@ -11,13 +11,13 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(ListenerProvider::class)]
 class ListenerProviderTest extends TestCase
 {
-    public function testCanCreateProvider()
+    public function testCanCreateProvider(): void
     {
         $provider = new ListenerProvider();
         $this->assertInstanceOf(ListenerProvider::class, $provider);
     }
 
-    public function testGetListenersForEventWithNoListeners()
+    public function testGetListenersForEventWithNoListeners(): void
     {
         $provider = new ListenerProvider();
         $event = new TestEventForProvider('test');
@@ -28,7 +28,7 @@ class ListenerProviderTest extends TestCase
         $this->assertSame([], iterator_to_array($listeners));
     }
 
-    public function testAddSingleListener()
+    public function testAddSingleListener(): void
     {
         $provider = new ListenerProvider();
         $listenerCalled = false;
@@ -50,7 +50,7 @@ class ListenerProviderTest extends TestCase
         $this->assertTrue($listenerCalled);
     }
 
-    public function testAddMultipleListenersForSameEvent()
+    public function testAddMultipleListenersForSameEvent(): void
     {
         $provider = new ListenerProvider();
         $callOrder = [];
@@ -80,7 +80,7 @@ class ListenerProviderTest extends TestCase
         $this->assertSame(['listener1', 'listener2'], $callOrder);
     }
 
-    public function testAddListenersForDifferentEvents()
+    public function testAddListenersForDifferentEvents(): void
     {
         $provider = new ListenerProvider();
 
@@ -101,7 +101,7 @@ class ListenerProviderTest extends TestCase
         $this->assertCount(1, iterator_to_array($listeners2));
     }
 
-    public function testGetListenersForEventUsesExactClassName()
+    public function testGetListenersForEventUsesExactClassName(): void
     {
         $provider = new ListenerProvider();
 
@@ -120,7 +120,7 @@ class ListenerProviderTest extends TestCase
         $this->assertCount(0, iterator_to_array($listeners2));
     }
 
-    public function testCanAddCallableAsListener()
+    public function testCanAddCallableAsListener(): void
     {
         $provider = new ListenerProvider();
 

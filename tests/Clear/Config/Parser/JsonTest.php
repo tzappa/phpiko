@@ -17,13 +17,13 @@ use PHPUnit\Framework\Attributes\Depends;
 #[CoversClass(Json::class)]
 class JsonTest extends TestCase
 {
-    public function testJsonParser()
+    public function testJsonParser(): void
     {
         $this->assertInstanceOf(ParserInterface::class, new Json());
     }
 
     #[Depends('testJsonParser')]
-    public function testJsonFromString()
+    public function testJsonFromString(): void
     {
         $parser = new Json();
         $arr = $parser->fromString(file_get_contents(__DIR__ . '/test.json'));
@@ -42,7 +42,7 @@ class JsonTest extends TestCase
     }
 
     #[Depends('testJsonFromString')]
-    public function testParserLoadsFile()
+    public function testParserLoadsFile(): void
     {
         $parser = new Json();
         $arr = $parser->fromFile(__DIR__ . '/test.json');
@@ -51,7 +51,7 @@ class JsonTest extends TestCase
     }
 
     #[Depends('testParserLoadsFile')]
-    public function testParserReturnsSameFromFileAndFromLoadedFile()
+    public function testParserReturnsSameFromFileAndFromLoadedFile(): void
     {
         $filename = __DIR__ . '/test.json';
 
@@ -66,7 +66,7 @@ class JsonTest extends TestCase
     }
 
     #[Depends('testJsonFromString')]
-    public function testJsonFromStringErrorTrailingComma()
+    public function testJsonFromStringErrorTrailingComma(): void
     {
         $parser = new Json();
         $this->expectException(ParserException::class);
@@ -74,7 +74,7 @@ class JsonTest extends TestCase
     }
 
     #[Depends('testJsonFromString')]
-    public function testJsonFromStringErrorNotObject()
+    public function testJsonFromStringErrorNotObject(): void
     {
         $parser = new Json();
         $this->expectException(ParserException::class);
@@ -82,7 +82,7 @@ class JsonTest extends TestCase
     }
 
     #[Depends('testJsonFromString')]
-    public function testJsonFromEmptyString()
+    public function testJsonFromEmptyString(): void
     {
         $parser = new Json();
         $this->expectException(ParserException::class);

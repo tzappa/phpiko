@@ -32,19 +32,19 @@ class HereLogger extends NullLogger
 #[CoversClass(LogProfiler::class)]
 class LogProfilerTest extends TestCase
 {
-    public function testLogProfilerImplementsProfilerInterface()
+    public function testLogProfilerImplementsProfilerInterface(): void
     {
         $this->assertInstanceOf(ProfilerInterface::class, new LogProfiler(new NullLogger()));
     }
 
-    public function testGetLogger()
+    public function testGetLogger(): void
     {
         $logger = new NullLogger();
         $profiler = new LogProfiler($logger);
         $this->assertSame($logger, $profiler->getLogger());
     }
 
-    public function testSetAndGetLogFormat()
+    public function testSetAndGetLogFormat(): void
     {
         $logger = new NullLogger();
         $profiler = new LogProfiler($logger);
@@ -53,14 +53,14 @@ class LogProfilerTest extends TestCase
         $this->assertSame($format, $profiler->getLogFormat());
     }
 
-    public function testDefaultLogLevelIsDebug()
+    public function testDefaultLogLevelIsDebug(): void
     {
         $logger = new NullLogger();
         $profiler = new LogProfiler($logger);
         $this->assertSame(LogLevel::DEBUG, $profiler->getLogLevel());
     }
 
-    public function testSetLogLevel()
+    public function testSetLogLevel(): void
     {
         $logger = new NullLogger();
         $profiler = new LogProfiler($logger);
@@ -73,7 +73,7 @@ class LogProfilerTest extends TestCase
         $this->assertSame($newLevel, $profiler->getLogLevel());
     }
 
-    public function testLogLevel()
+    public function testLogLevel(): void
     {
         $logger = new HereLogger();
         $profiler = new LogProfiler($logger);
@@ -89,7 +89,7 @@ class LogProfilerTest extends TestCase
         $this->assertSame('debug', $logger->lastLevel);
     }
 
-    public function testLog()
+    public function testLog(): void
     {
         $logger = new HereLogger();
         $profiler = new LogProfiler($logger);

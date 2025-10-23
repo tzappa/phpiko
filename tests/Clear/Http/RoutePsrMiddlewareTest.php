@@ -30,7 +30,7 @@ class CheckLoginRequired implements MiddlewareInterface
 #[CoversClass(Route::class)]
 class RoutePsrMiddlewareTest extends TestCase
 {
-    public function testAddMiddlewareReturnsSelf()
+    public function testAddMiddlewareReturnsSelf(): void
     {
         // create anonimous class
         $page = new class implements RequestHandlerInterface
@@ -45,7 +45,7 @@ class RoutePsrMiddlewareTest extends TestCase
         $this->assertEquals($route, $route2);
     }
 
-    public function testAddMiddleware()
+    public function testAddMiddleware(): void
     {
         // create anonimous class
         $page = new class implements RequestHandlerInterface
@@ -60,7 +60,7 @@ class RoutePsrMiddlewareTest extends TestCase
         $this->assertCount(1, $route->getMiddlewares());
     }
 
-    public function testMiddlewaresAreExecutedBeforeTheHandler()
+    public function testMiddlewaresAreExecutedBeforeTheHandler(): void
     {
         // create anonimous class
         $page = new class implements RequestHandlerInterface
@@ -76,7 +76,7 @@ class RoutePsrMiddlewareTest extends TestCase
         $this->assertEquals('Login required', (string) $response->getBody());
     }
 
-    public function testMiddlewaresAreExecutedInOrder()
+    public function testMiddlewaresAreExecutedInOrder(): void
     {
         // create anonimous class
         $page = new class implements RequestHandlerInterface

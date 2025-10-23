@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(PermissionCollection::class)]
 class RoleCollectionTest extends TestCase
 {
-    public function testRoleCollection()
+    public function testRoleCollection(): void
     {
         $rc = new RoleCollection([
             new Role(1, 'Manage Users', new PermissionCollection()),
@@ -33,7 +33,7 @@ class RoleCollectionTest extends TestCase
         $this->assertEquals('Manage Users', $rc[0]->getName());
     }
 
-    public function testOffsetSet()
+    public function testOffsetSet(): void
     {
         $permissionCollection = new PermissionCollection();
         $role = new Role(3, 'Statistics', $permissionCollection);
@@ -43,7 +43,7 @@ class RoleCollectionTest extends TestCase
     }
 
     #[Depends('testRoleCollection', 'testOffsetSet')]
-    public function testRoleCollectionThrowsExceptionIfNotRoleInstanceIsGiven()
+    public function testRoleCollectionThrowsExceptionIfNotRoleInstanceIsGiven(): void
     {
         $rc = new RoleCollection([
             new Role(1, 'Manage Users', new PermissionCollection()),
@@ -54,7 +54,7 @@ class RoleCollectionTest extends TestCase
         $rc[] = new \stdClass();
     }
 
-    public function testRoleCollectionThrowsExceptionIfNotRoleInstanceIsGivenOnCreate()
+    public function testRoleCollectionThrowsExceptionIfNotRoleInstanceIsGivenOnCreate(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $rc = new RoleCollection([

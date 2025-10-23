@@ -14,13 +14,13 @@ use DateTime;
 #[CoversClass(Counter::class)]
 class CounterTest extends TestCase
 {
-    public function testCounterImplementsCounterInterface()
+    public function testCounterImplementsCounterInterface(): void
     {
         $this->assertInstanceOf(CounterInterface::class, new Counter('1', 3));
     }
 
     #[Depends('testCounterImplementsCounterInterface')]
-    public function testGetValues()
+    public function testGetValues(): void
     {
         $created = new DateTime('-1 year');
         $updated = new DateTime('-1 second');
@@ -32,7 +32,7 @@ class CounterTest extends TestCase
     }
 
     #[Depends('testGetValues')]
-    public function testGetDefaultValues()
+    public function testGetDefaultValues(): void
     {
         $counter = new Counter('1', 3);
         $this->assertSame('1', $counter->getId());
@@ -41,13 +41,13 @@ class CounterTest extends TestCase
         $this->assertNotNull($counter->getUpdatedAt());
     }
 
-    public function testNegativeValueHandling()
+    public function testNegativeValueHandling(): void
     {
         $counter = new Counter('test', -1);
         $this->assertSame(-1, $counter->getValue());
     }
 
-    public function testBoundaryValues()
+    public function testBoundaryValues(): void
     {
         $counter1 = new Counter('max', PHP_INT_MAX);
         $this->assertSame(PHP_INT_MAX, $counter1->getValue());

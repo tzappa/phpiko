@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Route::class)]
 class RouteExecTest extends TestCase
 {
-    public function testRouteExec()
+    public function testRouteExec(): void
     {
         $route = new Route('GET', '/', function (ServerRequestInterface $request, array $params) {
             return 'Hello World';
@@ -23,7 +23,7 @@ class RouteExecTest extends TestCase
         $this->assertEquals('Hello World', $route->exec($request));
     }
 
-    public function testRouteExecWithParams()
+    public function testRouteExecWithParams(): void
     {
         $route = new Route('GET', '/hello/{name}', function (ServerRequestInterface $request, array $params) {
             return 'Hello ' . $params['name'];
@@ -33,7 +33,7 @@ class RouteExecTest extends TestCase
         $this->assertEquals('Hello John', $route->exec($request));
     }
 
-    public function testRouteExecWithParams2()
+    public function testRouteExecWithParams2(): void
     {
         $route = new Route('GET', '/hello/{name}/{surname}', function (ServerRequestInterface $request, array $params) {
             return 'Hello ' . $params['name'] . ' ' . $params['surname'];
@@ -42,7 +42,7 @@ class RouteExecTest extends TestCase
         $this->assertEquals('Hello John Doe', $route->exec($request));
     }
 
-    public function testRouteExecSavesParamsAsRequestAttributes()
+    public function testRouteExecSavesParamsAsRequestAttributes(): void
     {
         $route = new Route('GET', '/hello/{name}/{surname}', function (ServerRequestInterface $request, array $params) {
             return 'Hello ' . $request->getAttribute('name') . ' ' . $request->getAttribute('surname');

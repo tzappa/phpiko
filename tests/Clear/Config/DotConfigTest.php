@@ -35,13 +35,13 @@ class DotConfigTest extends TestCase
         ]
     ];
 
-    public function testDotConfigCreate()
+    public function testDotConfigCreate(): void
     {
         $this->assertNotEmpty(new DotConfig($this->conf));
     }
 
     #[Depends('testDotConfigCreate')]
-    public function testHasSingleKey()
+    public function testHasSingleKey(): void
     {
         $config = new DotConfig($this->conf);
 
@@ -51,7 +51,7 @@ class DotConfigTest extends TestCase
 
     #[Depends('testDotConfigCreate')]
     #[Depends('testHasSingleKey')]
-    public function testGetSingleKey()
+    public function testGetSingleKey(): void
     {
         $config = new DotConfig($this->conf);
 
@@ -62,7 +62,7 @@ class DotConfigTest extends TestCase
     }
 
     #[Depends('testGetSingleKey')]
-    public function testGetWithDefaultParam()
+    public function testGetWithDefaultParam(): void
     {
         $config = new DotConfig($this->conf);
         $this->assertNull($config->get('foo', null));
@@ -71,7 +71,7 @@ class DotConfigTest extends TestCase
     }
 
     #[Depends('testGetSingleKey')]
-    public function testGetArray()
+    public function testGetArray(): void
     {
         $config = new DotConfig($this->conf);
 
@@ -83,7 +83,7 @@ class DotConfigTest extends TestCase
     }
 
     #[Depends('testGetSingleKey')]
-    public function testHasWithDotNotation()
+    public function testHasWithDotNotation(): void
     {
         $config = new DotConfig($this->conf);
         $this->assertTrue($config->has('db.type'));
@@ -95,7 +95,7 @@ class DotConfigTest extends TestCase
     }
 
     #[Depends('testHasWithDotNotation')]
-    public function testGetWithDotNotation()
+    public function testGetWithDotNotation(): void
     {
         $config = new DotConfig($this->conf);
         $this->assertSame('mysql', $config->get('db.type'));
@@ -110,7 +110,7 @@ class DotConfigTest extends TestCase
     }
 
     #[Depends('testHasWithDotNotation')]
-    public function testGetDotNotationWithDefault()
+    public function testGetDotNotationWithDefault(): void
     {
         $config = new DotConfig($this->conf);
         $this->assertSame('mysql', $config->get('db.type', 'def'));

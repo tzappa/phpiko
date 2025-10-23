@@ -29,12 +29,12 @@ class AbstractFileReaderTest extends TestCase
         };
     }
 
-    public function testAbstractFileReaderImplementsParserInterface()
+    public function testAbstractFileReaderImplementsParserInterface(): void
     {
         $this->assertInstanceOf(ParserInterface::class, $this->testParser);
     }
 
-    public function testFromFileWithValidFile()
+    public function testFromFileWithValidFile(): void
     {
         // Create a temporary file with test content
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
@@ -51,7 +51,7 @@ class AbstractFileReaderTest extends TestCase
         }
     }
 
-    public function testFromFileWithNonExistentFile()
+    public function testFromFileWithNonExistentFile(): void
     {
         $this->expectException(FileException::class);
         $this->expectExceptionMessage('Could not find configuration file /non/existent/file.txt');
@@ -59,7 +59,7 @@ class AbstractFileReaderTest extends TestCase
         $this->testParser->fromFile('/non/existent/file.txt');
     }
 
-    public function testFromFileWithDirectory()
+    public function testFromFileWithDirectory(): void
     {
         $this->expectException(FileException::class);
         $this->expectExceptionMessage('Could not find configuration file /tmp');
@@ -67,7 +67,7 @@ class AbstractFileReaderTest extends TestCase
         $this->testParser->fromFile('/tmp');
     }
 
-    public function testFromFileWithUnreadableFile()
+    public function testFromFileWithUnreadableFile(): void
     {
         // Create a temporary file and make it unreadable
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
@@ -85,7 +85,7 @@ class AbstractFileReaderTest extends TestCase
         }
     }
 
-    public function testFromFileWithEmptyFile()
+    public function testFromFileWithEmptyFile(): void
     {
         // Create a temporary empty file
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
@@ -101,7 +101,7 @@ class AbstractFileReaderTest extends TestCase
         }
     }
 
-    public function testFromFileWithLargeFile()
+    public function testFromFileWithLargeFile(): void
     {
         // Create a temporary file with large content
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
@@ -118,7 +118,7 @@ class AbstractFileReaderTest extends TestCase
         }
     }
 
-    public function testFromFileWithBinaryFile()
+    public function testFromFileWithBinaryFile(): void
     {
         // Create a temporary file with binary content
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.bin';
@@ -135,7 +135,7 @@ class AbstractFileReaderTest extends TestCase
         }
     }
 
-    public function testFromFileWithFileContainingNullBytes()
+    public function testFromFileWithFileContainingNullBytes(): void
     {
         // Create a temporary file with null bytes
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
@@ -152,7 +152,7 @@ class AbstractFileReaderTest extends TestCase
         }
     }
 
-    public function testFromFileWithFileContainingNewlines()
+    public function testFromFileWithFileContainingNewlines(): void
     {
         // Create a temporary file with various newline characters
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
@@ -169,7 +169,7 @@ class AbstractFileReaderTest extends TestCase
         }
     }
 
-    public function testFromFileWithFileContainingSpecialCharacters()
+    public function testFromFileWithFileContainingSpecialCharacters(): void
     {
         // Create a temporary file with special characters
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
@@ -186,7 +186,7 @@ class AbstractFileReaderTest extends TestCase
         }
     }
 
-    public function testFromFileWithSymlink()
+    public function testFromFileWithSymlink(): void
     {
         // Create a temporary file and a symlink to it
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
@@ -205,7 +205,7 @@ class AbstractFileReaderTest extends TestCase
         }
     }
 
-    public function testFromFileWithFileThatCannotBeRead()
+    public function testFromFileWithFileThatCannotBeRead(): void
     {
         // This test simulates a file that exists but cannot be read
         // We'll create a file and then remove read permissions
@@ -227,7 +227,7 @@ class AbstractFileReaderTest extends TestCase
         }
     }
 
-    public function testFromFileWithFileThatReturnsFalseFromFileGetContents()
+    public function testFromFileWithFileThatReturnsFalseFromFileGetContents(): void
     {
         // This is a bit tricky to test as file_get_contents rarely returns false
         // We'll create a mock scenario by using a file that gets deleted between

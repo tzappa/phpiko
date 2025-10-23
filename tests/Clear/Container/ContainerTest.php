@@ -21,12 +21,12 @@ use stdClass;
 #[UsesClass(NotFoundException::class)]
 class ContainerTest extends TestCase
 {
-    public function testContainerImplementsContainerInteropInterface()
+    public function testContainerImplementsContainerInteropInterface(): void
     {
         $this->assertInstanceOf(ContainerInterface::class, new Container());
     }
 
-    public function testGetWithoutSetReturnsNull()
+    public function testGetWithoutSetReturnsNull(): void
     {
         $container = new Container();
 
@@ -34,7 +34,7 @@ class ContainerTest extends TestCase
         $this->assertNull($container->get('param'));
     }
 
-    public function testHas()
+    public function testHas(): void
     {
         $container = new Container();
         $container->set('param', 'value');
@@ -52,7 +52,7 @@ class ContainerTest extends TestCase
         $this->assertFalse($container->has('unset'));
     }
 
-    public function testSetString()
+    public function testSetString(): void
     {
         $container = new Container();
         $container->set('param', 'value');
@@ -61,7 +61,7 @@ class ContainerTest extends TestCase
         $this->assertSame('value', $container->get('param'));
     }
 
-    public function testSetInteger()
+    public function testSetInteger(): void
     {
         $container = new Container();
         $container->set('int', 4);
@@ -71,7 +71,7 @@ class ContainerTest extends TestCase
         $this->assertSame(4, $container->get('int'));
     }
 
-    public function testSetFalse()
+    public function testSetFalse(): void
     {
         $container = new Container();
         $container->set('false', false);
@@ -80,7 +80,7 @@ class ContainerTest extends TestCase
         $this->assertFalse($container->get('false'));
     }
 
-    public function testSetTrue()
+    public function testSetTrue(): void
     {
         $container = new Container();
         $container->set('true', true);
@@ -89,7 +89,7 @@ class ContainerTest extends TestCase
         $this->assertTrue($container->get('true'));
     }
 
-    public function testSetNull()
+    public function testSetNull(): void
     {
         $container = new Container();
         $container->set('null', null);
@@ -98,7 +98,7 @@ class ContainerTest extends TestCase
         $this->assertNull($container->get('null'));
     }
 
-    public function testSetObject()
+    public function testSetObject(): void
     {
         $container = new Container();
         $obj = new StdClass();
@@ -107,7 +107,7 @@ class ContainerTest extends TestCase
         $this->assertSame($obj, $container->get('obj'));
     }
 
-    public function testWithClosure()
+    public function testWithClosure(): void
     {
         $container = new Container();
         $container->set('StdClass', function () {
@@ -117,7 +117,7 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf('StdClass', $container->get('StdClass'));
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $container = new Container();
         $container->set('param', 'value');
@@ -127,7 +127,7 @@ class ContainerTest extends TestCase
         $this->assertFalse($container->has('param'));
     }
 
-    public function testArrayAccess()
+    public function testArrayAccess(): void
     {
         $container = new Container();
         $this->assertFalse(isset($container['param']));
@@ -161,7 +161,7 @@ class ContainerTest extends TestCase
         $this->assertFalse(isset($container['null']));
     }
 
-    public function testHasWithArrayAccess()
+    public function testHasWithArrayAccess(): void
     {
         $container = new Container();
         $container['param'] = 'value';
@@ -178,7 +178,7 @@ class ContainerTest extends TestCase
         $this->assertFalse(isset($container['unset']));
     }
 
-    public function testGetSameClosureTwice()
+    public function testGetSameClosureTwice(): void
     {
         $container = new Container();
         $container->set('closure', function () {
@@ -188,7 +188,7 @@ class ContainerTest extends TestCase
         $this->assertSame($container->get('closure'), $container->get('closure'));
     }
 
-    public function testGetFactory()
+    public function testGetFactory(): void
     {
         $container = new Container();
         $this->assertNull($container->factory('closure'));
@@ -204,7 +204,7 @@ class ContainerTest extends TestCase
         $this->assertSame(4, $container->factory('id'));
     }
 
-    public function testOverridingValueWithValue()
+    public function testOverridingValueWithValue(): void
     {
         $container = new Container();
         $container->set('param', 'value');
@@ -213,7 +213,7 @@ class ContainerTest extends TestCase
         $this->assertSame('other value', $container->get('param'));
     }
 
-    public function testOverridingClosureWithValue()
+    public function testOverridingClosureWithValue(): void
     {
         $container = new Container();
         $container->set('random', function () {
@@ -224,7 +224,7 @@ class ContainerTest extends TestCase
         $this->assertSame('a', $container->get('random'));
     }
 
-    public function testOverridingValueWithClosure()
+    public function testOverridingValueWithClosure(): void
     {
         $container = new Container();
         $container->set('random', 'a');
@@ -235,7 +235,7 @@ class ContainerTest extends TestCase
         $this->assertIsInt($container->get('random'));
     }
 
-    public function testOverridingClosureWithClosure()
+    public function testOverridingClosureWithClosure(): void
     {
         $container = new Container();
         $container->set('random', function () {
@@ -248,7 +248,7 @@ class ContainerTest extends TestCase
         $this->assertSame('pi=3.14', $container->get('random'));
     }
 
-    public function testOverridingLockedValue()
+    public function testOverridingLockedValue(): void
     {
         $container = new Container();
         $container->set('param', 'value');
@@ -258,7 +258,7 @@ class ContainerTest extends TestCase
         $container->set('param', 'foo');
     }
 
-    public function testOverridingLockedValueHoldsOldOne()
+    public function testOverridingLockedValueHoldsOldOne(): void
     {
         $container = new Container();
         $container->set('param', 'value');
@@ -273,7 +273,7 @@ class ContainerTest extends TestCase
         $this->assertSame('value', $container->get('param'));
     }
 
-    public function testLocksForbidsDeletion()
+    public function testLocksForbidsDeletion(): void
     {
         $container = new Container();
         $container->set('param', 'value');
@@ -282,7 +282,7 @@ class ContainerTest extends TestCase
         $container->delete('param');
     }
 
-    public function testLocksForbidsDeletionAndHoldsAValue()
+    public function testLocksForbidsDeletionAndHoldsAValue(): void
     {
         $container = new Container();
         $container->set('param', 'value');
@@ -295,7 +295,7 @@ class ContainerTest extends TestCase
         $this->assertSame('value', $container->get('param'));
     }
 
-    public function testGetRawFunction()
+    public function testGetRawFunction(): void
     {
         $container = new Container();
         $function = function () {
@@ -305,7 +305,7 @@ class ContainerTest extends TestCase
         $this->assertSame($function, $container->raw('func'));
     }
 
-    public function testSettingRaWForClosures()
+    public function testSettingRaWForClosures(): void
     {
         $container = new Container();
         $function = function () {
@@ -316,14 +316,14 @@ class ContainerTest extends TestCase
         $this->assertSame($function, $container->get('func'));
     }
 
-    public function testNullValueGetRaw()
+    public function testNullValueGetRaw(): void
     {
         $container = new Container();
         $container['null'] = null;
         $this->assertNull($container->raw('null'));
     }
 
-    public function testGetRawCanBeUsedForDefinigFreshObjects()
+    public function testGetRawCanBeUsedForDefinigFreshObjects(): void
     {
         $container = new Container();
         $container->set('closure', function () {
@@ -337,7 +337,7 @@ class ContainerTest extends TestCase
         $this->assertNotSame($StdClass(), $StdClass());
     }
 
-    public function testSettingFactoryForClosures()
+    public function testSettingFactoryForClosures(): void
     {
         $container = new Container();
         $container->set('closure', $container->factory(function () {
@@ -348,7 +348,7 @@ class ContainerTest extends TestCase
         $this->assertNotSame($container->get('closure'), $container->get('closure'));
     }
 
-    public function testPropertyOverloading()
+    public function testPropertyOverloading(): void
     {
         $container = new Container();
         $this->assertFalse($container->has('test'));
@@ -364,7 +364,7 @@ class ContainerTest extends TestCase
         $this->assertEquals(array('foo', 'bar'), $container->get('test'));
     }
 
-    public function testPropertyUnset()
+    public function testPropertyUnset(): void
     {
         $container = new Container();
         $container->test = function () {
@@ -375,7 +375,7 @@ class ContainerTest extends TestCase
         $this->assertFalse(isset($container->test));
     }
 
-    public function testEmpty()
+    public function testEmpty(): void
     {
         $container = new Container();
         $container->test = 'test';

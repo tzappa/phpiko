@@ -16,13 +16,13 @@ use PHPUnit\Framework\Attributes\Depends;
 #[CoversClass(Ini::class)]
 class IniTest extends TestCase
 {
-    public function testIniIsParser()
+    public function testIniIsParser(): void
     {
         $this->assertInstanceOf(ParserInterface::class, new Ini());
     }
 
     #[Depends('testIniIsParser')]
-    public function testIniFromString()
+    public function testIniFromString(): void
     {
         $parser = new Ini();
         $arr = $parser->fromString(file_get_contents(__DIR__ . '/test.ini'));

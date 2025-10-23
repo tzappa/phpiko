@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Route::class)]
 class RouteMiddlewareTest extends TestCase
 {
-    public function testAddMiddlewareReturnsSelf()
+    public function testAddMiddlewareReturnsSelf(): void
     {
         $route = new Route('GET', '/', function () {
             //
@@ -23,7 +23,7 @@ class RouteMiddlewareTest extends TestCase
         $this->assertEquals($route, $route2);
     }
 
-    public function testAddMiddleware()
+    public function testAddMiddleware(): void
     {
         $route = new Route('GET', '/', function () {
             //
@@ -34,7 +34,7 @@ class RouteMiddlewareTest extends TestCase
         $this->assertCount(1, $route->getMiddlewares());
     }
 
-    public function testAddMultipleMiddlewares()
+    public function testAddMultipleMiddlewares(): void
     {
         $route = (new Route('GET', '/', function () {
             //
@@ -46,7 +46,7 @@ class RouteMiddlewareTest extends TestCase
         $this->assertCount(2, $route->getMiddlewares());
     }
 
-    public function testAddMultipleMiddlewaresWithArray()
+    public function testAddMultipleMiddlewaresWithArray(): void
     {
         $route = (new Route('GET', '/', function () {
             //
@@ -61,7 +61,7 @@ class RouteMiddlewareTest extends TestCase
         $this->assertCount(2, $route->getMiddlewares());
     }
 
-    public function testMiddlewaresAreExecutedBeforeTheHandler()
+    public function testMiddlewaresAreExecutedBeforeTheHandler(): void
     {
         $route = (new Route('GET', '/', function () {
             return 'handler';
@@ -72,7 +72,7 @@ class RouteMiddlewareTest extends TestCase
         $this->assertEquals('middleware', $response);
     }
 
-    public function testMiddlewaresAreExecutedInOrder()
+    public function testMiddlewaresAreExecutedInOrder(): void
     {
         $route = (new Route('GET', '/', function () {
             return 'handler';
@@ -85,7 +85,7 @@ class RouteMiddlewareTest extends TestCase
         $this->assertEquals('middleware1 middleware2 handler', $response);
     }
 
-    public function testMiddlewaresCanModifyTheRequest()
+    public function testMiddlewaresCanModifyTheRequest(): void
     {
         $route = (new Route('GET', '/', function ($request) {
             return $request->getAttribute('foo');
@@ -98,7 +98,7 @@ class RouteMiddlewareTest extends TestCase
         $this->assertEquals('bar', $response);
     }
 
-    public function testMiddlewaresCanModifyTheResponse()
+    public function testMiddlewaresCanModifyTheResponse(): void
     {
         $route = (new Route('GET', '/', function () {
             return 'handler';
@@ -111,7 +111,7 @@ class RouteMiddlewareTest extends TestCase
         $this->assertEquals('handler middleware', $response);
     }
 
-    public function testMiddlewaresCanStopTheChain()
+    public function testMiddlewaresCanStopTheChain(): void
     {
         $route = (new Route('GET', '/', function () {
             return 'handler';
@@ -124,7 +124,7 @@ class RouteMiddlewareTest extends TestCase
         $this->assertEquals('middleware', $response);
     }
 
-    public function testMiddlewareCanSeeAttribitesFromThePath()
+    public function testMiddlewareCanSeeAttribitesFromThePath(): void
     {
         $route = (new Route('GET', '/{id}', function ($request) {
             return 'handler';

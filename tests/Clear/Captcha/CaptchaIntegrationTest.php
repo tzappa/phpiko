@@ -60,7 +60,7 @@ class CaptchaIntegrationTest extends TestCase
         $this->pdo->exec('DELETE FROM captcha_used_codes');
     }
 
-    public function testCompleteCaptchaWorkflow()
+    public function testCompleteCaptchaWorkflow(): void
     {
         // Step 1: Create a new captcha
         $this->captcha->create();
@@ -100,7 +100,7 @@ class CaptchaIntegrationTest extends TestCase
         $this->assertFalse($this->provider->add($ivString, 60)); // Should fail because already used
     }
 
-    public function testCaptchaExpiration()
+    public function testCaptchaExpiration(): void
     {
         $config = [
             'width' => 120,
@@ -138,7 +138,7 @@ class CaptchaIntegrationTest extends TestCase
         $this->assertEquals('Code expired', $captcha->getLastErrorMessage());
     }
 
-    public function testCaptchaReusePrevention()
+    public function testCaptchaReusePrevention(): void
     {
         // Use MockUsedKeysProvider for this test
         $mockProvider = new MockUsedKeysProvider();
@@ -179,7 +179,7 @@ class CaptchaIntegrationTest extends TestCase
         $this->assertTrue($result2);
     }
 
-    public function testMultipleCaptchaGeneration()
+    public function testMultipleCaptchaGeneration(): void
     {
         $captchas = [];
         $checksums = [];
@@ -206,7 +206,7 @@ class CaptchaIntegrationTest extends TestCase
         $this->assertEquals(count($images), count($uniqueImages));
     }
 
-    public function testCaptchaWithDifferentConfigurations()
+    public function testCaptchaWithDifferentConfigurations(): void
     {
         $configs = [
             [
@@ -257,7 +257,7 @@ class CaptchaIntegrationTest extends TestCase
         }
     }
 
-    public function testCaptchaWithSpecialCharacters()
+    public function testCaptchaWithSpecialCharacters(): void
     {
         $config = [
             'charset' => '!@#$%^&*()_+-=[]{}|;:,.<>?',
@@ -280,7 +280,7 @@ class CaptchaIntegrationTest extends TestCase
         }
     }
 
-    public function testCaptchaPerformance()
+    public function testCaptchaPerformance(): void
     {
         $startTime = microtime(true);
 

@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Initials::class)]
 class InitialsTest extends TestCase
 {
-    public function testInitials()
+    public function testInitials(): void
     {
         // Two names
         $initials = Initials::fromName('John Doe');
@@ -54,7 +54,7 @@ class InitialsTest extends TestCase
         $this->assertEquals('プポ', $initials);
     }
 
-    public function testUpperCase()
+    public function testUpperCase(): void
     {
         $initials = Initials::fromName('john Doe');
         $this->assertEquals('JD', $initials);
@@ -63,7 +63,7 @@ class InitialsTest extends TestCase
         $this->assertEquals('ИД', $initials);
     }
 
-    public function testExtractInitialsFromEmailAddress()
+    public function testExtractInitialsFromEmailAddress(): void
     {
         $initials = Initials::fromName('demo@gmail.com');
         $this->assertEquals('DE', $initials);

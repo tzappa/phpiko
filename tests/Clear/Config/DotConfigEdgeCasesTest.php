@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(DotConfig::class)]
 class DotConfigEdgeCasesTest extends TestCase
 {
-    public function testEmptyArray()
+    public function testEmptyArray(): void
     {
         $config = new DotConfig([]);
 
@@ -23,7 +23,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertSame('default', $config->get('any.key', 'default'));
     }
 
-    public function testNullValues()
+    public function testNullValues(): void
     {
         $data = [
             'null_value' => null,
@@ -47,7 +47,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertNull($config->get('nested.null_value', 'default'));
     }
 
-    public function testEmptyStringValues()
+    public function testEmptyStringValues(): void
     {
         $data = [
             'empty_string' => '',
@@ -68,7 +68,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertSame('value', $config->get('nested.not_empty'));
     }
 
-    public function testZeroValues()
+    public function testZeroValues(): void
     {
         $data = [
             'zero_int' => 0,
@@ -95,7 +95,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertSame(1, $config->get('nested.not_zero'));
     }
 
-    public function testFalseValues()
+    public function testFalseValues(): void
     {
         $data = [
             'false_bool' => false,
@@ -116,7 +116,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertTrue($config->get('nested.true_bool'));
     }
 
-    public function testEmptyArrays()
+    public function testEmptyArrays(): void
     {
         $data = [
             'empty_array' => [],
@@ -140,7 +140,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertNotEmpty($config->get('nested.not_empty_array'));
     }
 
-    public function testDeepNesting()
+    public function testDeepNesting(): void
     {
         $data = [
             'level1' => [
@@ -165,7 +165,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertNull($config->get('level1.level2.level3.level4.level5.nonexistent'));
     }
 
-    public function testVeryLongKeys()
+    public function testVeryLongKeys(): void
     {
         $longKey = str_repeat('a', 1000);
         $data = [
@@ -183,7 +183,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertSame('nested_value', $config->get("nested.{$longKey}"));
     }
 
-    public function testSpecialCharactersInKeys()
+    public function testSpecialCharactersInKeys(): void
     {
         $data = [
             'key with spaces' => 'value1',
@@ -296,7 +296,7 @@ class DotConfigEdgeCasesTest extends TestCase
         }
     }
 
-    public function testUnicodeInKeys()
+    public function testUnicodeInKeys(): void
     {
         $data = [
             'café' => 'value1',
@@ -339,7 +339,7 @@ class DotConfigEdgeCasesTest extends TestCase
         }
     }
 
-    public function testMixedDataTypes()
+    public function testMixedDataTypes(): void
     {
         $data = [
             'string' => 'hello',
@@ -379,7 +379,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertSame(['x', 'y', 'z'], $config->get('nested_mixed.array'));
     }
 
-    public function testVeryDeepNesting()
+    public function testVeryDeepNesting(): void
     {
         $data = [];
         $current = &$data;
@@ -403,7 +403,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertSame('deep_value', $config->get($key));
     }
 
-    public function testLargeArray()
+    public function testLargeArray(): void
     {
         $data = [];
         for ($i = 0; $i < 1000; $i++) {
@@ -419,7 +419,7 @@ class DotConfigEdgeCasesTest extends TestCase
         }
     }
 
-    public function testNumericKeys()
+    public function testNumericKeys(): void
     {
         $data = [
             '0' => 'zero',
@@ -447,7 +447,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertSame('nested_two', $config->get('nested.2'));
     }
 
-    public function testEmptyKey()
+    public function testEmptyKey(): void
     {
         $data = [
             '' => 'empty_key_value',
@@ -462,7 +462,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertSame('normal_value', $config->get('normal'));
     }
 
-    public function testKeyWithOnlyDots()
+    public function testKeyWithOnlyDots(): void
     {
         $data = [
             'dots' => 'dots_value',
@@ -477,7 +477,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertSame('normal_value', $config->get('normal'));
     }
 
-    public function testKeyWithLeadingAndTrailingDots()
+    public function testKeyWithLeadingAndTrailingDots(): void
     {
         $data = [
             'leading' => 'leading_dot_value',

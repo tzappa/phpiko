@@ -24,7 +24,7 @@ class DatabaseProviderTest extends TestCase
         $this->provider = new Provider($this->setUpDb());
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $counter1 = $this->provider->get(1);
         $this->assertNotEmpty($counter1);
@@ -36,14 +36,14 @@ class DatabaseProviderTest extends TestCase
     }
 
     #[Depends('testGet')]
-    public function testGetReturnsCounter()
+    public function testGetReturnsCounter(): void
     {
         $counter1 = $this->provider->get(1);
         $this->assertInstanceOf(CounterInterface::class, $counter1);
     }
 
     #[Depends('testGetReturnsCounter')]
-    public function testGetMapsAllData()
+    public function testGetMapsAllData(): void
     {
         $counter1 = $this->provider->get(1);
         $this->assertEquals(1, $counter1->getId());
@@ -51,12 +51,12 @@ class DatabaseProviderTest extends TestCase
     }
 
     #[Depends('testGet')]
-    public function testCounterNotFound()
+    public function testCounterNotFound(): void
     {
         $this->assertNull($this->provider->get(666));
     }
 
-    public function testIncrementReturnsCounter()
+    public function testIncrementReturnsCounter(): void
     {
         $this->provider->set('testcounter', 3);
         $counter = $this->provider->increment('testcounter');
@@ -64,7 +64,7 @@ class DatabaseProviderTest extends TestCase
     }
 
     #[Depends('testIncrementReturnsCounter')]
-    public function testIncrementReturnsNextValue()
+    public function testIncrementReturnsNextValue(): void
     {
         $this->provider->set('testcounter', 7);
         $counter = $this->provider->increment('testcounter');
@@ -72,7 +72,7 @@ class DatabaseProviderTest extends TestCase
     }
 
     #[Depends('testIncrementReturnsNextValue')]
-    public function testIncrementAndGet()
+    public function testIncrementAndGet(): void
     {
         $this->provider->set('testcounter', 17);
         $this->provider->increment('testcounter');
@@ -81,7 +81,7 @@ class DatabaseProviderTest extends TestCase
     }
 
     #[Depends('testIncrementAndGet')]
-    public function testIncrementByMoreThanOne()
+    public function testIncrementByMoreThanOne(): void
     {
         $this->provider->set('incBy10', 17);
         $counter = $this->provider->increment('incBy10', 10);
@@ -89,7 +89,7 @@ class DatabaseProviderTest extends TestCase
     }
 
     #[Depends('testIncrementReturnsCounter')]
-    public function testIncrementIfCounterNotFound()
+    public function testIncrementIfCounterNotFound(): void
     {
         $counter = $this->provider->increment('new-counter');
         $this->assertNotNull($counter);
@@ -100,7 +100,7 @@ class DatabaseProviderTest extends TestCase
         $this->assertSame('new-counter', $counter->getId());
         $this->assertSame(1, $counter->getValue());
     }
-    public function testIncrementWithNegativeValue()
+    public function testIncrementWithNegativeValue(): void
     {
         $this->provider->set('negative', 10);
         $counter = $this->provider->increment('negative', -5);

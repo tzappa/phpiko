@@ -16,24 +16,24 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(TwigTemplate::class)]
 class TwigTemplateTest extends TestCase
 {
-    public function testPageCreate()
+    public function testPageCreate(): void
     {
         $this->assertInstanceOf(TemplateInterface::class, new TwigTemplate(__DIR__, false, false));
     }
 
-    public function testLoadReturnsSelf()
+    public function testLoadReturnsSelf(): void
     {
         $page = new TwigTemplate(__DIR__, false, false);
         $this->assertEquals($page, $page->load('phpunit'));
     }
 
-    public function testAssignReturnsSelf()
+    public function testAssignReturnsSelf(): void
     {
         $page = new TwigTemplate(__DIR__, false, false);
         $this->assertEquals($page, $page->assign('testkey', 'one'));
     }
 
-    public function testParse()
+    public function testParse(): void
     {
         $page = new TwigTemplate(__DIR__, false, false);
         $page->load('phpunit');
@@ -42,7 +42,7 @@ class TwigTemplateTest extends TestCase
         $this->assertSame("<title></title>\n\n", $html);
     }
 
-    public function testAssign()
+    public function testAssign(): void
     {
         $page = new TwigTemplate(__DIR__, false, false);
         $page->load('phpunit');
@@ -52,7 +52,7 @@ class TwigTemplateTest extends TestCase
         $this->assertSame("<title></title>\ntest\n", $html);
     }
 
-    public function testAssignRewritesSameKey()
+    public function testAssignRewritesSameKey(): void
     {
         $page = new TwigTemplate(__DIR__, false, false);
         $page->load('phpunit');
@@ -63,14 +63,14 @@ class TwigTemplateTest extends TestCase
         $this->assertSame("<title></title>\nother\n", $html);
     }
 
-    public function testRegisterFunctionRetursSelf()
+    public function testRegisterFunctionRetursSelf(): void
     {
         $page = new TwigTemplate(__DIR__, false, false);
         $this->assertEquals($page, $page->registerFunction('test', function () {
         }));
     }
 
-    public function testRegisterFunction()
+    public function testRegisterFunction(): void
     {
         $page = new TwigTemplate(__DIR__, false, false);
         $page->registerFunction('customFunc', function ($param) {
@@ -85,7 +85,7 @@ class TwigTemplateTest extends TestCase
         $this->assertSame("bar\n333\n", $html);
     }
 
-    public function testDebug()
+    public function testDebug(): void
     {
         $page = new TwigTemplate(__DIR__, false, true);
         $page->load('debug');
