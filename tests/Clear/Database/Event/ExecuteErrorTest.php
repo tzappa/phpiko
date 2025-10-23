@@ -25,7 +25,7 @@ class ExecuteErrorTest extends TestCase
         $queryString = 'SELECT * FROM users';
         $params = ['id' => 1];
         $event = new ExecuteError($queryString, $params, $this->exception);
-        
+
         $this->assertEquals('ExecuteError', $event->getEventType());
     }
 
@@ -34,7 +34,7 @@ class ExecuteErrorTest extends TestCase
         $queryString = 'SELECT * FROM users WHERE id = ?';
         $params = ['id' => 1];
         $event = new ExecuteError($queryString, $params, $this->exception);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
     }
 
@@ -43,7 +43,7 @@ class ExecuteErrorTest extends TestCase
         $queryString = 'SELECT * FROM users WHERE id = ?';
         $params = ['id' => 1];
         $event = new ExecuteError($queryString, $params, $this->exception);
-        
+
         $this->assertEquals($params, $event->getParams());
     }
 
@@ -52,7 +52,7 @@ class ExecuteErrorTest extends TestCase
         $queryString = 'SELECT * FROM users';
         $params = ['id' => 1];
         $event = new ExecuteError($queryString, $params, $this->exception);
-        
+
         $this->assertSame($this->exception, $event->getException());
     }
 
@@ -61,7 +61,7 @@ class ExecuteErrorTest extends TestCase
         $queryString = 'INSERT INTO users (name, email) VALUES (?, ?)';
         $params = ['John Doe', 'john@example.com'];
         $event = new ExecuteError($queryString, $params, $this->exception);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
     }
 
@@ -70,7 +70,7 @@ class ExecuteErrorTest extends TestCase
         $queryString = 'UPDATE users SET name = ? WHERE id = ?';
         $params = ['John Doe', 1];
         $event = new ExecuteError($queryString, $params, $this->exception);
-        
+
         $this->assertEquals($params, $event->getParams());
     }
 
@@ -79,14 +79,14 @@ class ExecuteErrorTest extends TestCase
         $queryString = 'DELETE FROM users WHERE id = ?';
         $params = [1];
         $event = new ExecuteError($queryString, $params, $this->exception);
-        
+
         $this->assertSame($this->exception, $event->getException());
     }
 
     public function testExtendsPdoEvent(): void
     {
         $event = new ExecuteError('SELECT 1', null, $this->exception);
-        
+
         $this->assertInstanceOf(PdoEvent::class, $event);
     }
 
@@ -94,7 +94,7 @@ class ExecuteErrorTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $event = new ExecuteError($queryString, null, $this->exception);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
         $this->assertNull($event->getParams());
         $this->assertSame($this->exception, $event->getException());
@@ -105,7 +105,7 @@ class ExecuteErrorTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $event = new ExecuteError($queryString, [], $this->exception);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
         $this->assertEquals([], $event->getParams());
         $this->assertSame($this->exception, $event->getException());
@@ -115,14 +115,14 @@ class ExecuteErrorTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $params = ['id' => 1];
-        
+
         $exceptions = [
             new PDOException('SQLSTATE[HY000]: General error: 1 no such table: users'),
             new PDOException('SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed'),
             new PDOException('SQLSTATE[HY000]: General error: 1 near "INVALID": syntax error'),
             new PDOException('SQLSTATE[HY000]: General error: 1 database is locked')
         ];
-        
+
         foreach ($exceptions as $exception) {
             $event = new ExecuteError($queryString, $params, $exception);
             $this->assertEquals($queryString, $event->getQueryString());
@@ -139,7 +139,7 @@ class ExecuteErrorTest extends TestCase
             'UPDATE users SET name = ? WHERE id = ?',
             'DELETE FROM users WHERE id = ?'
         ];
-        
+
         foreach ($queries as $query) {
             $event = new ExecuteError($query, null, $this->exception);
             $this->assertEquals($query, $event->getQueryString());
@@ -151,14 +151,14 @@ class ExecuteErrorTest extends TestCase
     public function testWithDifferentParamTypes(): void
     {
         $queryString = 'SELECT * FROM users WHERE id = ? AND active = ?';
-        
+
         $testParams = [
             ['id' => 1, 'active' => true],
             ['id' => '2', 'active' => false],
             ['id' => 3.14, 'active' => 1],
             ['id' => null, 'active' => 'yes']
         ];
-        
+
         foreach ($testParams as $params) {
             $event = new ExecuteError($queryString, $params, $this->exception);
             $this->assertEquals($params, $event->getParams());
@@ -170,7 +170,7 @@ class ExecuteErrorTest extends TestCase
     public function testEmptyQueryString(): void
     {
         $event = new ExecuteError('', null, $this->exception);
-        
+
         $this->assertEquals('', $event->getQueryString());
         $this->assertEquals('ExecuteError', $event->getEventType());
         $this->assertSame($this->exception, $event->getException());
@@ -181,7 +181,7 @@ class ExecuteErrorTest extends TestCase
         $complexQuery = 'SELECT u.*, p.title FROM users u LEFT JOIN posts p ON u.id = p.user_id WHERE u.active = ? AND p.published_at > ? ORDER BY u.created_at DESC LIMIT ?';
         $params = [true, '2023-01-01', 10];
         $event = new ExecuteError($complexQuery, $params, $this->exception);
-        
+
         $this->assertEquals($complexQuery, $event->getQueryString());
         $this->assertEquals($params, $event->getParams());
         $this->assertSame($this->exception, $event->getException());
@@ -192,7 +192,7 @@ class ExecuteErrorTest extends TestCase
         $queryString = 'SELECT 1';
         $params = ['test'];
         $event = new ExecuteError($queryString, $params, $this->exception);
-        
+
         // Verify all properties cannot be changed after construction
         $this->assertEquals($queryString, $event->getQueryString());
         $this->assertEquals($params, $event->getParams());
@@ -203,7 +203,7 @@ class ExecuteErrorTest extends TestCase
     {
         $queryString = 'SELECT 1';
         $event = new ExecuteError($queryString, null, $this->exception);
-        
+
         // The exception object itself can be modified (it's not readonly)
         $this->assertSame($this->exception, $event->getException());
     }
@@ -211,14 +211,14 @@ class ExecuteErrorTest extends TestCase
     public function testWithSpecificPdoExceptionCodes(): void
     {
         $queryString = 'SELECT * FROM users';
-        
+
         $exceptions = [
             new PDOException('SQLSTATE[HY000]: General error: 1 no such table: users'),
             new PDOException('SQLSTATE[23000]: Integrity constraint violation: 19 UNIQUE constraint failed'),
             new PDOException('SQLSTATE[HY000]: General error: 1 near "INVALID": syntax error'),
             new PDOException('SQLSTATE[HY000]: General error: 1 database is locked')
         ];
-        
+
         foreach ($exceptions as $exception) {
             $event = new ExecuteError($queryString, null, $exception);
             $this->assertSame($exception, $event->getException());
@@ -231,7 +231,7 @@ class ExecuteErrorTest extends TestCase
         $queryString = 'SELECT * FROM "users" WHERE name = \'John\'';
         $exception = new PDOException('SQLSTATE[HY000]: General error: 1 near "John": syntax error');
         $event = new ExecuteError($queryString, null, $exception);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
         $this->assertSame($exception, $event->getException());
     }

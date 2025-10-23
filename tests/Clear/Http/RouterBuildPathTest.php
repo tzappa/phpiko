@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 /**
  * Check the route can build the URI path
  *
@@ -18,21 +21,24 @@ class RouterBuildPathTest extends TestCase
     public function testRouteBuildOnNoDynamicPaths()
     {
         $router = new Router();
-        $router->map('GET', '/', function () {}, 'home');
+        $router->map('GET', '/', function () {
+        }, 'home');
         $this->assertEquals('/', $router->buildPath('home'));
     }
 
     public function testRouteBuildOnDynamicPaths()
     {
         $router = new Router();
-        $router->map('GET', '/hello/{name}/{surname}', function () {}, 'hello');
+        $router->map('GET', '/hello/{name}/{surname}', function () {
+        }, 'hello');
         $this->assertEquals('/hello/John/Doe', $router->buildPath('hello', ['name' => 'John', 'surname' => 'Doe']));
     }
 
     public function testBuildPathThrowsExceptionIfNotEnougthParams()
     {
         $router = new Router();
-        $router->map('GET', '/hello/{name}/{surname}', function () {}, 'hello');
+        $router->map('GET', '/hello/{name}/{surname}', function () {
+        }, 'hello');
         $this->expectException(\Exception::class);
         $router->buildPath('hello', ['name' => 'John']);
     }
@@ -40,7 +46,8 @@ class RouterBuildPathTest extends TestCase
     public function testBuildPathThrowsExceptionIfNotEnougthParams2()
     {
         $router = new Router();
-        $router->map('GET', '/hello/{name}/{surname}', function () {}, 'hello');
+        $router->map('GET', '/hello/{name}/{surname}', function () {
+        }, 'hello');
         $this->expectException(\Exception::class);
         $router->buildPath('hello', ['surname' => 'Doe']);
     }
@@ -48,14 +55,16 @@ class RouterBuildPathTest extends TestCase
     public function testBuildPathOnDynamicWithRegEx()
     {
         $router = new Router();
-        $router->map('GET', '/post/{id:\d+}-{slug:[a-z0-9_\-]+}.html', function () {}, 'post');
+        $router->map('GET', '/post/{id:\d+}-{slug:[a-z0-9_\-]+}.html', function () {
+        }, 'post');
         $this->assertEquals('/post/42-clear-router.html', $router->buildPath('post', ['id' => '42', 'slug' => 'clear-router']));
     }
 
     public function testBuildPathThrowsExceptionWhenParamValueDoesntMatchRegex()
     {
         $router = new Router();
-        $router->map('GET', '/post/{id:\d+}-{slug:[a-z0-9_\-]+}.html', function () {}, 'post');
+        $router->map('GET', '/post/{id:\d+}-{slug:[a-z0-9_\-]+}.html', function () {
+        }, 'post');
         $this->expectException(\InvalidArgumentException::class);
         $router->buildPath('post', ['id' => 'word', 'slug' => 'clear-router']);
     }

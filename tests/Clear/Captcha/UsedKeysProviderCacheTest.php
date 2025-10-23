@@ -173,14 +173,14 @@ class UsedKeysProviderCacheTest extends TestCase
     {
         $key = 'test-key-123';
         $expiresAfter = 3600; // 1 hour
-        
+
         $result = $this->provider->add($key, $expiresAfter);
-        
+
         $this->assertTrue($result);
-        
+
         // Verify the key was stored in cache
         $this->assertTrue($this->cachePool->hasItem(sha1($key)));
-        
+
         // Verify the cache item has the correct expiration
         $item = $this->cachePool->getItem(sha1($key));
         $this->assertTrue($item->isHit());
@@ -191,11 +191,11 @@ class UsedKeysProviderCacheTest extends TestCase
     {
         $key = 'test-key-456';
         $expiresAfter = 3600;
-        
+
         // Add the key first time
         $result1 = $this->provider->add($key, $expiresAfter);
         $this->assertTrue($result1);
-        
+
         // Try to add the same key again
         $result2 = $this->provider->add($key, $expiresAfter);
         $this->assertFalse($result2);
@@ -205,15 +205,15 @@ class UsedKeysProviderCacheTest extends TestCase
     {
         $keys = ['key1', 'key2', 'key3', 'key4'];
         $expiresAfter = 3600;
-        
+
         foreach ($keys as $key) {
             $result = $this->provider->add($key, $expiresAfter);
             $this->assertTrue($result);
         }
-        
+
         // Verify all keys were stored
         $this->assertEquals(count($keys), $this->cachePool->getItemsCount());
-        
+
         foreach ($keys as $key) {
             $this->assertTrue($this->cachePool->hasItem(sha1($key)));
         }
@@ -223,13 +223,13 @@ class UsedKeysProviderCacheTest extends TestCase
     {
         $key1 = 'key-short';
         $key2 = 'key-long';
-        
+
         $result1 = $this->provider->add($key1, 1); // 1 second
         $result2 = $this->provider->add($key2, 3600); // 1 hour
-        
+
         $this->assertTrue($result1);
         $this->assertTrue($result2);
-        
+
         // Both keys should be in the cache
         $this->assertEquals(2, $this->cachePool->getItemsCount());
         $this->assertTrue($this->cachePool->hasItem(sha1($key1)));
@@ -240,10 +240,10 @@ class UsedKeysProviderCacheTest extends TestCase
     {
         $key = '';
         $expiresAfter = 3600;
-        
+
         $result = $this->provider->add($key, $expiresAfter);
         $this->assertTrue($result);
-        
+
         // Verify the empty key was stored
         $this->assertTrue($this->cachePool->hasItem(sha1($key)));
     }
@@ -252,10 +252,10 @@ class UsedKeysProviderCacheTest extends TestCase
     {
         $key = str_repeat('a', 1000); // Very long key
         $expiresAfter = 3600;
-        
+
         $result = $this->provider->add($key, $expiresAfter);
         $this->assertTrue($result);
-        
+
         // Verify the long key was stored (using SHA1 hash)
         $this->assertTrue($this->cachePool->hasItem(sha1($key)));
     }
@@ -264,10 +264,10 @@ class UsedKeysProviderCacheTest extends TestCase
     {
         $key = 'key-zero-expiration';
         $expiresAfter = 0;
-        
+
         $result = $this->provider->add($key, $expiresAfter);
         $this->assertTrue($result);
-        
+
         // Verify the key was stored
         $this->assertTrue($this->cachePool->hasItem(sha1($key)));
     }
@@ -276,10 +276,10 @@ class UsedKeysProviderCacheTest extends TestCase
     {
         $key = 'key-negative-expiration';
         $expiresAfter = -3600; // Negative expiration
-        
+
         $result = $this->provider->add($key, $expiresAfter);
         $this->assertTrue($result);
-        
+
         // Verify the key was stored
         $this->assertTrue($this->cachePool->hasItem(sha1($key)));
     }
@@ -303,17 +303,17 @@ class UsedKeysProviderCacheTest extends TestCase
             'key?with?question',
             'key&with&ampersand'
         ];
-        
+
         $expiresAfter = 3600;
-        
+
         foreach ($keys as $key) {
             $result = $this->provider->add($key, $expiresAfter);
             $this->assertTrue($result);
         }
-        
+
         // Verify all keys were stored
         $this->assertEquals(count($keys), $this->cachePool->getItemsCount());
-        
+
         foreach ($keys as $key) {
             $this->assertTrue($this->cachePool->hasItem(sha1($key)));
         }
@@ -333,17 +333,17 @@ class UsedKeysProviderCacheTest extends TestCase
             'key-ไทย',
             'key-🌍🌎🌏'
         ];
-        
+
         $expiresAfter = 3600;
-        
+
         foreach ($keys as $key) {
             $result = $this->provider->add($key, $expiresAfter);
             $this->assertTrue($result);
         }
-        
+
         // Verify all keys were stored
         $this->assertEquals(count($keys), $this->cachePool->getItemsCount());
-        
+
         foreach ($keys as $key) {
             $this->assertTrue($this->cachePool->hasItem(sha1($key)));
         }
@@ -353,13 +353,13 @@ class UsedKeysProviderCacheTest extends TestCase
     {
         $key = 'concurrent-key';
         $expiresAfter = 3600;
-        
+
         // Simulate concurrent access by adding the same key multiple times
         $results = [];
         for ($i = 0; $i < 5; $i++) {
             $results[] = $this->provider->add($key, $expiresAfter);
         }
-        
+
         // Only the first add should succeed
         $this->assertTrue($results[0]);
         $this->assertFalse($results[1]);
@@ -372,9 +372,9 @@ class UsedKeysProviderCacheTest extends TestCase
     {
         $key = 'test-value-key';
         $expiresAfter = 3600;
-        
+
         $this->provider->add($key, $expiresAfter);
-        
+
         // Verify the cache item has the expected value
         $item = $this->cachePool->getItem(sha1($key));
         $this->assertEquals('*', $item->get());
@@ -384,16 +384,16 @@ class UsedKeysProviderCacheTest extends TestCase
     {
         $key = 'test-expiration-key';
         $expiresAfter = 60; // 1 minute
-        
+
         $this->provider->add($key, $expiresAfter);
-        
+
         // Verify the cache item has the correct expiration
         $item = $this->cachePool->getItem(sha1($key));
         $this->assertTrue($item->isHit());
-        
+
         // The expiration should be set to the current time + expiresAfter
         $expectedExpiration = time() + $expiresAfter;
-        
+
         // We can't directly access the expiration property, but we can test that the item is hit
         $this->assertTrue($item->isHit());
     }

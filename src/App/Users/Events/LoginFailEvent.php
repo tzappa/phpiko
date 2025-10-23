@@ -15,5 +15,7 @@ use App\Users\User;
  */
 class LoginFailEvent
 {
-    public function __construct(public readonly User $user, public readonly string $reason) {}
+    public function __construct(public readonly User $user, public readonly string $reason)
+    {
+    }
 }

@@ -19,5 +19,6 @@ final class PasswordResetRequestEvent
         public readonly User $user,
         public readonly string $token,
         public readonly string $resetUrl
-    ) {}
+    ) {
+    }
 }

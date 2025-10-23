@@ -16,7 +16,7 @@ class BeforeQueryTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $event = new BeforeQuery($queryString);
-        
+
         $this->assertEquals('BeforeQuery', $event->getEventType());
     }
 
@@ -24,7 +24,7 @@ class BeforeQueryTest extends TestCase
     {
         $queryString = 'SELECT * FROM users WHERE id = ?';
         $event = new BeforeQuery($queryString);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
     }
 
@@ -32,14 +32,14 @@ class BeforeQueryTest extends TestCase
     {
         $queryString = 'INSERT INTO users (name, email) VALUES (?, ?)';
         $event = new BeforeQuery($queryString);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
     }
 
     public function testExtendsPdoEvent(): void
     {
         $event = new BeforeQuery('SELECT 1');
-        
+
         $this->assertInstanceOf(PdoEvent::class, $event);
     }
 
@@ -47,7 +47,7 @@ class BeforeQueryTest extends TestCase
     {
         $originalQuery = 'SELECT * FROM users';
         $event = new BeforeQuery($originalQuery);
-        
+
         // Verify we can get the original query
         $this->assertEquals($originalQuery, $event->getQueryString());
     }
@@ -62,7 +62,7 @@ class BeforeQueryTest extends TestCase
             'CREATE TABLE test (id INTEGER PRIMARY KEY)',
             'DROP TABLE test'
         ];
-        
+
         foreach ($queries as $query) {
             $event = new BeforeQuery($query);
             $this->assertEquals($query, $event->getQueryString());
@@ -73,7 +73,7 @@ class BeforeQueryTest extends TestCase
     public function testEmptyQueryString(): void
     {
         $event = new BeforeQuery('');
-        
+
         $this->assertEquals('', $event->getQueryString());
         $this->assertEquals('BeforeQuery', $event->getEventType());
     }
@@ -82,7 +82,7 @@ class BeforeQueryTest extends TestCase
     {
         $complexQuery = 'SELECT u.*, p.title FROM users u LEFT JOIN posts p ON u.id = p.user_id WHERE u.active = 1 AND p.published_at > ? ORDER BY u.created_at DESC LIMIT 10';
         $event = new BeforeQuery($complexQuery);
-        
+
         $this->assertEquals($complexQuery, $event->getQueryString());
     }
 }

@@ -34,7 +34,8 @@ class CompleteSignup
         private CounterService $counters,
         private TemplateInterface $template,
         private SessionInterface $session,
-    ) {}
+    ) {
+    }
 
     /**
      * Handle the request
@@ -89,7 +90,8 @@ class CompleteSignup
                     // Log the user in
                     $this->loginService->login($user['username'], $password);
 
-                    return new RedirectResponse('/');                }
+                    return new RedirectResponse('/');
+                }
             } catch (InvalidArgumentException $e) {
                 // Handle validation errors
                 if (strpos($e->getMessage(), 'Username is already taken') !== false) {

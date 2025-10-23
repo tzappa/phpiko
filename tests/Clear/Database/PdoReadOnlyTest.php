@@ -33,7 +33,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(PdoStatementExt::class)]
 class PdoReadOnlyTest extends TestCase
 {
-
     public function testCreate()
     {
         $this->assertNotEmpty(new PdoExt('sqlite::memory:'));

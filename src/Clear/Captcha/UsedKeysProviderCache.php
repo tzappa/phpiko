@@ -31,7 +31,7 @@ final class UsedKeysProviderCache implements UsedKeysProviderInterface
     public function add(string $id, int $expiresAfter): bool
     {
         // check we have the key
-        $item =$this->cachePool->getItem(sha1($id));
+        $item = $this->cachePool->getItem(sha1($id));
         if ($item->isHit()) {
             return false;
         }

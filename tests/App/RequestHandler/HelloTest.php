@@ -36,7 +36,7 @@ class HelloTest extends TestCase
     public function testHandleWithAuthenticatedUser(): void
     {
         $user = (object) ['username' => 'john_doe'];
-        
+
         $this->requestMock->expects($this->once())
             ->method('getAttribute')
             ->with('user')
@@ -91,21 +91,21 @@ class HelloTest extends TestCase
     {
         $templateMock = $this->createMock(TemplateInterface::class);
         $requestMock = $this->createMock(ServerRequestInterface::class);
-        
-        $extendedHandler = new class($templateMock) extends Hello {
+
+        $extendedHandler = new class ($templateMock) extends Hello {
             private TemplateInterface $customTemplate;
-            
+
             public function __construct(TemplateInterface $template)
             {
                 parent::__construct($template);
                 $this->customTemplate = $template;
             }
-            
+
             public function handle(ServerRequestInterface $request): ResponseInterface
             {
                 $user = $request->getAttribute('user');
                 $username = $user->username ?? 'Guest';
-                
+
                 $tpl = $this->customTemplate->load('hello.twig');
                 $tpl->assign('username', 'Dear ' . $username);
                 $html = $tpl->parse();
@@ -115,7 +115,7 @@ class HelloTest extends TestCase
         };
 
         $user = (object) ['username' => 'alice'];
-        
+
         $requestMock->expects($this->once())
             ->method('getAttribute')
             ->with('user')
@@ -142,16 +142,16 @@ class HelloTest extends TestCase
     {
         $templateMock = $this->createMock(TemplateInterface::class);
         $requestMock = $this->createMock(ServerRequestInterface::class);
-        
-        $extendedHandler = new class($templateMock) extends Hello {
+
+        $extendedHandler = new class ($templateMock) extends Hello {
             private TemplateInterface $customTemplate;
-            
+
             public function __construct(TemplateInterface $template)
             {
                 parent::__construct($template);
                 $this->customTemplate = $template;
             }
-            
+
             protected function getTemplateName(): string
             {
                 return 'welcome.twig';

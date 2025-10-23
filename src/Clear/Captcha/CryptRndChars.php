@@ -64,7 +64,7 @@ final class CryptRndChars implements CaptchaInterface
             // height of the image in pixels
             'height'                   => 40,
             // absolute path to the font
-            'font'                     => __DIR__.'/captcha.ttf',
+            'font'                     => __DIR__ . '/captcha.ttf',
             // quality
             'quality'                  => 15,
             // chars that will be used on code generation
@@ -131,7 +131,7 @@ final class CryptRndChars implements CaptchaInterface
         if ($iv === false) {
             throw new RuntimeException('Failed to generate initialization vector.');
         }
-        $ciphertext = openssl_encrypt($plaintext, $this->config['cipher'], $this->secret, $options=0, $iv);
+        $ciphertext = openssl_encrypt($plaintext, $this->config['cipher'], $this->secret, $options = 0, $iv);
         if ($ciphertext === false) {
             throw new RuntimeException('Encryption failed.');
         }
@@ -168,7 +168,7 @@ final class CryptRndChars implements CaptchaInterface
             return false;
         }
 
-        $plaintext = openssl_decrypt($ciphertext, $this->config['cipher'], $this->secret, $options=0, $iv);
+        $plaintext = openssl_decrypt($ciphertext, $this->config['cipher'], $this->secret, $options = 0, $iv);
         if (!$plaintext) {
             $this->lastErrorMessage = 'Checksum mismatch';
             return false;

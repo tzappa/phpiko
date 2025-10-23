@@ -16,7 +16,7 @@ class BeforeExecuteTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $event = new BeforeExecute($queryString);
-        
+
         $this->assertEquals('BeforeExecute', $event->getEventType());
     }
 
@@ -24,7 +24,7 @@ class BeforeExecuteTest extends TestCase
     {
         $queryString = 'SELECT * FROM users WHERE id = ?';
         $event = new BeforeExecute($queryString);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
     }
 
@@ -32,7 +32,7 @@ class BeforeExecuteTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $event = new BeforeExecute($queryString);
-        
+
         $this->assertNull($event->getParams());
     }
 
@@ -41,7 +41,7 @@ class BeforeExecuteTest extends TestCase
         $queryString = 'SELECT * FROM users WHERE id = ?';
         $params = ['id' => 1];
         $event = new BeforeExecute($queryString, $params);
-        
+
         $this->assertEquals($params, $event->getParams());
     }
 
@@ -49,7 +49,7 @@ class BeforeExecuteTest extends TestCase
     {
         $queryString = 'INSERT INTO users (name, email) VALUES (?, ?)';
         $event = new BeforeExecute($queryString);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
     }
 
@@ -58,14 +58,14 @@ class BeforeExecuteTest extends TestCase
         $queryString = 'UPDATE users SET name = ? WHERE id = ?';
         $params = ['John Doe', 1];
         $event = new BeforeExecute($queryString, $params);
-        
+
         $this->assertEquals($params, $event->getParams());
     }
 
     public function testExtendsPdoEvent(): void
     {
         $event = new BeforeExecute('SELECT 1');
-        
+
         $this->assertInstanceOf(PdoEvent::class, $event);
     }
 
@@ -73,7 +73,7 @@ class BeforeExecuteTest extends TestCase
     {
         $originalQuery = 'SELECT * FROM users';
         $event = new BeforeExecute($originalQuery);
-        
+
         // Verify we can get the original query
         $this->assertEquals($originalQuery, $event->getQueryString());
     }
@@ -83,7 +83,7 @@ class BeforeExecuteTest extends TestCase
         $queryString = 'SELECT * FROM users WHERE id = ?';
         $originalParams = ['id' => 1];
         $event = new BeforeExecute($queryString, $originalParams);
-        
+
         // Verify we can get the original params
         $this->assertEquals($originalParams, $event->getParams());
     }
@@ -96,7 +96,7 @@ class BeforeExecuteTest extends TestCase
             'UPDATE users SET name = ? WHERE id = ?',
             'DELETE FROM users WHERE id = ?'
         ];
-        
+
         foreach ($queries as $query) {
             $event = new BeforeExecute($query);
             $this->assertEquals($query, $event->getQueryString());
@@ -108,14 +108,14 @@ class BeforeExecuteTest extends TestCase
     public function testWithDifferentParamTypes(): void
     {
         $queryString = 'SELECT * FROM users WHERE id = ? AND active = ?';
-        
+
         $testParams = [
             ['id' => 1, 'active' => true],
             ['id' => '2', 'active' => false],
             ['id' => 3.14, 'active' => 1],
             ['id' => null, 'active' => 'yes']
         ];
-        
+
         foreach ($testParams as $params) {
             $event = new BeforeExecute($queryString, $params);
             $this->assertEquals($params, $event->getParams());
@@ -126,7 +126,7 @@ class BeforeExecuteTest extends TestCase
     public function testEmptyQueryString(): void
     {
         $event = new BeforeExecute('');
-        
+
         $this->assertEquals('', $event->getQueryString());
         $this->assertEquals('BeforeExecute', $event->getEventType());
         $this->assertNull($event->getParams());
@@ -136,7 +136,7 @@ class BeforeExecuteTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $event = new BeforeExecute($queryString, []);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
         $this->assertEquals([], $event->getParams());
     }
@@ -146,7 +146,7 @@ class BeforeExecuteTest extends TestCase
         $complexQuery = 'SELECT u.*, p.title FROM users u LEFT JOIN posts p ON u.id = p.user_id WHERE u.active = ? AND p.published_at > ? ORDER BY u.created_at DESC LIMIT ?';
         $params = [true, '2023-01-01', 10];
         $event = new BeforeExecute($complexQuery, $params);
-        
+
         $this->assertEquals($complexQuery, $event->getQueryString());
         $this->assertEquals($params, $event->getParams());
     }

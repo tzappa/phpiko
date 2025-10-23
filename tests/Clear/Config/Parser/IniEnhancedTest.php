@@ -7,7 +7,6 @@ namespace Test\Config\Parser;
 use Clear\Config\Parser\Ini;
 use Clear\Config\Parser\ParserInterface;
 use Clear\Config\Exception\ConfigException;
-
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -40,9 +39,9 @@ version = 1.1
 log[enabled] = On
 log[level] = debug
 INI;
-        
+
         $arr = $parser->fromString($iniString);
-        
+
         $this->assertIsArray($arr);
         $this->assertSame('value', $arr['key']);
         $this->assertSame('mysql', $arr['db']['type']);
@@ -72,9 +71,9 @@ version = 1.1
 log[enabled] = 1
 log[level] = debug
 INI;
-        
+
         $arr = $parser->fromString($iniString);
-        
+
         $this->assertIsArray($arr);
         $this->assertArrayHasKey('general', $arr);
         $this->assertArrayHasKey('database', $arr);
@@ -92,7 +91,7 @@ INI;
     {
         $parser = new Ini();
         $arr = $parser->fromString('');
-        
+
         $this->assertIsArray($arr);
         $this->assertEmpty($arr);
     }
@@ -101,7 +100,7 @@ INI;
     {
         $parser = new Ini();
         $arr = $parser->fromString("   \n\t  \n  ");
-        
+
         $this->assertIsArray($arr);
         $this->assertEmpty($arr);
     }
@@ -119,9 +118,9 @@ type = mysql
 ; Another comment
 port = 3306
 INI;
-        
+
         $arr = $parser->fromString($iniString);
-        
+
         $this->assertIsArray($arr);
         $this->assertSame('value', $arr['key']);
         $this->assertSame('mysql', $arr['db']['type']);
@@ -141,9 +140,9 @@ off_val = off
 yes_val = yes
 no_val = no
 INI;
-        
+
         $arr = $parser->fromString($iniString);
-        
+
         $this->assertIsArray($arr);
         $this->assertSame(1, $arr['enabled']);
         $this->assertSame(0, $arr['disabled']);
@@ -164,9 +163,9 @@ float = 3.14
 negative = -10
 zero = 0
 INI;
-        
+
         $arr = $parser->fromString($iniString);
-        
+
         $this->assertIsArray($arr);
         $this->assertSame(42, $arr['integer']);
         $this->assertSame(3.14, $arr['float']);
@@ -183,9 +182,9 @@ double_quoted = "quoted value"
 mixed = "quoted 'with' single"
 mixed2 = 'quoted "with" double'
 INI;
-        
+
         $arr = $parser->fromString($iniString);
-        
+
         $this->assertIsArray($arr);
         $this->assertSame('quoted value', $arr['single_quoted']);
         $this->assertSame('quoted value', $arr['double_quoted']);
@@ -202,9 +201,9 @@ empty_quoted = ""
 empty_single = ''
 space = " "
 INI;
-        
+
         $arr = $parser->fromString($iniString);
-        
+
         $this->assertIsArray($arr);
         $this->assertSame('', $arr['empty']);
         $this->assertSame('', $arr['empty_quoted']);
@@ -215,10 +214,10 @@ INI;
     public function testFromStringWithMalformedIni()
     {
         $parser = new Ini();
-        
+
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('INI parse error');
-        
+
         // Suppress PHP warnings for malformed INI (expected behavior)
         $oldErrorReporting = error_reporting(E_ERROR | E_PARSE);
         $parser->fromString('invalid ini content with [unclosed section');
@@ -228,10 +227,10 @@ INI;
     public function testFromStringWithInvalidSyntax()
     {
         $parser = new Ini();
-        
+
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('INI parse error');
-        
+
         // Suppress PHP warnings for malformed INI (expected behavior)
         $oldErrorReporting = error_reporting(E_ERROR | E_PARSE);
         $parser->fromString('key = value = extra');
@@ -242,7 +241,7 @@ INI;
     {
         $parser = new Ini();
         $arr = $parser->fromFile(__DIR__ . '/test.ini');
-        
+
         $this->assertIsArray($arr);
         $this->assertSame('value', $arr['key']);
         $this->assertSame('mysql', $arr['db']['type']);
@@ -252,10 +251,10 @@ INI;
     public function testFromFileWithNonExistentFile()
     {
         $parser = new Ini();
-        
+
         $this->expectException(\Clear\Config\Exception\FileException::class);
         $this->expectExceptionMessage('Could not find configuration file /non/existent/file.ini');
-        
+
         $parser->fromFile('/non/existent/file.ini');
     }
 
@@ -265,13 +264,13 @@ INI;
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.ini';
         file_put_contents($tempFile, 'key = value');
         chmod($tempFile, 0000);
-        
+
         $parser = new Ini();
-        
+
         try {
             $this->expectException(\Clear\Config\Exception\FileException::class);
             $this->expectExceptionMessage("Configuration file {$tempFile} is unreadable");
-            
+
             $parser->fromFile($tempFile);
         } finally {
             chmod($tempFile, 0644);

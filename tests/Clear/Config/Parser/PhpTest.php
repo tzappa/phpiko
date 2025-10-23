@@ -7,7 +7,6 @@ namespace Test\Config\Parser;
 use Clear\Config\Parser\Php;
 use Clear\Config\Parser\ParserInterface;
 use Clear\Config\Exception\ConfigException;
-
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -26,7 +25,7 @@ class PhpTest extends TestCase
     {
         $parser = new Php();
         $arr = $parser->fromFile(__DIR__ . '/../test_config.php');
-        
+
         $this->assertIsArray($arr);
         $this->assertSame('value', $arr['key']);
         $this->assertIsArray($arr['db']);
@@ -43,10 +42,10 @@ class PhpTest extends TestCase
     public function testFromFileWithNonExistentFile()
     {
         $parser = new Php();
-        
+
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('File /non/existent/file.php not found');
-        
+
         $parser->fromFile('/non/existent/file.php');
     }
 
@@ -55,13 +54,13 @@ class PhpTest extends TestCase
         // Create a temporary PHP file that doesn't return an array
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.php';
         file_put_contents($tempFile, '<?php return "not an array";');
-        
+
         $parser = new Php();
-        
+
         try {
             $this->expectException(ConfigException::class);
             $this->expectExceptionMessage("File {$tempFile} does not return an array");
-            
+
             $parser->fromFile($tempFile);
         } finally {
             unlink($tempFile);
@@ -73,13 +72,13 @@ class PhpTest extends TestCase
         // Create a temporary PHP file that returns null
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.php';
         file_put_contents($tempFile, '<?php return null;');
-        
+
         $parser = new Php();
-        
+
         try {
             $this->expectException(ConfigException::class);
             $this->expectExceptionMessage("File {$tempFile} does not return an array");
-            
+
             $parser->fromFile($tempFile);
         } finally {
             unlink($tempFile);
@@ -91,13 +90,13 @@ class PhpTest extends TestCase
         // Create a temporary PHP file that returns a string
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.php';
         file_put_contents($tempFile, '<?php return "hello world";');
-        
+
         $parser = new Php();
-        
+
         try {
             $this->expectException(ConfigException::class);
             $this->expectExceptionMessage("File {$tempFile} does not return an array");
-            
+
             $parser->fromFile($tempFile);
         } finally {
             unlink($tempFile);
@@ -109,13 +108,13 @@ class PhpTest extends TestCase
         // Create a temporary PHP file that returns an object
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.php';
         file_put_contents($tempFile, '<?php return new stdClass();');
-        
+
         $parser = new Php();
-        
+
         try {
             $this->expectException(ConfigException::class);
             $this->expectExceptionMessage("File {$tempFile} does not return an array");
-            
+
             $parser->fromFile($tempFile);
         } finally {
             unlink($tempFile);
@@ -127,13 +126,13 @@ class PhpTest extends TestCase
         // Create a temporary PHP file that returns an integer
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.php';
         file_put_contents($tempFile, '<?php return 42;');
-        
+
         $parser = new Php();
-        
+
         try {
             $this->expectException(ConfigException::class);
             $this->expectExceptionMessage("File {$tempFile} does not return an array");
-            
+
             $parser->fromFile($tempFile);
         } finally {
             unlink($tempFile);
@@ -145,13 +144,13 @@ class PhpTest extends TestCase
         // Create a temporary PHP file that returns a boolean
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.php';
         file_put_contents($tempFile, '<?php return true;');
-        
+
         $parser = new Php();
-        
+
         try {
             $this->expectException(ConfigException::class);
             $this->expectExceptionMessage("File {$tempFile} does not return an array");
-            
+
             $parser->fromFile($tempFile);
         } finally {
             unlink($tempFile);
@@ -161,30 +160,30 @@ class PhpTest extends TestCase
     public function testFromStringThrowsException()
     {
         $parser = new Php();
-        
+
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('PHP parser does not support string parsing');
-        
+
         $parser->fromString('<?php return ["key" => "value"];');
     }
 
     public function testFromStringWithEmptyString()
     {
         $parser = new Php();
-        
+
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('PHP parser does not support string parsing');
-        
+
         $parser->fromString('');
     }
 
     public function testFromStringWithValidPhpCode()
     {
         $parser = new Php();
-        
+
         $this->expectException(ConfigException::class);
         $this->expectExceptionMessage('PHP parser does not support string parsing');
-        
+
         $parser->fromString('<?php return ["key" => "value"];');
     }
 }

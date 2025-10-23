@@ -13,7 +13,9 @@ final class UserRepositoryPdo implements UserRepositoryInterface
     private array $fields = ['id', 'email', 'username', 'password', 'state', 'created_at', 'updated_at'];
     private string $table = 'users';
 
-    public function __construct(private PDO $db) {}
+    public function __construct(private PDO $db)
+    {
+    }
 
     /**
      * Change the DB table name for users

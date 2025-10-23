@@ -21,7 +21,8 @@ class SignupEmailSent
     public function __construct(
         private TemplateInterface $template,
         private SessionManager $session
-    ) {}
+    ) {
+    }
 
 
     /**

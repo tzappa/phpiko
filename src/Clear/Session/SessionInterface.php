@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -11,7 +11,7 @@ interface SessionInterface
 {
     /**
      * Get a session value by key
-     * 
+     *
      * @param string $key
      * @param mixed $default
      * @return mixed
@@ -20,7 +20,7 @@ interface SessionInterface
 
     /**
      * Set a session value by key
-     * 
+     *
      * @param string $key
      * @param mixed $value
      * @return void
@@ -29,7 +29,7 @@ interface SessionInterface
 
     /**
      * Check if a session key exists
-     * 
+     *
      * @param string $key
      * @return bool
      */
@@ -37,7 +37,7 @@ interface SessionInterface
 
     /**
      * Remove a session key
-     * 
+     *
      * @param string $key
      * @return void
      */
@@ -45,7 +45,7 @@ interface SessionInterface
 
     /**
      * Clear all session data
-     * 
+     *
      * @return void
      */
     public function clear(): void;

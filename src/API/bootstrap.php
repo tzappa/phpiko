@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API bootstrap file
  */
@@ -12,7 +13,6 @@ use Clear\Config\Factory as ConfigFactory;
 use Clear\Container\Container;
 use Clear\Database\PdoExt as PDO;
 use Clear\Logger\FileLogger;
-
 use Clear\Http\Exception\NotFoundException;
 // Vendor
 use Laminas\Diactoros\ServerRequestFactory;
@@ -97,4 +97,4 @@ try {
     $response = (new JsonResponse(['error' => 'Not found'], 404));
 }
 
-(new SapiEmitter)->emit($response);
+(new SapiEmitter())->emit($response);

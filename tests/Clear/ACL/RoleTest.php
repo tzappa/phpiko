@@ -23,14 +23,14 @@ class RoleTest extends TestCase
 {
     public function testRoleImplementsRoleInterface()
     {
-        $this->assertInstanceOf(RoleInterface::class, new Role(1, 'Manager', new PermissionCollection));
+        $this->assertInstanceOf(RoleInterface::class, new Role(1, 'Manager', new PermissionCollection()));
     }
 
     public function testConstructorValidation()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Role name cannot be empty');
-        new Role(1, '', new PermissionCollection);
+        new Role(1, '', new PermissionCollection());
     }
 
     #[Depends('testRoleImplementsRoleInterface')]

@@ -35,16 +35,16 @@ class LogoutExtensibilityTest extends TestCase
     public function testCanTestInheritanceStructure(): void
     {
         $reflection = new \ReflectionClass(Logout::class);
-        
+
         // Verify the class can be extended by checking it's not final
         $this->assertFalse($reflection->isFinal());
-        
+
         // Verify it has the expected public methods that can be overridden
         $this->assertTrue($reflection->hasMethod('handle'));
-        
+
         $handleMethod = $reflection->getMethod('handle');
         $this->assertTrue($handleMethod->isPublic());
-        
+
         // Verify constructor is accessible for extension
         $constructor = $reflection->getConstructor();
         $this->assertNotNull($constructor);
@@ -54,7 +54,7 @@ class LogoutExtensibilityTest extends TestCase
     private function createExtendedLogoutHandler()
     {
         // Create a simple test class that demonstrates extensibility concepts
-        return new class() {
+        return new class () {
             public function getRedirectUrl(): string
             {
                 return '/goodbye';

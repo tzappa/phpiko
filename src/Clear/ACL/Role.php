@@ -97,7 +97,7 @@ final class Role implements RoleInterface
 
         // fallback if no discovery, or discovery returns NULL
         if (is_null($this->permissions)) {
-            $this->permissions = new PermissionCollection;
+            $this->permissions = new PermissionCollection();
         }
 
         return $this->permissions;

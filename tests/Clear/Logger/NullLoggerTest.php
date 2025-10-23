@@ -29,7 +29,7 @@ class NullLoggerTest extends TestCase
     {
         // NullLogger should not output anything or throw exceptions
         $this->logger->log(LogLevel::INFO, 'Test message');
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -41,20 +41,20 @@ class NullLoggerTest extends TestCase
                 return 'Stringable message';
             }
         };
-        
+
         // NullLogger should not output anything or throw exceptions
         $this->logger->log(LogLevel::DEBUG, $stringable);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
     public function testLogWithContext(): void
     {
         $context = ['user_id' => 123, 'action' => 'login'];
-        
+
         // NullLogger should not output anything or throw exceptions
         $this->logger->log(LogLevel::INFO, 'User action', $context);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -70,11 +70,11 @@ class NullLoggerTest extends TestCase
             LogLevel::INFO,
             LogLevel::DEBUG
         ];
-        
+
         foreach ($levels as $level) {
             $this->logger->log($level, "Message for {$level}");
         }
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -83,28 +83,28 @@ class NullLoggerTest extends TestCase
         for ($i = 0; $i <= 7; $i++) {
             $this->logger->log($i, "Message for level {$i}");
         }
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
     public function testLogWithEmptyMessage(): void
     {
         $this->logger->log(LogLevel::INFO, '');
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
     public function testLogWithEmptyContext(): void
     {
         $this->logger->log(LogLevel::INFO, 'Message', []);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
     public function testLogWithNullContext(): void
     {
         $this->logger->log(LogLevel::INFO, 'Message');
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -118,9 +118,9 @@ class NullLoggerTest extends TestCase
             'array' => [1, 2, 3],
             'object' => (object)['key' => 'value']
         ];
-        
+
         $this->logger->log(LogLevel::INFO, 'Complex context', $context);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -140,36 +140,36 @@ class NullLoggerTest extends TestCase
                 'expires' => '2023-12-31'
             ]
         ];
-        
+
         $this->logger->log(LogLevel::INFO, 'Nested context', $context);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
     public function testLogWithSpecialCharacters(): void
     {
         $message = 'Message with special chars: !@#$%^&*()_+-=[]{}|;:,.<>?';
-        
+
         $this->logger->log(LogLevel::INFO, $message);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
     public function testLogWithUnicodeCharacters(): void
     {
         $message = 'Unicode message: 你好世界 🌍';
-        
+
         $this->logger->log(LogLevel::INFO, $message);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
     public function testLogWithVeryLongMessage(): void
     {
         $longMessage = str_repeat('This is a very long message. ', 1000);
-        
+
         $this->logger->log(LogLevel::INFO, $longMessage);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -179,9 +179,9 @@ class NullLoggerTest extends TestCase
         for ($i = 0; $i < 1000; $i++) {
             $largeContext["key_{$i}"] = "value_{$i}";
         }
-        
+
         $this->logger->log(LogLevel::INFO, 'Large context', $largeContext);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -189,7 +189,7 @@ class NullLoggerTest extends TestCase
     {
         // NullLogger should handle invalid levels gracefully
         $this->logger->log('invalid_level', 'Message');
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -234,7 +234,9 @@ class NullLoggerTest extends TestCase
     public function testLogWithCallableMessage(): void
     {
         $this->expectException(\TypeError::class);
-        $callable = function() { return 'callable message'; };
+        $callable = function () {
+            return 'callable message';
+        };
         $this->logger->log(LogLevel::INFO, $callable);
     }
 
@@ -243,7 +245,7 @@ class NullLoggerTest extends TestCase
         for ($i = 0; $i < 100; $i++) {
             $this->logger->log(LogLevel::INFO, "Message {$i}", ['index' => $i]);
         }
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -255,17 +257,17 @@ class NullLoggerTest extends TestCase
                 return 'Stringable 1';
             }
         };
-        
+
         $stringable2 = new class implements Stringable {
             public function __toString(): string
             {
                 return 'Stringable 2';
             }
         };
-        
+
         $this->logger->log(LogLevel::INFO, $stringable1);
         $this->logger->log(LogLevel::INFO, $stringable2);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -277,10 +279,10 @@ class NullLoggerTest extends TestCase
                 throw new \Exception('Error in __toString');
             }
         };
-        
+
         // NullLogger should handle this gracefully
         $this->logger->log(LogLevel::INFO, $stringable);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -288,9 +290,9 @@ class NullLoggerTest extends TestCase
     {
         $context = ['key' => 'value'];
         $context['self'] = &$context; // Create circular reference
-        
+
         $this->logger->log(LogLevel::INFO, 'Circular reference', $context);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -298,20 +300,22 @@ class NullLoggerTest extends TestCase
     {
         $resource = fopen('php://memory', 'r');
         $context = ['resource' => $resource];
-        
+
         $this->logger->log(LogLevel::INFO, 'Resource in context', $context);
-        
+
         fclose($resource);
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
     public function testLogWithCallableInContext(): void
     {
-        $callable = function() { return 'callable'; };
+        $callable = function () {
+            return 'callable';
+        };
         $context = ['callback' => $callable];
-        
+
         $this->logger->log(LogLevel::INFO, 'Callable in context', $context);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -320,19 +324,21 @@ class NullLoggerTest extends TestCase
         $object = new \stdClass();
         $object->property = 'value';
         $context = ['object' => $object];
-        
+
         $this->logger->log(LogLevel::INFO, 'Object in context', $context);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
     public function testLogWithClosureInContext(): void
     {
-        $closure = function($x) { return $x * 2; };
+        $closure = function ($x) {
+            return $x * 2;
+        };
         $context = ['closure' => $closure];
-        
+
         $this->logger->log(LogLevel::INFO, 'Closure in context', $context);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 
@@ -342,9 +348,9 @@ class NullLoggerTest extends TestCase
             public $property = 'value';
         };
         $context = ['anonymous' => $anonymous];
-        
+
         $this->logger->log(LogLevel::INFO, 'Anonymous class in context', $context);
-        
+
         $this->assertTrue(true); // If we get here, no exception was thrown
     }
 }

@@ -18,7 +18,7 @@ class RouteExecTest extends TestCase
         $route = new Route('GET', '/', function (ServerRequestInterface $request, array $params) {
             return 'Hello World';
         });
-        $request = (new RequestFactory)->createServerRequest('GET', '/');
+        $request = (new RequestFactory())->createServerRequest('GET', '/');
 
         $this->assertEquals('Hello World', $route->exec($request));
     }
@@ -28,7 +28,7 @@ class RouteExecTest extends TestCase
         $route = new Route('GET', '/hello/{name}', function (ServerRequestInterface $request, array $params) {
             return 'Hello ' . $params['name'];
         });
-        $request = (new RequestFactory)->createServerRequest('GET', '/hello/John');
+        $request = (new RequestFactory())->createServerRequest('GET', '/hello/John');
 
         $this->assertEquals('Hello John', $route->exec($request));
     }
@@ -38,7 +38,7 @@ class RouteExecTest extends TestCase
         $route = new Route('GET', '/hello/{name}/{surname}', function (ServerRequestInterface $request, array $params) {
             return 'Hello ' . $params['name'] . ' ' . $params['surname'];
         });
-        $request = (new RequestFactory)->createServerRequest('GET', '/hello/John/Doe');
+        $request = (new RequestFactory())->createServerRequest('GET', '/hello/John/Doe');
         $this->assertEquals('Hello John Doe', $route->exec($request));
     }
 
@@ -47,7 +47,7 @@ class RouteExecTest extends TestCase
         $route = new Route('GET', '/hello/{name}/{surname}', function (ServerRequestInterface $request, array $params) {
             return 'Hello ' . $request->getAttribute('name') . ' ' . $request->getAttribute('surname');
         });
-        $request = (new RequestFactory)->createServerRequest('GET', '/hello/John/Doe');
+        $request = (new RequestFactory())->createServerRequest('GET', '/hello/John/Doe');
         $this->assertEquals('Hello John Doe', $route->exec($request));
     }
 }

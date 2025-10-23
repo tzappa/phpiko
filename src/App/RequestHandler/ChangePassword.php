@@ -35,7 +35,8 @@ class ChangePassword implements RequestHandlerInterface
         private Counters $counters,
         private TemplateInterface $template,
         private SessionInterface $session,
-    ) {}
+    ) {
+    }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

@@ -9,7 +9,9 @@ namespace Clear\Avatar;
  */
 class Avatar
 {
-    public function __construct(private string $name) {}
+    public function __construct(private string $name)
+    {
+    }
 
     /**
      *  Image output
@@ -67,7 +69,7 @@ class Avatar
             'b' => hexdec(substr($s, 4, 2)),
         ];
 
-        $maxCol = array_search(max($color),$color);
+        $maxCol = array_search(max($color), $color);
 
         if (($color['r'] > 128) && ($maxCol != 'r')) {
             $color['r'] = 256 - $color['r'];

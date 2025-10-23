@@ -34,70 +34,70 @@ class AfterConnectTest extends TestCase
     public function testConstructorSetsEventType(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, $this->options, $this->pdo);
-        
+
         $this->assertEquals('AfterConnect', $event->getEventType());
     }
 
     public function testConstructorSetsDsn(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, $this->options, $this->pdo);
-        
+
         $this->assertEquals($this->dsn, $event->getDsn());
     }
 
     public function testConstructorSetsUsername(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, $this->options, $this->pdo);
-        
+
         $this->assertEquals($this->username, $event->getUsername());
     }
 
     public function testConstructorSetsOptions(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, $this->options, $this->pdo);
-        
+
         $this->assertEquals($this->options, $event->getOptions());
     }
 
     public function testConstructorSetsPdo(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, $this->options, $this->pdo);
-        
+
         $this->assertSame($this->pdo, $event->getPdo());
     }
 
     public function testGetDsnReturnsCorrectValue(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, $this->options, $this->pdo);
-        
+
         $this->assertEquals($this->dsn, $event->getDsn());
     }
 
     public function testGetUsernameReturnsCorrectValue(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, $this->options, $this->pdo);
-        
+
         $this->assertEquals($this->username, $event->getUsername());
     }
 
     public function testGetOptionsReturnsCorrectValue(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, $this->options, $this->pdo);
-        
+
         $this->assertEquals($this->options, $event->getOptions());
     }
 
     public function testGetPdoReturnsCorrectValue(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, $this->options, $this->pdo);
-        
+
         $this->assertSame($this->pdo, $event->getPdo());
     }
 
     public function testExtendsPdoEvent(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, $this->options, $this->pdo);
-        
+
         $this->assertInstanceOf(PdoEvent::class, $event);
     }
 
@@ -110,7 +110,7 @@ class AfterConnectTest extends TestCase
             'pgsql:host=localhost;port=5432;dbname=test',
             'oci:dbname=//localhost:1521/test'
         ];
-        
+
         foreach ($dsns as $dsn) {
             $event = new AfterConnect($dsn, 'user', [], $this->pdo);
             $this->assertEquals($dsn, $event->getDsn());
@@ -127,7 +127,7 @@ class AfterConnectTest extends TestCase
             '',
             'user@domain.com'
         ];
-        
+
         foreach ($usernames as $username) {
             $event = new AfterConnect($this->dsn, $username, [], $this->pdo);
             $this->assertEquals($username, $event->getUsername());
@@ -149,7 +149,7 @@ class AfterConnectTest extends TestCase
                 PDO::ATTR_TIMEOUT => 30
             ]
         ];
-        
+
         foreach ($optionsSets as $options) {
             $event = new AfterConnect($this->dsn, 'user', $options, $this->pdo);
             $this->assertEquals($options, $event->getOptions());
@@ -159,7 +159,7 @@ class AfterConnectTest extends TestCase
     public function testWithEmptyDsn(): void
     {
         $event = new AfterConnect('', 'user', [], $this->pdo);
-        
+
         $this->assertEquals('', $event->getDsn());
         $this->assertEquals('AfterConnect', $event->getEventType());
     }
@@ -167,7 +167,7 @@ class AfterConnectTest extends TestCase
     public function testWithEmptyUsername(): void
     {
         $event = new AfterConnect($this->dsn, '', [], $this->pdo);
-        
+
         $this->assertEquals('', $event->getUsername());
         $this->assertEquals($this->dsn, $event->getDsn());
     }
@@ -175,7 +175,7 @@ class AfterConnectTest extends TestCase
     public function testWithEmptyOptions(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, [], $this->pdo);
-        
+
         $this->assertEquals([], $event->getOptions());
         $this->assertEquals($this->dsn, $event->getDsn());
         $this->assertEquals($this->username, $event->getUsername());
@@ -184,7 +184,7 @@ class AfterConnectTest extends TestCase
     public function testAllPropertiesAreReadonly(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, $this->options, $this->pdo);
-        
+
         // Verify all properties cannot be changed after construction
         $this->assertEquals($this->dsn, $event->getDsn());
         $this->assertEquals($this->username, $event->getUsername());
@@ -195,7 +195,7 @@ class AfterConnectTest extends TestCase
     public function testPdoIsMutable(): void
     {
         $event = new AfterConnect($this->dsn, $this->username, $this->options, $this->pdo);
-        
+
         // The PDO object itself can be modified (it's not readonly)
         $this->assertSame($this->pdo, $event->getPdo());
     }
@@ -204,7 +204,7 @@ class AfterConnectTest extends TestCase
     {
         $complexDsn = 'mysql:host=localhost;port=3306;dbname=testdb;charset=utf8mb4;collation=utf8mb4_unicode_ci';
         $event = new AfterConnect($complexDsn, 'admin', [], $this->pdo);
-        
+
         $this->assertEquals($complexDsn, $event->getDsn());
     }
 
@@ -217,7 +217,7 @@ class AfterConnectTest extends TestCase
             'user123',
             'user with spaces'
         ];
-        
+
         foreach ($specialUsernames as $username) {
             $event = new AfterConnect($this->dsn, $username, [], $this->pdo);
             $this->assertEquals($username, $event->getUsername());

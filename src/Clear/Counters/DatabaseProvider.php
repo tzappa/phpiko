@@ -14,7 +14,9 @@ class DatabaseProvider implements ProviderInterface
 {
     private string $tableName = 'counters';
 
-    public function __construct(private PDO $db) {}
+    public function __construct(private PDO $db)
+    {
+    }
 
     /**
      * Change the DB table name for users

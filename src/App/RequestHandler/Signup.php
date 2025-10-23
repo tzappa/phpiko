@@ -27,7 +27,8 @@ class Signup
     public function __construct(
         private TemplateInterface $template,
         private SessionInterface $session
-    ) {}
+    ) {
+    }
 
 
     /**
@@ -76,7 +77,7 @@ class Signup
                 } else {
                     // Call the API endpoint
                     $apiResponse = $this->callSignupAPI($request, $email, $data['code'] ?? '', $data['checksum'] ?? '');
-                    
+
                     if ($apiResponse['success']) {
                         // Store email in session temporarily for showing on verification page
                         $this->session->set('verification_email', $email);
@@ -104,13 +105,13 @@ class Signup
         $tpl->assign('csrf', $this->generateCsrfToken());
         $tpl->assign('data', $data);
         $tpl->assign('errors', $errors);
-        
+
         if (!empty($this->captcha)) {
             $this->captcha->create();
             $tpl->assign('captcha_image', 'data:image/jpeg;base64,' . base64_encode($this->captcha->getImage()));
             $tpl->assign('captcha_checksum', $this->captcha->getChecksum());
         }
-        
+
         $html = $tpl->parse();
 
         return new HtmlResponse($html);
@@ -123,9 +124,9 @@ class Signup
     {
         $apiUrl = 'http://phpiko.loc/api/v1/signup';
 
-        $verificationBaseUrl = $request->getUri()->getScheme() . '://' . 
-                               $request->getUri()->getHost() . 
-                               (($port = $request->getUri()->getPort()) ? ":$port" : '') . 
+        $verificationBaseUrl = $request->getUri()->getScheme() . '://' .
+                               $request->getUri()->getHost() .
+                               (($port = $request->getUri()->getPort()) ? ":$port" : '') .
                                '/complete-signup';
 
         $data = [

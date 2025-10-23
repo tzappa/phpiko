@@ -7,7 +7,6 @@ namespace Test\Config\Parser;
 use Clear\Config\Parser\AbstractFileReader;
 use Clear\Config\Parser\ParserInterface;
 use Clear\Config\Exception\FileException;
-
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -41,10 +40,10 @@ class AbstractFileReaderTest extends TestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
         $testContent = 'test content';
         file_put_contents($tempFile, $testContent);
-        
+
         try {
             $result = $this->testParser->fromFile($tempFile);
-            
+
             $this->assertIsArray($result);
             $this->assertSame('test content', $result['parsed']);
         } finally {
@@ -56,7 +55,7 @@ class AbstractFileReaderTest extends TestCase
     {
         $this->expectException(FileException::class);
         $this->expectExceptionMessage('Could not find configuration file /non/existent/file.txt');
-        
+
         $this->testParser->fromFile('/non/existent/file.txt');
     }
 
@@ -64,7 +63,7 @@ class AbstractFileReaderTest extends TestCase
     {
         $this->expectException(FileException::class);
         $this->expectExceptionMessage('Could not find configuration file /tmp');
-        
+
         $this->testParser->fromFile('/tmp');
     }
 
@@ -74,11 +73,11 @@ class AbstractFileReaderTest extends TestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
         file_put_contents($tempFile, 'test content');
         chmod($tempFile, 0000);
-        
+
         try {
             $this->expectException(FileException::class);
             $this->expectExceptionMessage("Configuration file {$tempFile} is unreadable");
-            
+
             $this->testParser->fromFile($tempFile);
         } finally {
             chmod($tempFile, 0644);
@@ -91,10 +90,10 @@ class AbstractFileReaderTest extends TestCase
         // Create a temporary empty file
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
         file_put_contents($tempFile, '');
-        
+
         try {
             $result = $this->testParser->fromFile($tempFile);
-            
+
             $this->assertIsArray($result);
             $this->assertSame('', $result['parsed']);
         } finally {
@@ -108,10 +107,10 @@ class AbstractFileReaderTest extends TestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
         $largeContent = str_repeat('test content ', 1000);
         file_put_contents($tempFile, $largeContent);
-        
+
         try {
             $result = $this->testParser->fromFile($tempFile);
-            
+
             $this->assertIsArray($result);
             $this->assertSame($largeContent, $result['parsed']);
         } finally {
@@ -125,10 +124,10 @@ class AbstractFileReaderTest extends TestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.bin';
         $binaryContent = "\x00\x01\x02\x03\x04\x05";
         file_put_contents($tempFile, $binaryContent);
-        
+
         try {
             $result = $this->testParser->fromFile($tempFile);
-            
+
             $this->assertIsArray($result);
             $this->assertSame($binaryContent, $result['parsed']);
         } finally {
@@ -142,10 +141,10 @@ class AbstractFileReaderTest extends TestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
         $contentWithNulls = "test\0content\0with\0nulls";
         file_put_contents($tempFile, $contentWithNulls);
-        
+
         try {
             $result = $this->testParser->fromFile($tempFile);
-            
+
             $this->assertIsArray($result);
             $this->assertSame($contentWithNulls, $result['parsed']);
         } finally {
@@ -159,10 +158,10 @@ class AbstractFileReaderTest extends TestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
         $contentWithNewlines = "line1\nline2\rline3\r\nline4";
         file_put_contents($tempFile, $contentWithNewlines);
-        
+
         try {
             $result = $this->testParser->fromFile($tempFile);
-            
+
             $this->assertIsArray($result);
             $this->assertSame($contentWithNewlines, $result['parsed']);
         } finally {
@@ -176,10 +175,10 @@ class AbstractFileReaderTest extends TestCase
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
         $specialContent = "Special chars: éñü中文😀\t\n\r";
         file_put_contents($tempFile, $specialContent);
-        
+
         try {
             $result = $this->testParser->fromFile($tempFile);
-            
+
             $this->assertIsArray($result);
             $this->assertSame($specialContent, $result['parsed']);
         } finally {
@@ -194,10 +193,10 @@ class AbstractFileReaderTest extends TestCase
         $symlinkFile = $tempFile . '.link';
         file_put_contents($tempFile, 'test content');
         symlink($tempFile, $symlinkFile);
-        
+
         try {
             $result = $this->testParser->fromFile($symlinkFile);
-            
+
             $this->assertIsArray($result);
             $this->assertSame('test content', $result['parsed']);
         } finally {
@@ -212,14 +211,14 @@ class AbstractFileReaderTest extends TestCase
         // We'll create a file and then remove read permissions
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
         file_put_contents($tempFile, 'test content');
-        
+
         // Make the file unreadable
         chmod($tempFile, 0000);
-        
+
         try {
             $this->expectException(FileException::class);
             $this->expectExceptionMessage("Configuration file {$tempFile} is unreadable");
-            
+
             $this->testParser->fromFile($tempFile);
         } finally {
             // Restore permissions and clean up
@@ -235,20 +234,21 @@ class AbstractFileReaderTest extends TestCase
         // the is_file check and the file_get_contents call
         $tempFile = tempnam(sys_get_temp_dir(), 'test') . '.txt';
         file_put_contents($tempFile, 'test content');
-        
+
         // Create a custom parser that deletes the file after is_file check
         $customParser = new class extends AbstractFileReader {
             private $tempFile;
-            
-            public function setTempFile($file) {
+
+            public function setTempFile($file)
+            {
                 $this->tempFile = $file;
             }
-            
+
             public function fromString(string $string): array
             {
                 return ['parsed' => $string];
             }
-            
+
             public function fromFile(string $fileName): array
             {
                 if (!is_file($fileName)) {
@@ -257,12 +257,12 @@ class AbstractFileReaderTest extends TestCase
                 if (!is_readable($fileName)) {
                     throw new FileException("Configuration file {$fileName} is unreadable");
                 }
-                
+
                 // Delete the file to simulate file_get_contents returning false
                 if ($fileName === $this->tempFile) {
                     unlink($fileName);
                 }
-                
+
                 $contents = file_get_contents($fileName);
                 if ($contents === false) {
                     throw new FileException("Could not read configuration file {$fileName}");
@@ -271,13 +271,13 @@ class AbstractFileReaderTest extends TestCase
                 return $this->fromString($contents);
             }
         };
-        
+
         $customParser->setTempFile($tempFile);
-        
+
         try {
             $this->expectException(FileException::class);
             $this->expectExceptionMessage("Could not read configuration file {$tempFile}");
-            
+
             $customParser->fromFile($tempFile);
         } catch (\Exception $e) {
             // Clean up if the file still exists
@@ -288,4 +288,3 @@ class AbstractFileReaderTest extends TestCase
         }
     }
 }
-

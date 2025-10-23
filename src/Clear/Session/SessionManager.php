@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -55,13 +55,13 @@ class SessionManager implements SessionInterface
 
     /**
      * {@inheritDoc}
-     */    
+     */
     public function clear(): void
     {
         $this->start();
         session_unset();
     }
-    
+
     /**
      * Start the session
      */

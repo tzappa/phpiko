@@ -1,4 +1,5 @@
 <?php
+
 /**
  * API route definitions
  */
@@ -46,13 +47,13 @@ $api1->map('POST', '/signup', function (ServerRequestInterface $request) use ($a
     $verificationRepo = new EmailVerificationRepositoryPdo($app->database);
     $userRepo = new UserRepositoryPdo($app->database);
     $eventDispatcher = new NullDispatcher();
-    
+
     $signupService = new SignupService($verificationRepo, $userRepo, $eventDispatcher);
     $handler = new Signup($signupService);
-    
+
     // Optionally set email service if available in app context
     $handler->setEmailService($app->emailService ?? null);
-    
+
     return $handler->handle($request);
 });
 

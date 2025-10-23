@@ -42,7 +42,8 @@ class Login implements RequestHandlerInterface
         private Counters $counters,
         private TemplateInterface $template,
         private SessionInterface $session,
-    ) {}
+    ) {
+    }
 
     public function setCaptcha(CaptchaInterface $captcha): self
     {

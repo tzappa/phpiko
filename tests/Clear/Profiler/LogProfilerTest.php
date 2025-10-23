@@ -39,14 +39,14 @@ class LogProfilerTest extends TestCase
 
     public function testGetLogger()
     {
-        $logger = new NullLogger;
+        $logger = new NullLogger();
         $profiler = new LogProfiler($logger);
         $this->assertSame($logger, $profiler->getLogger());
     }
 
     public function testSetAndGetLogFormat()
     {
-        $logger = new NullLogger;
+        $logger = new NullLogger();
         $profiler = new LogProfiler($logger);
         $format = 'phpunit test format';
         $profiler->setLogFormat($format);
@@ -55,14 +55,14 @@ class LogProfilerTest extends TestCase
 
     public function testDefaultLogLevelIsDebug()
     {
-        $logger = new NullLogger;
+        $logger = new NullLogger();
         $profiler = new LogProfiler($logger);
         $this->assertSame(LogLevel::DEBUG, $profiler->getLogLevel());
     }
 
     public function testSetLogLevel()
     {
-        $logger = new NullLogger;
+        $logger = new NullLogger();
         $profiler = new LogProfiler($logger);
         $newLevel = LogLevel::INFO;
         $profiler->setLogLevel($newLevel);

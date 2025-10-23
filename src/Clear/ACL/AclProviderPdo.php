@@ -117,7 +117,7 @@ final class AclProviderPdo implements AclProviderInterface
      */
     public function listRoles(array $filter = [], int $limit = 0, int $offset = 0, $order = null): RoleCollection
     {
-        $roles = new RoleCollection;
+        $roles = new RoleCollection();
         list($where, $params) = $this->where($filter);
         $sql = "SELECT * FROM {$this->rolesTable} {$where} {$this->order($order)} {$this->limit($limit, $offset)}";
         $sth = $this->db->prepare($sql);
@@ -217,7 +217,7 @@ final class AclProviderPdo implements AclProviderInterface
      */
     public function getRolePermissions(int $roleId): PermissionCollection
     {
-        $permissions = new PermissionCollection;
+        $permissions = new PermissionCollection();
         $sql = "SELECT p.id, p.object, p.operation
                 FROM {$this->permissionsTable} AS p
                 WHERE p.id IN (
@@ -238,7 +238,7 @@ final class AclProviderPdo implements AclProviderInterface
      */
     public function getRefPermissions(int $refId): PermissionCollection
     {
-        $permissions = new PermissionCollection;
+        $permissions = new PermissionCollection();
 
         $sql = "SELECT DISTINCT p.id, p.object, p.operation
                 FROM {$this->permissionsTable} AS p
@@ -297,7 +297,7 @@ final class AclProviderPdo implements AclProviderInterface
                 WHERE ref_id = ?";
         $sth = $this->db->prepare($sql);
         $sth->execute([$refId]);
-        $rc = new RoleCollection;
+        $rc = new RoleCollection();
         while ($role = $sth->fetch(PDO::FETCH_ASSOC)) {
             $rc[] = new Role((int) $role['id'], $role['name'], null);
         }
@@ -389,6 +389,8 @@ final class AclProviderPdo implements AclProviderInterface
     private function mapRole(array $data): Role
     {
         $data['id'] = (int) $data['id'];
-        return new Role($data['id'], $data['name'], function ($id) { return $this->getRolePermissions($id); });
+        return new Role($data['id'], $data['name'], function ($id) {
+            return $this->getRolePermissions($id);
+        });
     }
 }

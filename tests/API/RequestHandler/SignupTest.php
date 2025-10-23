@@ -37,7 +37,7 @@ class SignupTest extends TestCase
     public function testSetEmailService(): void
     {
         $result = $this->handler->setEmailService($this->emailService);
-        
+
         $this->assertSame($this->handler, $result);
     }
 
@@ -45,11 +45,11 @@ class SignupTest extends TestCase
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn('GET');
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(405, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -60,15 +60,15 @@ class SignupTest extends TestCase
     {
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn('');
-        
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(400, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -79,15 +79,15 @@ class SignupTest extends TestCase
     {
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn('invalid json');
-        
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(400, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -100,15 +100,15 @@ class SignupTest extends TestCase
         $body->method('__toString')->willReturn(json_encode([
             'verification_base_url' => 'https://example.com/verify'
         ]));
-        
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(400, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -124,15 +124,15 @@ class SignupTest extends TestCase
             'email' => 'invalid-email',
             'verification_base_url' => 'https://example.com/verify'
         ]));
-        
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(400, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -147,15 +147,15 @@ class SignupTest extends TestCase
         $body->method('__toString')->willReturn(json_encode([
             'email' => 'test@example.com'
         ]));
-        
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(400, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -171,15 +171,15 @@ class SignupTest extends TestCase
             'email' => 'test@example.com',
             'verification_base_url' => 'invalid-url'
         ]));
-        
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(400, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -192,7 +192,7 @@ class SignupTest extends TestCase
     {
         $email = 'test@example.com';
         $verificationBaseUrl = 'https://example.com/verify';
-        
+
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn(json_encode([
             'email' => $email,
@@ -207,11 +207,11 @@ class SignupTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -227,9 +227,9 @@ class SignupTest extends TestCase
         $email = 'test@example.com';
         $verificationBaseUrl = 'https://example.com/verify';
         $token = 'test-token';
-        
+
         $this->handler->setEmailService($this->emailService);
-        
+
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn(json_encode([
             'email' => $email,
@@ -249,11 +249,11 @@ class SignupTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -269,9 +269,9 @@ class SignupTest extends TestCase
         $email = 'test@example.com';
         $verificationBaseUrl = 'https://example.com/verify';
         $token = 'test-token';
-        
+
         $this->handler->setEmailService($this->emailService);
-        
+
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn(json_encode([
             'email' => $email,
@@ -291,11 +291,11 @@ class SignupTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(500, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -308,7 +308,7 @@ class SignupTest extends TestCase
     {
         $email = 'test@example.com';
         $verificationBaseUrl = 'https://example.com/verify';
-        
+
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn(json_encode([
             'email' => $email,
@@ -323,11 +323,11 @@ class SignupTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(400, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -340,7 +340,7 @@ class SignupTest extends TestCase
     {
         $email = 'test@example.com';
         $verificationBaseUrl = 'https://example.com/verify';
-        
+
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn(json_encode([
             'email' => $email,
@@ -355,11 +355,11 @@ class SignupTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getMethod')->willReturn('POST');
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(500, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 

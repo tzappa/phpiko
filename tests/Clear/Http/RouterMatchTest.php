@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 /**
  * Route Tests
  *
@@ -18,21 +21,24 @@ class RouterMatchTest extends TestCase
     public function testRouteMatch()
     {
         $route = new Router();
-        $route = $route->map('GET', '/', function () {});
+        $route = $route->map('GET', '/', function () {
+        });
         $this->assertTrue($route->match('GET', '/'));
         $this->assertFalse($route->match('POST', '/'));
         $this->assertFalse($route->match('GET', '/user'));
         $this->assertFalse($route->match('GET', '/user/42'));
 
         $route = new Router();
-        $route = $route->map('GET', '/user', function () {});
+        $route = $route->map('GET', '/user', function () {
+        });
         $this->assertTrue($route->match('GET', '/user'));
         $this->assertFalse($route->match('POST', '/user'));
         $this->assertFalse($route->match('GET', '/'));
         $this->assertFalse($route->match('GET', '/user/42'));
 
         $route = new Router();
-        $route = $route->map('POST', '/user', function () {});
+        $route = $route->map('POST', '/user', function () {
+        });
         $this->assertTrue($route->match('POST', '/user'));
         $this->assertFalse($route->match('GET', '/user'));
         $this->assertFalse($route->match('GET', '/'));
@@ -41,7 +47,8 @@ class RouterMatchTest extends TestCase
         $this->assertFalse($route->match('GET', '/user/42'));
 
         $route = new Router();
-        $route = $route->map('*', '/user', function () {});
+        $route = $route->map('*', '/user', function () {
+        });
         $this->assertTrue($route->match('POST', '/user'));
         $this->assertTrue($route->match('GET', '/user'));
         $this->assertFalse($route->match('GET', '/'));
@@ -53,7 +60,8 @@ class RouterMatchTest extends TestCase
     public function testRouteMatchWithMultipleMethods()
     {
         $route = new Router();
-        $route = $route->map('GET|POST', '/user', function () {});
+        $route = $route->map('GET|POST', '/user', function () {
+        });
         $this->assertTrue($route->match('POST', '/user'));
         $this->assertTrue($route->match('GET', '/user'));
         $this->assertFALSE($route->match('DELETE', '/user'));
@@ -65,14 +73,16 @@ class RouterMatchTest extends TestCase
     public function testRouteMethodIsCaseSensitive()
     {
         $route = new Router();
-        $route = $route->map('get', '/', function () {});
+        $route = $route->map('get', '/', function () {
+        });
         $this->assertFalse($route->match('GET', '/'));
         $this->assertFalse($route->match('POST', '/'));
         $this->assertFalse($route->match('GET', '/user'));
         $this->assertFalse($route->match('GET', '/user/42'));
 
         $route = new Router();
-        $route = $route->map('get|post', '/user', function () {});
+        $route = $route->map('get|post', '/user', function () {
+        });
         $this->assertFalse($route->match('GET', '/user'));
         $this->assertFalse($route->match('POST', '/user'));
     }
@@ -80,7 +90,8 @@ class RouterMatchTest extends TestCase
     public function testRouteMatchDynamicParams()
     {
         $route = new Router();
-        $route = $route->map('GET', '/user/{id}', function () {});
+        $route = $route->map('GET', '/user/{id}', function () {
+        });
         $this->assertTrue($route->match('GET', '/user/42'));
         $this->assertTrue($route->match('GET', '/user/name'));
         $this->assertFalse($route->match('POST', '/user/42'));
@@ -91,7 +102,8 @@ class RouterMatchTest extends TestCase
         $this->assertFalse($route->match('GET', '/user/42/43'));
 
         $route = new Router();
-        $route = $route->map('GET', '/user/{id}/', function () {});
+        $route = $route->map('GET', '/user/{id}/', function () {
+        });
         $this->assertTrue($route->match('GET', '/user/42/'));
         $this->assertTrue($route->match('GET', '/user/name/'));
         $this->assertFalse($route->match('POST', '/user/42/'));
@@ -105,7 +117,8 @@ class RouterMatchTest extends TestCase
     public function testRouteMatchSeveralDynamicParams()
     {
         $route = new Router();
-        $route = $route->map('GET', '/user/{id}/post/{post}', function () {});
+        $route = $route->map('GET', '/user/{id}/post/{post}', function () {
+        });
         $this->assertTrue($route->match('GET', '/user/42/post/1'));
         $this->assertTrue($route->match('GET', '/user/name/post/1'));
         $this->assertTrue($route->match('GET', '/user/42/post/name'));
@@ -125,7 +138,8 @@ class RouterMatchTest extends TestCase
     public function testRouteMatchSeveralDynamicParamsInOneSegment()
     {
         $route = new Router();
-        $route = $route->map('GET', '/user/{id}-{post}', function () {});
+        $route = $route->map('GET', '/user/{id}-{post}', function () {
+        });
         $this->assertTrue($route->match('GET', '/user/42-1'));
         $this->assertTrue($route->match('GET', '/user/name-1'));
         $this->assertTrue($route->match('GET', '/user/42-name'));
@@ -144,7 +158,8 @@ class RouterMatchTest extends TestCase
     public function testRouteMatchDynamicParamsWithRegex()
     {
         $route = new Router();
-        $route = $route->map('GET', '/user/{id:\d+}', function () {});
+        $route = $route->map('GET', '/user/{id:\d+}', function () {
+        });
         $this->assertTrue($route->match('GET', '/user/42'));
         $this->assertFalse($route->match('POST', '/user/42'));
         $this->assertFalse($route->match('GET', '/user/name'));
@@ -154,7 +169,8 @@ class RouterMatchTest extends TestCase
         $this->assertFalse($route->match('GET', '/user/42/43'));
 
         $route = new Router();
-        $route = $route->map('GET', '/user/{id:\d+}/', function () {});
+        $route = $route->map('GET', '/user/{id:\d+}/', function () {
+        });
         $this->assertTrue($route->match('GET', '/user/42/'));
         $this->assertFalse($route->match('POST', '/user/42/'));
         $this->assertFalse($route->match('GET', '/user/name/'));
@@ -167,7 +183,8 @@ class RouterMatchTest extends TestCase
     public function testRouteMatchSeveralDynamicParamsWithRegex()
     {
         $route = new Router();
-        $route = $route->map('GET', '/post/{id:\d+}-{name:[a-z\-]+}', function () {});
+        $route = $route->map('GET', '/post/{id:\d+}-{name:[a-z\-]+}', function () {
+        });
         $this->assertTrue($route->match('GET', '/post/42-hello-world'));
         $this->assertFalse($route->match('POST', '/post/42-hello-world'));
         $this->assertFalse($route->match('GET', '/post/name-1'));

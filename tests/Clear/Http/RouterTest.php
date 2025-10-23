@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 /**
  * Router Tests
  *
@@ -26,7 +29,7 @@ class RouterTest extends TestCase
         $route->map('GET', '/', function ($request) {
             return 'Hello World';
         });
-        $request = (new RequestFactory)->createServerRequest('GET', '/');
+        $request = (new RequestFactory())->createServerRequest('GET', '/');
         $this->assertEquals('Hello World', $route->dispatch($request));
     }
 
@@ -79,38 +82,38 @@ class RouterTest extends TestCase
             return "404 {$path} Not Found";
         });
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/');
+        $request = (new RequestFactory())->createServerRequest('GET', '/');
         $this->assertEquals('Hello, world!', $router->dispatch($request));
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/hello/router');
+        $request = (new RequestFactory())->createServerRequest('GET', '/hello/router');
         $this->assertEquals('Hello, router!', $router->dispatch($request));
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/post/42');
+        $request = (new RequestFactory())->createServerRequest('GET', '/post/42');
         $this->assertEquals('Post 42', $router->dispatch($request));
 
-        $request = (new RequestFactory)->createServerRequest('DELETE', '/action');
+        $request = (new RequestFactory())->createServerRequest('DELETE', '/action');
         $this->assertEquals('Action DELETE', $router->dispatch($request));
 
-        $request = (new RequestFactory)->createServerRequest('PUT', '/foo');
+        $request = (new RequestFactory())->createServerRequest('PUT', '/foo');
         $this->assertEquals('bar', $router->dispatch($request));
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/api/users');
+        $request = (new RequestFactory())->createServerRequest('GET', '/api/users');
         $this->assertEquals('API Get users', $router->dispatch($request));
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/api/users/42');
+        $request = (new RequestFactory())->createServerRequest('GET', '/api/users/42');
         $this->assertEquals('Get user id 42', $router->dispatch($request));
 
-        $request = (new RequestFactory)->createServerRequest('POST', '/api/v2/users');
+        $request = (new RequestFactory())->createServerRequest('POST', '/api/v2/users');
         $this->assertEquals('API v2 post users', $router->dispatch($request));
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/wrong/path');
+        $request = (new RequestFactory())->createServerRequest('GET', '/wrong/path');
         $this->assertEquals('404 wrong/path Not Found', $router->dispatch($request));
     }
 
     public function testNotFoundExceptionIsThrownIfNoRouteMatch()
     {
         $router = new Router();
-        $request = (new RequestFactory)->createServerRequest('GET', '/');
+        $request = (new RequestFactory())->createServerRequest('GET', '/');
         $this->expectException(NotFoundException::class);
         $router->dispatch($request);
     }
@@ -125,7 +128,7 @@ class RouterTest extends TestCase
         $router->map('GET', '/api/users', function () {
             return 'Api Get users';
         });
-        $request = (new RequestFactory)->createServerRequest('GET', '/api/users');
+        $request = (new RequestFactory())->createServerRequest('GET', '/api/users');
         $response = $router->dispatch($request);
         $this->assertEquals('Api Get users', $response);
     }
@@ -136,7 +139,7 @@ class RouterTest extends TestCase
         $router->map('GET', '/', function ($request) {
             return 'Hello World';
         }, 'home');
-        $request = (new RequestFactory)->createServerRequest('GET', '/');
+        $request = (new RequestFactory())->createServerRequest('GET', '/');
         $this->assertEquals('Hello World', $router->dispatch($request));
     }
 
@@ -175,7 +178,7 @@ class RouterTest extends TestCase
         };
         $router = new Router();
         $router->map('GET', '/', $class);
-        $request = (new RequestFactory)->createServerRequest('GET', '/');
+        $request = (new RequestFactory())->createServerRequest('GET', '/');
         $this->assertEquals('Hello World', (string) $router->dispatch($request)->getBody());
     }
 
@@ -191,7 +194,7 @@ class RouterTest extends TestCase
         $router->map('GET', '/', function () use ($class) {
             return $class;
         });
-        $request = (new RequestFactory)->createServerRequest('GET', '/');
+        $request = (new RequestFactory())->createServerRequest('GET', '/');
         $this->assertEquals('Hello World', (string) $router->dispatch($request)->getBody());
     }
 }

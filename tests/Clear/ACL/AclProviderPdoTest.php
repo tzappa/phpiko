@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Clear\ACL;
 
-
 use Clear\ACL\AclProviderPdo;
 use Clear\ACL\Permission;
 use Clear\ACL\PermissionCollection;
@@ -15,7 +14,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\TestCase;
-
 
 /**
  * Tests for Access Control List Permission Database (PDO) Provider

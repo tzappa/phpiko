@@ -30,7 +30,8 @@ class ResetPassword implements RequestHandlerInterface
         private ListenerProvider $listener,
         private TemplateInterface $template,
         private SessionInterface $session
-    ) {}
+    ) {
+    }
 
     /**
      * {@inheritdoc}

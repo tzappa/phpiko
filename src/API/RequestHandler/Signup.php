@@ -20,7 +20,9 @@ class Signup implements RequestHandlerInterface
 {
     private ?EmailVerificationService $emailService = null;
 
-    public function __construct(private SignupService $signupService) {}
+    public function __construct(private SignupService $signupService)
+    {
+    }
 
     /**
      * Set email service
@@ -40,7 +42,7 @@ class Signup implements RequestHandlerInterface
         // Parse JSON body
         $body = (string) $request->getBody();
         $data = json_decode($body, true);
-        
+
         if (json_last_error() !== JSON_ERROR_NONE) {
             return new JsonResponse(['error' => 'Invalid JSON data'], 400);
         }
@@ -89,7 +91,6 @@ class Signup implements RequestHandlerInterface
                 'message' => 'Verification email sent. Please check your email to complete signup.',
                 'email' => $email
             ]);
-
         } catch (InvalidArgumentException $e) {
             return new JsonResponse([
                 'errors' => ['email' => $e->getMessage()]

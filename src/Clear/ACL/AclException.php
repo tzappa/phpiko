@@ -9,4 +9,6 @@ use Exception;
 /**
  * ACL Exception
  */
-class AclException extends Exception {}
+class AclException extends Exception
+{
+}

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -58,6 +58,7 @@ class FakeTemplateTest extends TestCase
     public function testRegisterFunctionRetursSelf()
     {
         $fake = new FakeTemplate();
-        $this->assertEquals($fake, $fake->registerFunction('test', function () {}));
+        $this->assertEquals($fake, $fake->registerFunction('test', function () {
+        }));
     }
 }

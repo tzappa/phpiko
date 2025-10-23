@@ -21,7 +21,8 @@ class EmailVerificationService
         private string $fromEmail,
         private string $fromName,
         private LoggerInterface $logger
-    ) {}
+    ) {
+    }
 
     /**
      * Send a verification email

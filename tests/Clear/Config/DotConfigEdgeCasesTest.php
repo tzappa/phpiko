@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Test\Config;
 
 use Clear\Config\DotConfig;
-
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +17,7 @@ class DotConfigEdgeCasesTest extends TestCase
     public function testEmptyArray()
     {
         $config = new DotConfig([]);
-        
+
         $this->assertFalse($config->has('any.key'));
         $this->assertNull($config->get('any.key'));
         $this->assertSame('default', $config->get('any.key', 'default'));
@@ -33,17 +32,17 @@ class DotConfigEdgeCasesTest extends TestCase
                 'not_null' => 'value'
             ]
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         $this->assertTrue($config->has('null_value'));
         $this->assertTrue($config->has('nested.null_value'));
         $this->assertTrue($config->has('nested.not_null'));
-        
+
         $this->assertNull($config->get('null_value'));
         $this->assertNull($config->get('nested.null_value'));
         $this->assertSame('value', $config->get('nested.not_null'));
-        
+
         $this->assertNull($config->get('null_value', 'default'));
         $this->assertNull($config->get('nested.null_value', 'default'));
     }
@@ -57,13 +56,13 @@ class DotConfigEdgeCasesTest extends TestCase
                 'not_empty' => 'value'
             ]
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         $this->assertTrue($config->has('empty_string'));
         $this->assertTrue($config->has('nested.empty_string'));
         $this->assertTrue($config->has('nested.not_empty'));
-        
+
         $this->assertSame('', $config->get('empty_string'));
         $this->assertSame('', $config->get('nested.empty_string'));
         $this->assertSame('value', $config->get('nested.not_empty'));
@@ -80,15 +79,15 @@ class DotConfigEdgeCasesTest extends TestCase
                 'not_zero' => 1
             ]
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         $this->assertTrue($config->has('zero_int'));
         $this->assertTrue($config->has('zero_float'));
         $this->assertTrue($config->has('nested.zero_int'));
         $this->assertTrue($config->has('nested.zero_float'));
         $this->assertTrue($config->has('nested.not_zero'));
-        
+
         $this->assertSame(0, $config->get('zero_int'));
         $this->assertSame(0.0, $config->get('zero_float'));
         $this->assertSame(0, $config->get('nested.zero_int'));
@@ -105,13 +104,13 @@ class DotConfigEdgeCasesTest extends TestCase
                 'true_bool' => true
             ]
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         $this->assertTrue($config->has('false_bool'));
         $this->assertTrue($config->has('nested.false_bool'));
         $this->assertTrue($config->has('nested.true_bool'));
-        
+
         $this->assertFalse($config->get('false_bool'));
         $this->assertFalse($config->get('nested.false_bool'));
         $this->assertTrue($config->get('nested.true_bool'));
@@ -126,13 +125,13 @@ class DotConfigEdgeCasesTest extends TestCase
                 'not_empty_array' => ['value']
             ]
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         $this->assertTrue($config->has('empty_array'));
         $this->assertTrue($config->has('nested.empty_array'));
         $this->assertTrue($config->has('nested.not_empty_array'));
-        
+
         $this->assertIsArray($config->get('empty_array'));
         $this->assertEmpty($config->get('empty_array'));
         $this->assertIsArray($config->get('nested.empty_array'));
@@ -156,12 +155,12 @@ class DotConfigEdgeCasesTest extends TestCase
                 ]
             ]
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         $this->assertTrue($config->has('level1.level2.level3.level4.level5.deep_value'));
         $this->assertSame('found', $config->get('level1.level2.level3.level4.level5.deep_value'));
-        
+
         $this->assertFalse($config->has('level1.level2.level3.level4.level5.nonexistent'));
         $this->assertNull($config->get('level1.level2.level3.level4.level5.nonexistent'));
     }
@@ -175,9 +174,9 @@ class DotConfigEdgeCasesTest extends TestCase
                 $longKey => 'nested_value'
             ]
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         $this->assertTrue($config->has($longKey));
         $this->assertSame('value', $config->get($longKey));
         $this->assertTrue($config->has("nested.{$longKey}"));
@@ -288,9 +287,9 @@ class DotConfigEdgeCasesTest extends TestCase
             'keyрусскийwithрусскийrussian' => 'value99',
             'key😀with😀emoji' => 'value100'
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         foreach ($data as $key => $expectedValue) {
             $this->assertTrue($config->has($key), "Key '{$key}' should exist");
             $this->assertSame($expectedValue, $config->get($key), "Value for key '{$key}' should match");
@@ -331,9 +330,9 @@ class DotConfigEdgeCasesTest extends TestCase
             'jalapeños' => 'value29',
             'señores' => 'value30'
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         foreach ($data as $key => $expectedValue) {
             $this->assertTrue($config->has($key), "Key '{$key}' should exist");
             $this->assertSame($expectedValue, $config->get($key), "Value for key '{$key}' should match");
@@ -360,9 +359,9 @@ class DotConfigEdgeCasesTest extends TestCase
                 'array' => ['x', 'y', 'z']
             ]
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         $this->assertSame('hello', $config->get('string'));
         $this->assertSame(42, $config->get('integer'));
         $this->assertSame(3.14159, $config->get('float'));
@@ -371,7 +370,7 @@ class DotConfigEdgeCasesTest extends TestCase
         $this->assertNull($config->get('null'));
         $this->assertSame([1, 2, 3], $config->get('array'));
         $this->assertSame(['a' => 1, 'b' => 2], $config->get('associative_array'));
-        
+
         $this->assertSame('world', $config->get('nested_mixed.string'));
         $this->assertSame(24, $config->get('nested_mixed.integer'));
         $this->assertSame(2.71828, $config->get('nested_mixed.float'));
@@ -385,21 +384,21 @@ class DotConfigEdgeCasesTest extends TestCase
         $data = [];
         $current = &$data;
         $depth = 100;
-        
+
         for ($i = 0; $i < $depth; $i++) {
             $current['level' . $i] = [];
             $current = &$current['level' . $i];
         }
         $current['final_value'] = 'deep_value';
-        
+
         $config = new DotConfig($data);
-        
+
         $key = 'level0';
         for ($i = 1; $i < $depth; $i++) {
             $key .= '.level' . $i;
         }
         $key .= '.final_value';
-        
+
         $this->assertTrue($config->has($key));
         $this->assertSame('deep_value', $config->get($key));
     }
@@ -410,9 +409,9 @@ class DotConfigEdgeCasesTest extends TestCase
         for ($i = 0; $i < 1000; $i++) {
             $data['key' . $i] = 'value' . $i;
         }
-        
+
         $config = new DotConfig($data);
-        
+
         for ($i = 0; $i < 1000; $i++) {
             $key = 'key' . $i;
             $this->assertTrue($config->has($key), "Key '{$key}' should exist");
@@ -434,15 +433,15 @@ class DotConfigEdgeCasesTest extends TestCase
                 '2' => 'nested_two'
             ]
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         $this->assertSame('zero', $config->get('0'));
         $this->assertSame('one', $config->get('1'));
         $this->assertSame('two', $config->get('2'));
         $this->assertSame('ten', $config->get('10'));
         $this->assertSame('hundred', $config->get('100'));
-        
+
         $this->assertSame('nested_zero', $config->get('nested.0'));
         $this->assertSame('nested_one', $config->get('nested.1'));
         $this->assertSame('nested_two', $config->get('nested.2'));
@@ -454,9 +453,9 @@ class DotConfigEdgeCasesTest extends TestCase
             '' => 'empty_key_value',
             'normal' => 'normal_value'
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         $this->assertTrue($config->has(''));
         $this->assertSame('empty_key_value', $config->get(''));
         $this->assertTrue($config->has('normal'));
@@ -469,9 +468,9 @@ class DotConfigEdgeCasesTest extends TestCase
             'dots' => 'dots_value',
             'normal' => 'normal_value'
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         $this->assertTrue($config->has('dots'));
         $this->assertSame('dots_value', $config->get('dots'));
         $this->assertTrue($config->has('normal'));
@@ -486,9 +485,9 @@ class DotConfigEdgeCasesTest extends TestCase
             'both' => 'both_dots_value',
             'normal' => 'normal_value'
         ];
-        
+
         $config = new DotConfig($data);
-        
+
         $this->assertTrue($config->has('leading'));
         $this->assertSame('leading_dot_value', $config->get('leading'));
         $this->assertTrue($config->has('trailing'));

@@ -21,16 +21,16 @@ class ExceptionsTest extends TestCase
 {
     public function testContainerExceptionImplementsPsrContainerExceptionInterface()
     {
-        $this->assertTrue(new ContainerException instanceof ContainerExceptionInterface);
+        $this->assertTrue(new ContainerException() instanceof ContainerExceptionInterface);
     }
 
     public function testNotFoundExceptionImplementsPsrContainerNotFoundExceptionInterface()
     {
-        $this->assertTrue(new NotFoundException instanceof NotFoundExceptionInterface);
+        $this->assertTrue(new NotFoundException() instanceof NotFoundExceptionInterface);
     }
 
     public function testNotFoundExceptionExtendsContainerException()
     {
-        $this->assertTrue(new NotFoundException instanceof ContainerException);
+        $this->assertTrue(new NotFoundException() instanceof ContainerException);
     }
 }

@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-
 namespace Test\Config;
 
 use Clear\Config\DotConfig;
-
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;

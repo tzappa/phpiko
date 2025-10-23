@@ -24,7 +24,8 @@ class SignupService
         private EmailVerificationRepositoryInterface $verificationRepo,
         private UserRepositoryInterface $userRepo,
         private EventDispatcherInterface $eventDispatcher
-    ) {}
+    ) {
+    }
 
     /**
      * Initiates the signup process by creating a verification token for the email

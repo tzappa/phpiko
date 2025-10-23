@@ -16,7 +16,7 @@ class BeforeExecTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $event = new BeforeExec($queryString);
-        
+
         $this->assertEquals('BeforeExec', $event->getEventType());
     }
 
@@ -24,7 +24,7 @@ class BeforeExecTest extends TestCase
     {
         $queryString = 'SELECT * FROM users WHERE id = ?';
         $event = new BeforeExec($queryString);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
     }
 
@@ -32,14 +32,14 @@ class BeforeExecTest extends TestCase
     {
         $queryString = 'INSERT INTO users (name, email) VALUES (?, ?)';
         $event = new BeforeExec($queryString);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
     }
 
     public function testExtendsPdoEvent(): void
     {
         $event = new BeforeExec('SELECT 1');
-        
+
         $this->assertInstanceOf(PdoEvent::class, $event);
     }
 
@@ -47,7 +47,7 @@ class BeforeExecTest extends TestCase
     {
         $originalQuery = 'SELECT * FROM users';
         $event = new BeforeExec($originalQuery);
-        
+
         // Verify we can get the original query
         $this->assertEquals($originalQuery, $event->getQueryString());
     }
@@ -63,7 +63,7 @@ class BeforeExecTest extends TestCase
             'DROP TABLE test',
             'ALTER TABLE users ADD COLUMN phone VARCHAR(20)'
         ];
-        
+
         foreach ($queries as $query) {
             $event = new BeforeExec($query);
             $this->assertEquals($query, $event->getQueryString());
@@ -74,7 +74,7 @@ class BeforeExecTest extends TestCase
     public function testEmptyQueryString(): void
     {
         $event = new BeforeExec('');
-        
+
         $this->assertEquals('', $event->getQueryString());
         $this->assertEquals('BeforeExec', $event->getEventType());
     }
@@ -83,7 +83,7 @@ class BeforeExecTest extends TestCase
     {
         $complexQuery = 'SELECT u.*, p.title, c.name as category_name FROM users u LEFT JOIN posts p ON u.id = p.user_id LEFT JOIN categories c ON p.category_id = c.id WHERE u.active = 1 AND p.published_at > ? ORDER BY u.created_at DESC LIMIT 10';
         $event = new BeforeExec($complexQuery);
-        
+
         $this->assertEquals($complexQuery, $event->getQueryString());
     }
 
@@ -96,7 +96,7 @@ class BeforeExecTest extends TestCase
             'ANALYZE',
             'REINDEX'
         ];
-        
+
         foreach ($queries as $query) {
             $event = new BeforeExec($query);
             $this->assertEquals($query, $event->getQueryString());
@@ -108,7 +108,7 @@ class BeforeExecTest extends TestCase
     {
         $multiQuery = 'CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT); INSERT INTO users (name) VALUES ("John"); SELECT * FROM users;';
         $event = new BeforeExec($multiQuery);
-        
+
         $this->assertEquals($multiQuery, $event->getQueryString());
     }
 
@@ -116,7 +116,7 @@ class BeforeExecTest extends TestCase
     {
         $queryWithSpecialChars = 'SELECT * FROM "users" WHERE name = \'John\' AND email LIKE "%@example.com"';
         $event = new BeforeExec($queryWithSpecialChars);
-        
+
         $this->assertEquals($queryWithSpecialChars, $event->getQueryString());
     }
 
@@ -124,7 +124,7 @@ class BeforeExecTest extends TestCase
     {
         $longQuery = str_repeat('SELECT * FROM users WHERE id = ? AND ', 100) . 'id > 0';
         $event = new BeforeExec($longQuery);
-        
+
         $this->assertEquals($longQuery, $event->getQueryString());
     }
 }

@@ -9,7 +9,6 @@ namespace Clear\ACL;
  */
 final class Service
 {
-
     /**
      * @var \Clear\ACL\AclProviderInterface instance
      */
@@ -42,7 +41,7 @@ final class Service
      */
     public function getAllPermissions(): PermissionCollection
     {
-        $permissions = new PermissionCollection;
+        $permissions = new PermissionCollection();
 
         foreach ($this->provider->filterPermissions() as $row) {
             $permissions[] = new Permission((int) $row['id'], $row['object'], $row['operation']);

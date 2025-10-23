@@ -33,14 +33,14 @@ class CheckPasswordStrengthTest extends TestCase
     {
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn('');
-        
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -56,14 +56,14 @@ class CheckPasswordStrengthTest extends TestCase
     {
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn('invalid json');
-        
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getBody')->willReturn($body);
-        
+
         $response = $this->handler->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -79,13 +79,13 @@ class CheckPasswordStrengthTest extends TestCase
     {
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn(json_encode(['password' => '']));
-        
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getBody')->willReturn($body);
         $response = $this->handler->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -101,13 +101,13 @@ class CheckPasswordStrengthTest extends TestCase
     {
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn(json_encode(['other' => 'value']));
-        
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->method('getBody')->willReturn($body);
         $response = $this->handler->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -123,7 +123,7 @@ class CheckPasswordStrengthTest extends TestCase
     {
         $password = '  strongpassword123!  ';
         $trimmedPassword = 'strongpassword123!';
-        
+
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn(json_encode(['password' => $password]));
 
@@ -153,7 +153,7 @@ class CheckPasswordStrengthTest extends TestCase
     public function testHandleReturnsSuccessWithWarning(): void
     {
         $password = 'weakpass';
-        
+
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn(json_encode(['password' => $password]));
 
@@ -177,7 +177,7 @@ class CheckPasswordStrengthTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -193,7 +193,7 @@ class CheckPasswordStrengthTest extends TestCase
     public function testHandleReturnsSuccessWithoutWarning(): void
     {
         $password = 'strongpassword123!';
-        
+
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn(json_encode(['password' => $password]));
 
@@ -217,7 +217,7 @@ class CheckPasswordStrengthTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         $responseBody = (string) $response->getBody();
         $data = json_decode($responseBody, true);
 
@@ -259,7 +259,7 @@ class CheckPasswordStrengthTest extends TestCase
     {
         $passwordStrength = $this->createMock(PasswordStrength::class);
         $handler = new CheckPasswordStrength($passwordStrength);
-        
+
         $body = $this->createMock(StreamInterface::class);
         $body->method('__toString')->willReturn(json_encode(['password' => 'test']));
 

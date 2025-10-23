@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace App\Middleware;
 
 use App\Users\Auth\CheckLoginService;
@@ -19,7 +18,9 @@ use Psr\Log\LoggerInterface;
  */
 final class AuthMiddleware implements MiddlewareInterface
 {
-    public function __construct(private CheckLoginService $users, private SessionInterface $session, private LoggerInterface $logger) {}
+    public function __construct(private CheckLoginService $users, private SessionInterface $session, private LoggerInterface $logger)
+    {
+    }
 
     /**
      * {@inheritDoc}

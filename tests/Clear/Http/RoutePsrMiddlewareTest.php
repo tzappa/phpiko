@@ -39,7 +39,7 @@ class RoutePsrMiddlewareTest extends TestCase
             }
         };
         $route = new Route('GET', '/', $page);
-        $route2 = $route->middleware(new CheckLoginRequired);
+        $route2 = $route->middleware(new CheckLoginRequired());
         $this->assertEquals($route, $route2);
     }
 
@@ -54,7 +54,7 @@ class RoutePsrMiddlewareTest extends TestCase
             }
         };
         $route = new Route('GET', '/', $page);
-        $route->middleware(new CheckLoginRequired);
+        $route->middleware(new CheckLoginRequired());
         $this->assertCount(1, $route->getMiddlewares());
     }
 
@@ -69,7 +69,7 @@ class RoutePsrMiddlewareTest extends TestCase
             }
         };
         $route = new Route('GET', '/', $page);
-        $route->middleware(new CheckLoginRequired);
+        $route->middleware(new CheckLoginRequired());
         $response = $route->handle($this->createMock(\Psr\Http\Message\ServerRequestInterface::class));
         $this->assertEquals('Login required', (string) $response->getBody());
     }

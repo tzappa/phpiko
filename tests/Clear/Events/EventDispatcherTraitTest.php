@@ -27,23 +27,23 @@ class EventDispatcherTraitTest extends TestCase
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
         $object = new TestClassWithTrait();
-        
+
         $object->setEventDispatcher($dispatcher);
-        
+
         // We can't directly test the private property, but we can test the behavior
         $event = new TraitTestEvent('test');
         $result = $object->dispatch($event);
-        
+
         $this->assertSame($event, $result);
     }
 
     public function testDispatchWithoutSettingDispatcher()
     {
         $object = new TestClassWithTrait();
-        
+
         $event = new TraitTestEvent('test');
         $result = $object->dispatch($event);
-        
+
         $this->assertNull($result);
     }
 
@@ -52,18 +52,18 @@ class EventDispatcherTraitTest extends TestCase
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
         $object = new TestClassWithTrait();
-        
+
         $listenerCalled = false;
         $provider->addListener(TraitTestEvent::class, function (TraitTestEvent $event) use (&$listenerCalled) {
             $listenerCalled = true;
             $event->setValue($event->getValue() . '-modified');
         });
-        
+
         $object->setEventDispatcher($dispatcher);
-        
+
         $event = new TraitTestEvent('initial');
         $result = $object->dispatch($event);
-        
+
         $this->assertSame($event, $result);
         $this->assertSame('initial-modified', $result->getValue());
         $this->assertTrue($listenerCalled);
@@ -74,16 +74,16 @@ class EventDispatcherTraitTest extends TestCase
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
         $object = new TestClassWithTrait();
-        
+
         $provider->addListener(TraitTestEvent::class, function (TraitTestEvent $event) {
             $event->setValue('modified');
         });
-        
+
         $object->setEventDispatcher($dispatcher);
-        
+
         $event = new TraitTestEvent('initial');
         $result = $object->dispatch($event);
-        
+
         // Should be the exact same object reference
         $this->assertSame($event, $result);
         $this->assertSame('modified', $event->getValue());
@@ -95,21 +95,21 @@ class EventDispatcherTraitTest extends TestCase
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
         $object = new TestClassWithTrait();
-        
+
         $callCount = 0;
         $provider->addListener(TraitTestEvent::class, function (TraitTestEvent $event) use (&$callCount) {
             $callCount++;
             $event->setValue($event->getValue() . '-' . $callCount);
         });
-        
+
         $object->setEventDispatcher($dispatcher);
-        
+
         $event1 = new TraitTestEvent('first');
         $result1 = $object->dispatch($event1);
-        
+
         $event2 = new TraitTestEvent('second');
         $result2 = $object->dispatch($event2);
-        
+
         $this->assertSame('first-1', $result1->getValue());
         $this->assertSame('second-2', $result2->getValue());
         $this->assertSame(2, $callCount);

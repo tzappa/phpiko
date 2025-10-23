@@ -28,7 +28,7 @@ class LoginTest extends TestCase
     {
         $reflection = new \ReflectionClass(Login::class);
         $this->assertTrue($reflection->hasMethod('setCaptcha'), 'Login class should have setCaptcha method');
-        
+
         $method = $reflection->getMethod('setCaptcha');
         $this->assertTrue($method->isPublic(), 'setCaptcha method should be public');
     }
@@ -37,7 +37,7 @@ class LoginTest extends TestCase
     {
         $reflection = new \ReflectionClass(Login::class);
         $traitNames = $reflection->getTraitNames();
-        
+
         $this->assertContains('Clear\Logger\LoggerTrait', $traitNames, 'Login class should use LoggerTrait');
         $this->assertContains('App\RequestHandler\CsrfTrait', $traitNames, 'Login class should use CsrfTrait');
     }
@@ -46,7 +46,7 @@ class LoginTest extends TestCase
     {
         $reflection = new \ReflectionClass(Login::class);
         $constructor = $reflection->getConstructor();
-        
+
         $this->assertNotNull($constructor, 'Login class should have a constructor');
         $this->assertEquals(5, $constructor->getNumberOfRequiredParameters(), 'Login constructor should have 5 required parameters');
     }

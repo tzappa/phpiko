@@ -25,7 +25,7 @@ class StdoutLoggerTest extends TestCase
     public function testConstructorWithDefaultConfig(): void
     {
         $logger = new StdoutLogger();
-        
+
         $this->assertEquals('debug', $logger->getLevel());
         $this->assertEquals('[{level}] {message} {context}', $logger->getFormat());
         $this->assertEquals(PHP_EOL, $logger->getEol());
@@ -42,9 +42,9 @@ class StdoutLoggerTest extends TestCase
             'interpolatePlaceholders' => false,
             'removeInterpolatedContext' => false
         ];
-        
+
         $logger = new StdoutLogger($config);
-        
+
         $this->assertEquals('error', $logger->getLevel());
         $this->assertEquals('[{level}] {message}', $logger->getFormat());
         $this->assertEquals("\n", $logger->getEol());
@@ -55,7 +55,7 @@ class StdoutLoggerTest extends TestCase
     public function testLogWithStringMessage(): void
     {
         $this->expectOutputString('[debug] Test message ' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::DEBUG, 'Test message');
     }
 
@@ -67,27 +67,27 @@ class StdoutLoggerTest extends TestCase
                 return 'Stringable message';
             }
         };
-        
+
         $this->expectOutputString('[debug] Stringable message ' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::DEBUG, $stringable);
     }
 
     public function testLogWithContext(): void
     {
         $context = ['user_id' => 123, 'action' => 'login'];
-        
+
         $this->expectOutputString('[info] User action {"user_id":123,"action":"login"}' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, 'User action', $context);
     }
 
     public function testLogWithInterpolation(): void
     {
         $context = ['user' => 'John', 'count' => 5];
-        
+
         $this->expectOutputString('[info] User John has 5 items ' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, 'User {user} has {count} items', $context);
     }
 
@@ -95,45 +95,45 @@ class StdoutLoggerTest extends TestCase
     {
         $date = new DateTime('2023-01-01 12:00:00');
         $context = ['date' => $date];
-        
+
         $this->expectOutputString('[info] Date is 2023-01-01 12:00:00 ' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, 'Date is {date}', $context);
     }
 
     public function testLogWithArrayInterpolation(): void
     {
         $context = ['data' => ['key' => 'value', 'number' => 42]];
-        
+
         $this->expectOutputString('[info] Data: {"key":"value","number":42} ' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, 'Data: {data}', $context);
     }
 
     public function testLogWithNestedPlaceholders(): void
     {
         $context = ['user' => 'John', 'action' => 'login'];
-        
+
         $this->expectOutputString('[info] User John performed login ' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, 'User {user} performed {action}', $context);
     }
 
     public function testLogWithUnmatchedPlaceholders(): void
     {
         $context = ['user' => 'John'];
-        
+
         $this->expectOutputString('[info] User John has {unknown} items ' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, 'User {user} has {unknown} items', $context);
     }
 
     public function testLogLevelThreshold(): void
     {
         $this->logger->setLevel(LogLevel::WARNING);
-        
+
         $this->expectOutputString('[warning] Warning message ' . PHP_EOL . '[error] Error message ' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::DEBUG, 'Debug message');
         $this->logger->log(LogLevel::INFO, 'Info message');
         $this->logger->log(LogLevel::WARNING, 'Warning message');
@@ -152,14 +152,14 @@ class StdoutLoggerTest extends TestCase
             LogLevel::INFO,
             LogLevel::DEBUG
         ];
-        
+
         $expectedOutput = '';
         foreach ($levels as $level) {
             $expectedOutput .= "[{$level}] Message for {$level} " . PHP_EOL;
         }
-        
+
         $this->expectOutputString($expectedOutput);
-        
+
         foreach ($levels as $level) {
             $this->logger->log($level, "Message for {$level}");
         }
@@ -168,7 +168,7 @@ class StdoutLoggerTest extends TestCase
     public function testLogWithNumericLevel(): void
     {
         $this->expectOutputString('[emergency] Emergency message ' . PHP_EOL . '[debug] Debug message ' . PHP_EOL);
-        
+
         $this->logger->log(0, 'Emergency message'); // 0 = EMERGENCY
         $this->logger->log(7, 'Debug message');     // 7 = DEBUG
     }
@@ -221,7 +221,7 @@ class StdoutLoggerTest extends TestCase
     {
         $this->logger->setInterpolatePlaceholders(false);
         $this->assertFalse($this->logger->getInterpolatePlaceholders());
-        
+
         $this->logger->setInterpolatePlaceholders(true);
         $this->assertTrue($this->logger->getInterpolatePlaceholders());
     }
@@ -230,7 +230,7 @@ class StdoutLoggerTest extends TestCase
     {
         $this->logger->setRemoveInterpolatedContext(false);
         $this->assertFalse($this->logger->getRemoveInterpolatedContext());
-        
+
         $this->logger->setRemoveInterpolatedContext(true);
         $this->assertTrue($this->logger->getRemoveInterpolatedContext());
     }
@@ -240,9 +240,9 @@ class StdoutLoggerTest extends TestCase
         $message = 'Simple message without placeholders';
         $context = ['key' => 'value'];
         $unprocessedContext = [];
-        
+
         $result = $this->logger->interpolate($message, $context, $unprocessedContext);
-        
+
         $this->assertEquals($message, $result);
         $this->assertEquals($context, $unprocessedContext);
     }
@@ -252,9 +252,9 @@ class StdoutLoggerTest extends TestCase
         $message = 'User {user} has {count} items';
         $context = ['user' => 'John', 'count' => 5, 'extra' => 'data'];
         $unprocessedContext = [];
-        
+
         $result = $this->logger->interpolate($message, $context, $unprocessedContext);
-        
+
         $this->assertEquals('User John has 5 items', $result);
         $this->assertEquals(['extra' => 'data'], $unprocessedContext);
     }
@@ -264,9 +264,9 @@ class StdoutLoggerTest extends TestCase
         $message = 'User {user.name} from {user.city}';
         $context = ['user.name' => 'John', 'user.city' => 'New York'];
         $unprocessedContext = [];
-        
+
         $result = $this->logger->interpolate($message, $context, $unprocessedContext);
-        
+
         $this->assertEquals('User John from New York', $result);
     }
 
@@ -295,81 +295,81 @@ class StdoutLoggerTest extends TestCase
     {
         $format = '[{LEVEL}] {message} {context}';
         $this->logger->setFormat($format);
-        
+
         $this->expectOutputString('[ERROR] Test message {"key":"value"}' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::ERROR, 'Test message', ['key' => 'value']);
     }
 
     public function testLogWithDisabledInterpolation(): void
     {
         $this->logger->setInterpolatePlaceholders(false);
-        
+
         $context = ['user' => 'John'];
-        
+
         $this->expectOutputString('[info] User {user} logged in {"user":"John"}' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, 'User {user} logged in', $context);
     }
 
     public function testLogWithDisabledContextRemoval(): void
     {
         $this->logger->setRemoveInterpolatedContext(false);
-        
+
         $context = ['user' => 'John', 'action' => 'login'];
-        
+
         $this->expectOutputString('[info] User John logged in {"user":"John","action":"login"}' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, 'User {user} logged in', $context);
     }
 
     public function testLogWithEmptyContext(): void
     {
         $this->expectOutputString('[info] Message with empty context ' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, 'Message with empty context', []);
     }
 
     public function testLogWithNullContext(): void
     {
         $this->expectOutputString('[info] Message with null context ' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, 'Message with null context');
     }
 
     public function testLogWithSpecialCharacters(): void
     {
         $message = 'Message with special chars: !@#$%^&*()_+-=[]{}|;:,.<>?';
-        
+
         $this->expectOutputString('[info] ' . $message . ' ' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, $message);
     }
 
     public function testLogWithUnicodeCharacters(): void
     {
         $message = 'Unicode message: 你好世界 🌍';
-        
+
         $this->expectOutputString('[info] ' . $message . ' ' . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, $message);
     }
 
     public function testLogWithCustomEol(): void
     {
         $this->logger->setEol("\r\n");
-        
+
         $this->expectOutputString('[debug] Test message ' . "\r\n");
-        
+
         $this->logger->log(LogLevel::DEBUG, 'Test message');
     }
 
     public function testLogWithEmptyEol(): void
     {
         $this->logger->setEol('');
-        
+
         $this->expectOutputString('[debug] Test message ');
-        
+
         $this->logger->log(LogLevel::DEBUG, 'Test message');
     }
 
@@ -380,7 +380,7 @@ class StdoutLoggerTest extends TestCase
             '[warning] Second message ' . PHP_EOL .
             '[error] Third message ' . PHP_EOL
         );
-        
+
         $this->logger->log(LogLevel::INFO, 'First message');
         $this->logger->log(LogLevel::WARNING, 'Second message');
         $this->logger->log(LogLevel::ERROR, 'Third message');
@@ -396,9 +396,9 @@ class StdoutLoggerTest extends TestCase
             'array' => [1, 2, 3],
             'object' => (object)['key' => 'value']
         ];
-        
+
         $this->expectOutputString('[info] Complex context ' . json_encode($context) . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, 'Complex context', $context);
     }
 
@@ -418,9 +418,9 @@ class StdoutLoggerTest extends TestCase
                 'expires' => '2023-12-31'
             ]
         ];
-        
+
         $this->expectOutputString('[info] Nested context ' . json_encode($context) . PHP_EOL);
-        
+
         $this->logger->log(LogLevel::INFO, 'Nested context', $context);
     }
 }

@@ -27,7 +27,7 @@ class AfterQueryTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $event = new AfterQuery($queryString, $this->statement);
-        
+
         $this->assertEquals('AfterQuery', $event->getEventType());
     }
 
@@ -35,7 +35,7 @@ class AfterQueryTest extends TestCase
     {
         $queryString = 'SELECT * FROM users WHERE id = ?';
         $event = new AfterQuery($queryString, $this->statement);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
     }
 
@@ -43,7 +43,7 @@ class AfterQueryTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $event = new AfterQuery($queryString, $this->statement);
-        
+
         $this->assertSame($this->statement, $event->getStatement());
     }
 
@@ -51,7 +51,7 @@ class AfterQueryTest extends TestCase
     {
         $queryString = 'INSERT INTO users (name, email) VALUES (?, ?)';
         $event = new AfterQuery($queryString, $this->statement);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
     }
 
@@ -59,14 +59,14 @@ class AfterQueryTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $event = new AfterQuery($queryString, $this->statement);
-        
+
         $this->assertSame($this->statement, $event->getStatement());
     }
 
     public function testExtendsPdoEvent(): void
     {
         $event = new AfterQuery('SELECT 1', $this->statement);
-        
+
         $this->assertInstanceOf(PdoEvent::class, $event);
     }
 
@@ -74,7 +74,7 @@ class AfterQueryTest extends TestCase
     {
         $queryString = 'INVALID SQL QUERY';
         $event = new AfterQuery($queryString, false);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
         $this->assertFalse($event->getStatement());
         $this->assertEquals('AfterQuery', $event->getEventType());
@@ -88,7 +88,7 @@ class AfterQueryTest extends TestCase
             'UPDATE users SET name = ? WHERE id = ?',
             'DELETE FROM users WHERE id = ?'
         ];
-        
+
         foreach ($queries as $query) {
             $event = new AfterQuery($query, $this->statement);
             $this->assertEquals($query, $event->getQueryString());
@@ -100,7 +100,7 @@ class AfterQueryTest extends TestCase
     public function testEmptyQueryString(): void
     {
         $event = new AfterQuery('', $this->statement);
-        
+
         $this->assertEquals('', $event->getQueryString());
         $this->assertEquals('AfterQuery', $event->getEventType());
         $this->assertSame($this->statement, $event->getStatement());
@@ -110,7 +110,7 @@ class AfterQueryTest extends TestCase
     {
         $complexQuery = 'SELECT u.*, p.title FROM users u LEFT JOIN posts p ON u.id = p.user_id WHERE u.active = 1 ORDER BY u.created_at DESC LIMIT 10';
         $event = new AfterQuery($complexQuery, $this->statement);
-        
+
         $this->assertEquals($complexQuery, $event->getQueryString());
         $this->assertSame($this->statement, $event->getStatement());
     }
@@ -119,7 +119,7 @@ class AfterQueryTest extends TestCase
     {
         $queryString = 'SELECT 1';
         $event = new AfterQuery($queryString, $this->statement);
-        
+
         // Verify the statement cannot be changed after construction
         $this->assertSame($this->statement, $event->getStatement());
     }
@@ -128,7 +128,7 @@ class AfterQueryTest extends TestCase
     {
         $queryString = 'SELECT 1';
         $event = new AfterQuery($queryString, $this->statement);
-        
+
         // Verify the query string cannot be changed after construction
         $this->assertEquals($queryString, $event->getQueryString());
     }

@@ -26,7 +26,7 @@ class RouteHandleTest extends TestCase
             }
         };
         $route = new Route('GET', '/', $page);
-        $request = (new RequestFactory)->createServerRequest('GET', '/');
+        $request = (new RequestFactory())->createServerRequest('GET', '/');
 
         $this->assertEquals('Page', (string) $route->handle($request)->getBody());
     }
@@ -42,7 +42,7 @@ class RouteHandleTest extends TestCase
         };
 
         $route = new Route('GET', '/hello/{name}', $page);
-        $request = (new RequestFactory)->createServerRequest('GET', '/hello/John');
+        $request = (new RequestFactory())->createServerRequest('GET', '/hello/John');
 
         $this->assertEquals('Hello John', (string) $route->handle($request)->getBody());
     }

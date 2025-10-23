@@ -18,7 +18,7 @@ class AfterExecuteTest extends TestCase
         $params = ['id' => 1];
         $result = true;
         $event = new AfterExecute($queryString, $params, $result);
-        
+
         $this->assertEquals('AfterExecute', $event->getEventType());
     }
 
@@ -28,7 +28,7 @@ class AfterExecuteTest extends TestCase
         $params = ['id' => 1];
         $result = true;
         $event = new AfterExecute($queryString, $params, $result);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
     }
 
@@ -38,7 +38,7 @@ class AfterExecuteTest extends TestCase
         $params = ['id' => 1];
         $result = true;
         $event = new AfterExecute($queryString, $params, $result);
-        
+
         $this->assertEquals($params, $event->getParams());
     }
 
@@ -48,7 +48,7 @@ class AfterExecuteTest extends TestCase
         $params = ['id' => 1];
         $result = true;
         $event = new AfterExecute($queryString, $params, $result);
-        
+
         $this->assertEquals($result, $event->getResult());
     }
 
@@ -58,7 +58,7 @@ class AfterExecuteTest extends TestCase
         $params = ['John Doe', 'john@example.com'];
         $result = true;
         $event = new AfterExecute($queryString, $params, $result);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
     }
 
@@ -68,7 +68,7 @@ class AfterExecuteTest extends TestCase
         $params = ['John Doe', 1];
         $result = true;
         $event = new AfterExecute($queryString, $params, $result);
-        
+
         $this->assertEquals($params, $event->getParams());
     }
 
@@ -78,14 +78,14 @@ class AfterExecuteTest extends TestCase
         $params = [1];
         $result = false;
         $event = new AfterExecute($queryString, $params, $result);
-        
+
         $this->assertEquals($result, $event->getResult());
     }
 
     public function testExtendsPdoEvent(): void
     {
         $event = new AfterExecute('SELECT 1', null, true);
-        
+
         $this->assertInstanceOf(PdoEvent::class, $event);
     }
 
@@ -93,7 +93,7 @@ class AfterExecuteTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $event = new AfterExecute($queryString, null, true);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
         $this->assertNull($event->getParams());
         $this->assertTrue($event->getResult());
@@ -104,7 +104,7 @@ class AfterExecuteTest extends TestCase
     {
         $queryString = 'SELECT * FROM users';
         $event = new AfterExecute($queryString, [], true);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
         $this->assertEquals([], $event->getParams());
         $this->assertTrue($event->getResult());
@@ -115,7 +115,7 @@ class AfterExecuteTest extends TestCase
         $queryString = 'INVALID SQL QUERY';
         $params = ['test'];
         $event = new AfterExecute($queryString, $params, false);
-        
+
         $this->assertEquals($queryString, $event->getQueryString());
         $this->assertEquals($params, $event->getParams());
         $this->assertFalse($event->getResult());
@@ -129,7 +129,7 @@ class AfterExecuteTest extends TestCase
             'UPDATE users SET name = ? WHERE id = ?',
             'DELETE FROM users WHERE id = ?'
         ];
-        
+
         foreach ($queries as $query) {
             $event = new AfterExecute($query, null, true);
             $this->assertEquals($query, $event->getQueryString());
@@ -141,14 +141,14 @@ class AfterExecuteTest extends TestCase
     public function testWithDifferentParamTypes(): void
     {
         $queryString = 'SELECT * FROM users WHERE id = ? AND active = ?';
-        
+
         $testParams = [
             ['id' => 1, 'active' => true],
             ['id' => '2', 'active' => false],
             ['id' => 3.14, 'active' => 1],
             ['id' => null, 'active' => 'yes']
         ];
-        
+
         foreach ($testParams as $params) {
             $event = new AfterExecute($queryString, $params, true);
             $this->assertEquals($params, $event->getParams());
@@ -160,7 +160,7 @@ class AfterExecuteTest extends TestCase
     public function testEmptyQueryString(): void
     {
         $event = new AfterExecute('', null, true);
-        
+
         $this->assertEquals('', $event->getQueryString());
         $this->assertEquals('AfterExecute', $event->getEventType());
         $this->assertTrue($event->getResult());
@@ -171,7 +171,7 @@ class AfterExecuteTest extends TestCase
         $complexQuery = 'SELECT u.*, p.title FROM users u LEFT JOIN posts p ON u.id = p.user_id WHERE u.active = ? AND p.published_at > ? ORDER BY u.created_at DESC LIMIT ?';
         $params = [true, '2023-01-01', 10];
         $event = new AfterExecute($complexQuery, $params, true);
-        
+
         $this->assertEquals($complexQuery, $event->getQueryString());
         $this->assertEquals($params, $event->getParams());
         $this->assertTrue($event->getResult());
@@ -183,7 +183,7 @@ class AfterExecuteTest extends TestCase
         $params = ['test'];
         $result = true;
         $event = new AfterExecute($queryString, $params, $result);
-        
+
         // Verify all properties cannot be changed after construction
         $this->assertEquals($queryString, $event->getQueryString());
         $this->assertEquals($params, $event->getParams());

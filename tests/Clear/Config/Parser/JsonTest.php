@@ -7,7 +7,6 @@ namespace Test\Config\Parser;
 use Clear\Config\Parser\Json;
 use Clear\Config\Parser\ParserInterface;
 use Clear\Config\Exception\ParserException;
-
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Depends;
@@ -20,14 +19,14 @@ class JsonTest extends TestCase
 {
     public function testJsonParser()
     {
-        $this->assertInstanceOf(ParserInterface::class, new Json);
+        $this->assertInstanceOf(ParserInterface::class, new Json());
     }
 
     #[Depends('testJsonParser')]
     public function testJsonFromString()
     {
         $parser = new Json();
-        $arr = $parser->fromString(file_get_contents(__DIR__.'/test.json'));
+        $arr = $parser->fromString(file_get_contents(__DIR__ . '/test.json'));
         $this->assertIsArray($arr);
         $this->assertSame('value', $arr['key']);
         $this->assertIsArray($arr['db']);
@@ -46,7 +45,7 @@ class JsonTest extends TestCase
     public function testParserLoadsFile()
     {
         $parser = new Json();
-        $arr = $parser->fromFile(__DIR__.'/test.json');
+        $arr = $parser->fromFile(__DIR__ . '/test.json');
         $this->assertIsArray($arr);
         $this->assertNotEmpty($arr['key']);
     }
@@ -54,7 +53,7 @@ class JsonTest extends TestCase
     #[Depends('testParserLoadsFile')]
     public function testParserReturnsSameFromFileAndFromLoadedFile()
     {
-        $filename = __DIR__.'/test.json';
+        $filename = __DIR__ . '/test.json';
 
         $parser = new Json();
         $arr = $parser->fromFile($filename);

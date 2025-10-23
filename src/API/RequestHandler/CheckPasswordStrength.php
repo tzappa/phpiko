@@ -15,7 +15,9 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class CheckPasswordStrength implements RequestHandlerInterface
 {
-    public function __construct(private PasswordStrength $passwordStrength) {}
+    public function __construct(private PasswordStrength $passwordStrength)
+    {
+    }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

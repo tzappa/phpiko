@@ -1,4 +1,5 @@
 <?php
+
 /**
  * App bootstrap file
  */
@@ -71,7 +72,6 @@ use Psr\Log\LoggerInterface;
 // PHP
 use Exception;
 use PDOException;
-
 
 // Load Composer's autoloader
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
@@ -301,4 +301,4 @@ try {
     $app->logger->critical('500 {message} in {url}', ['code' => $e->getCode(), 'message' => $e->getMessage(), 'url' => (string) $request->getUri()]);
 }
 
-(new SapiEmitter)->emit($result);
+(new SapiEmitter())->emit($result);

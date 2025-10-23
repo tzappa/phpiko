@@ -12,7 +12,9 @@ use InvalidArgumentException;
 
 final class CheckLoginService
 {
-    public function __construct(private UserRepositoryInterface $repository) {}
+    public function __construct(private UserRepositoryInterface $repository)
+    {
+    }
 
     /**
      * Checks the logged in user' status.

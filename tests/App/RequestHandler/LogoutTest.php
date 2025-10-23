@@ -28,7 +28,7 @@ class LogoutTest extends TestCase
     {
         $reflection = new \ReflectionClass(Logout::class);
         $traitNames = $reflection->getTraitNames();
-        
+
         $this->assertContains('Clear\Events\EventDispatcherTrait', $traitNames, 'Logout class should use EventDispatcherTrait');
     }
 
@@ -36,7 +36,7 @@ class LogoutTest extends TestCase
     {
         $reflection = new \ReflectionClass(Logout::class);
         $constructor = $reflection->getConstructor();
-        
+
         $this->assertNotNull($constructor, 'Logout class should have a constructor');
         $this->assertEquals(2, $constructor->getNumberOfRequiredParameters(), 'Logout constructor should have 2 required parameters');
     }
@@ -45,7 +45,7 @@ class LogoutTest extends TestCase
     {
         $reflection = new \ReflectionClass(Logout::class);
         $this->assertTrue($reflection->hasMethod('handle'), 'Logout class should have handle method');
-        
+
         $method = $reflection->getMethod('handle');
         $this->assertTrue($method->isPublic(), 'handle method should be public');
     }

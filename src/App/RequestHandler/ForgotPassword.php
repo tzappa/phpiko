@@ -34,7 +34,8 @@ class ForgotPassword implements RequestHandlerInterface
         private ListenerProvider $listener,
         private TemplateInterface $template,
         private SessionInterface $session,
-    ) {}
+    ) {
+    }
 
     public function setEmailService(EmailServiceInterface $emailService): self
     {
@@ -91,7 +92,7 @@ class ForgotPassword implements RequestHandlerInterface
         $tpl->assign('csrf', $this->generateCsrfToken());
         $tpl->assign('error', $error);
         $tpl->assign('success', $success);
-        
+
         if (!empty($this->captcha)) {
             $this->captcha->create();
             $tpl->assign('captcha_image', 'data:image/jpeg;base64,' . base64_encode($this->captcha->getImage()));

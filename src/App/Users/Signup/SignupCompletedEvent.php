@@ -12,7 +12,9 @@ class SignupCompletedEvent
     /**
      * @param array $user User data for the newly registered user
      */
-    public function __construct(private array $user) {}
+    public function __construct(private array $user)
+    {
+    }
 
     /**
      * Get the user data

@@ -12,4 +12,6 @@ use App\Users\User;
  * @param User $user The user that attempted to log in
  * @param string $reason Reason for the login failure.  (e.g., "Invalid password", "Account locked")
  */
-final class InvalidPasswordEvent extends LoginFailEvent {}
+final class InvalidPasswordEvent extends LoginFailEvent
+{
+}

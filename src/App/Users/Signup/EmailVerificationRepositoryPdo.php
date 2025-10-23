@@ -14,7 +14,9 @@ class EmailVerificationRepositoryPdo implements EmailVerificationRepositoryInter
 {
     private string $table = 'email_verification_tokens';
 
-    public function __construct(private PDO $db) {}
+    public function __construct(private PDO $db)
+    {
+    }
 
     /**
      * {@inheritDoc}

@@ -35,10 +35,10 @@ class DispatcherTest extends TestCase
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
-        
+
         $event = new TestEvent('initial');
         $result = $dispatcher->dispatch($event);
-        
+
         $this->assertSame($event, $result);
         $this->assertSame('initial', $result->getValue());
     }
@@ -47,22 +47,22 @@ class DispatcherTest extends TestCase
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
-        
+
         $callOrder = [];
-        
+
         $provider->addListener(TestEvent::class, function (TestEvent $event) use (&$callOrder) {
             $callOrder[] = 'listener1';
             $event->setValue($event->getValue() . '-modified1');
         });
-        
+
         $provider->addListener(TestEvent::class, function (TestEvent $event) use (&$callOrder) {
             $callOrder[] = 'listener2';
             $event->setValue($event->getValue() . '-modified2');
         });
-        
+
         $event = new TestEvent('initial');
         $result = $dispatcher->dispatch($event);
-        
+
         $this->assertSame($event, $result);
         $this->assertSame('initial-modified1-modified2', $result->getValue());
         $this->assertSame(['listener1', 'listener2'], $callOrder);
@@ -72,23 +72,23 @@ class DispatcherTest extends TestCase
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
-        
+
         $callOrder = [];
-        
+
         $provider->addListener(TestStoppableEvent::class, function (TestStoppableEvent $event) use (&$callOrder) {
             $callOrder[] = 'listener1';
             $event->setValue($event->getValue() . '-modified1');
             $event->stopPropagation();
         });
-        
+
         $provider->addListener(TestStoppableEvent::class, function (TestStoppableEvent $event) use (&$callOrder) {
             $callOrder[] = 'listener2';
             $event->setValue($event->getValue() . '-modified2');
         });
-        
+
         $event = new TestStoppableEvent('initial');
         $result = $dispatcher->dispatch($event);
-        
+
         $this->assertSame($event, $result);
         $this->assertSame('initial-modified1', $result->getValue());
         $this->assertSame(['listener1'], $callOrder);
@@ -98,19 +98,19 @@ class DispatcherTest extends TestCase
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
-        
+
         $callOrder = [];
-        
+
         $provider->addListener(TestStoppableEvent::class, function (TestStoppableEvent $event) use (&$callOrder) {
             $callOrder[] = 'listener1';
             $event->setValue($event->getValue() . '-modified1');
         });
-        
+
         $event = new TestStoppableEvent('initial');
         $event->stopPropagation(); // Stop before dispatch
-        
+
         $result = $dispatcher->dispatch($event);
-        
+
         $this->assertSame($event, $result);
         $this->assertSame('initial', $result->getValue());
         $this->assertSame([], $callOrder);
@@ -120,10 +120,10 @@ class DispatcherTest extends TestCase
     {
         $provider = new ListenerProvider();
         $dispatcher = new Dispatcher($provider);
-        
+
         $event = new TestEvent('initial');
         $result = $dispatcher->dispatch($event);
-        
+
         $this->assertSame($event, $result);
         $this->assertSame('initial', $result->getValue());
     }

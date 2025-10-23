@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 /**
  * Router Tests with middlewares
  *
@@ -14,12 +17,10 @@ use Laminas\Diactoros\ServerRequestFactory as RequestFactory;
 use Laminas\Diactoros\Response\TextResponse;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Server\MiddlewareInterface;
-
 
 function checkLoginRequired(ServerRequestInterface $request, $handler)
 {
@@ -72,7 +73,7 @@ class RouterUsingMiddlewaresTest extends TestCase
         $router->map('GET', '/private', function (ServerRequestInterface $request) {
             return 'My Private Space';
         })->middleware('\\Tests\\Http\\checkLoginRequired');
-        $request = (new RequestFactory)->createServerRequest('GET', '/private');
+        $request = (new RequestFactory())->createServerRequest('GET', '/private');
         $response = $router->dispatch($request);
         $this->assertEquals('Login required', $response);
     }
@@ -83,7 +84,7 @@ class RouterUsingMiddlewaresTest extends TestCase
         $router->map('GET', '/private', function (ServerRequestInterface $request) {
             return 'My Private Space';
         })->middleware('\\Tests\\Http\\checkLoginRequired');
-        $request = (new RequestFactory)->createServerRequest('GET', '/private');
+        $request = (new RequestFactory())->createServerRequest('GET', '/private');
         $request = $request->withAttribute('user_id', 1);
         $response = $router->dispatch($request);
         $this->assertEquals('My Private Space', $response);
@@ -97,11 +98,11 @@ class RouterUsingMiddlewaresTest extends TestCase
         $group->map('GET', '/profile', function (ServerRequestInterface $request) {
             return 'My Profile';
         });
-        $request = (new RequestFactory)->createServerRequest('GET', '/private/profile');
+        $request = (new RequestFactory())->createServerRequest('GET', '/private/profile');
         $response = $router->dispatch($request);
         $this->assertEquals('Login required', $response);
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/private/profile');
+        $request = (new RequestFactory())->createServerRequest('GET', '/private/profile');
         $request = $request->withAttribute('user_id', 1);
         $response = $router->dispatch($request);
         $this->assertEquals('My Profile', $response);
@@ -117,23 +118,23 @@ class RouterUsingMiddlewaresTest extends TestCase
             return 'My Profile';
         })->middleware('\\Tests\\Http\\checkForbidden');
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/private/profile');
+        $request = (new RequestFactory())->createServerRequest('GET', '/private/profile');
         $request = $request->withAttribute('debug', 1);
         $response = $router->dispatch($request);
         $this->assertEquals('Login required', $response);
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/private/profile');
+        $request = (new RequestFactory())->createServerRequest('GET', '/private/profile');
         $request = $request->withAttribute('user_id', 1);
         $response = $router->dispatch($request);
         $this->assertEquals('Forbidden', $response);
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/private/profile');
+        $request = (new RequestFactory())->createServerRequest('GET', '/private/profile');
         $request = $request->withAttribute('user_id', 1);
         $request = $request->withAttribute('show_profile', 1);
         $response = $router->dispatch($request);
         $this->assertEquals('My Profile', $response);
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/private/profile');
+        $request = (new RequestFactory())->createServerRequest('GET', '/private/profile');
         $request = $request->withAttribute('show_profile', 1);
         $response = $router->dispatch($request);
         $this->assertEquals('Login required', $response);
@@ -166,7 +167,7 @@ class RouterUsingMiddlewaresTest extends TestCase
             return 'r m2 ' . $next($request);
         });
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/group1/group2/show');
+        $request = (new RequestFactory())->createServerRequest('GET', '/group1/group2/show');
         $response = $router->dispatch($request);
         $this->assertEquals('g1m1 g1m2 g2 m1 g2 m2 r m1 r m2 Show', $response);
     }
@@ -220,7 +221,7 @@ class RouterUsingMiddlewaresTest extends TestCase
             }
         });
 
-        $request = (new RequestFactory)->createServerRequest('GET', '/group1/group2/show');
+        $request = (new RequestFactory())->createServerRequest('GET', '/group1/group2/show');
         $response = $router->dispatch($request);
         $this->assertEquals('Show', $response->getBody()->getContents());
         $this->assertEquals('m2,m1', $response->getHeaderLine('X-Group1'));

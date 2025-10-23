@@ -19,7 +19,9 @@ class Logout implements RequestHandlerInterface
 {
     use EventDispatcherTrait;
 
-    public function __construct(private LogoutService $users, private SessionInterface $session) {}
+    public function __construct(private LogoutService $users, private SessionInterface $session)
+    {
+    }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {

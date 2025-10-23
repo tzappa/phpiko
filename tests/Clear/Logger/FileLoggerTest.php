@@ -34,7 +34,7 @@ class FileLoggerTest extends TestCase
     public function testConstructorWithDefaultConfig(): void
     {
         $logger = new FileLogger();
-        
+
         $this->assertEquals('', $logger->getFileName());
         $this->assertEquals('debug', $logger->getLevel());
         $this->assertEquals('[{datetime}] [{level}] {message} {context}', $logger->getFormat());
@@ -53,9 +53,9 @@ class FileLoggerTest extends TestCase
             'interpolatePlaceholders' => false,
             'removeInterpolatedContext' => false
         ];
-        
+
         $logger = new FileLogger($config);
-        
+
         $this->assertEquals('/tmp/custom.log', $logger->getFileName());
         $this->assertEquals('error', $logger->getLevel());
         $this->assertEquals('[{level}] {message}', $logger->getFormat());
@@ -67,7 +67,7 @@ class FileLoggerTest extends TestCase
     public function testLogWithStringMessage(): void
     {
         $this->logger->log(LogLevel::INFO, 'Test message');
-        
+
         $this->assertFileExists($this->testLogFile);
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('Test message', $content);
@@ -82,9 +82,9 @@ class FileLoggerTest extends TestCase
                 return 'Stringable message';
             }
         };
-        
+
         $this->logger->log(LogLevel::DEBUG, $stringable);
-        
+
         $this->assertFileExists($this->testLogFile);
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('Stringable message', $content);
@@ -94,7 +94,7 @@ class FileLoggerTest extends TestCase
     {
         $context = ['user_id' => 123, 'action' => 'login'];
         $this->logger->log(LogLevel::INFO, 'User action', $context);
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('User action', $content);
         $this->assertStringContainsString('{"user_id":123,"action":"login"}', $content);
@@ -104,7 +104,7 @@ class FileLoggerTest extends TestCase
     {
         $context = ['user' => 'John', 'count' => 5];
         $this->logger->log(LogLevel::INFO, 'User {user} has {count} items', $context);
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('User John has 5 items', $content);
     }
@@ -114,7 +114,7 @@ class FileLoggerTest extends TestCase
         $date = new DateTime('2023-01-01 12:00:00');
         $context = ['date' => $date];
         $this->logger->log(LogLevel::INFO, 'Date is {date}', $context);
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('Date is 2023-01-01 12:00:00', $content);
     }
@@ -123,7 +123,7 @@ class FileLoggerTest extends TestCase
     {
         $context = ['data' => ['key' => 'value', 'number' => 42]];
         $this->logger->log(LogLevel::INFO, 'Data: {data}', $context);
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('Data: {"key":"value","number":42}', $content);
     }
@@ -132,7 +132,7 @@ class FileLoggerTest extends TestCase
     {
         $context = ['user' => 'John', 'action' => 'login'];
         $this->logger->log(LogLevel::INFO, 'User {user} performed {action}', $context);
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('User John performed login', $content);
     }
@@ -141,7 +141,7 @@ class FileLoggerTest extends TestCase
     {
         $context = ['user' => 'John'];
         $this->logger->log(LogLevel::INFO, 'User {user} has {unknown} items', $context);
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('User John has {unknown} items', $content);
     }
@@ -149,12 +149,12 @@ class FileLoggerTest extends TestCase
     public function testLogLevelThreshold(): void
     {
         $this->logger->setLevel(LogLevel::WARNING);
-        
+
         $this->logger->log(LogLevel::DEBUG, 'Debug message');
         $this->logger->log(LogLevel::INFO, 'Info message');
         $this->logger->log(LogLevel::WARNING, 'Warning message');
         $this->logger->log(LogLevel::ERROR, 'Error message');
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringNotContainsString('Debug message', $content);
         $this->assertStringNotContainsString('Info message', $content);
@@ -174,11 +174,11 @@ class FileLoggerTest extends TestCase
             LogLevel::INFO,
             LogLevel::DEBUG
         ];
-        
+
         foreach ($levels as $level) {
             $this->logger->log($level, "Message for {$level}");
         }
-        
+
         $content = file_get_contents($this->testLogFile);
         foreach ($levels as $level) {
             $this->assertStringContainsString("Message for {$level}", $content);
@@ -189,7 +189,7 @@ class FileLoggerTest extends TestCase
     {
         $this->logger->log(0, 'Emergency message'); // 0 = EMERGENCY
         $this->logger->log(7, 'Debug message');     // 7 = DEBUG
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('Emergency message', $content);
         $this->assertStringContainsString('Debug message', $content);
@@ -204,13 +204,13 @@ class FileLoggerTest extends TestCase
     public function testSetFileName(): void
     {
         $newFile = sys_get_temp_dir() . '/new_log_' . uniqid() . '.log';
-        
+
         $this->logger->setFileName($newFile);
         $this->assertEquals($newFile, $this->logger->getFileName());
-        
+
         $this->logger->log(LogLevel::INFO, 'Test message');
         $this->assertFileExists($newFile);
-        
+
         unlink($newFile);
     }
 
@@ -268,7 +268,7 @@ class FileLoggerTest extends TestCase
     {
         $this->logger->setInterpolatePlaceholders(false);
         $this->assertFalse($this->logger->getInterpolatePlaceholders());
-        
+
         $this->logger->setInterpolatePlaceholders(true);
         $this->assertTrue($this->logger->getInterpolatePlaceholders());
     }
@@ -277,7 +277,7 @@ class FileLoggerTest extends TestCase
     {
         $this->logger->setRemoveInterpolatedContext(false);
         $this->assertFalse($this->logger->getRemoveInterpolatedContext());
-        
+
         $this->logger->setRemoveInterpolatedContext(true);
         $this->assertTrue($this->logger->getRemoveInterpolatedContext());
     }
@@ -287,9 +287,9 @@ class FileLoggerTest extends TestCase
         $message = 'Simple message without placeholders';
         $context = ['key' => 'value'];
         $unprocessedContext = [];
-        
+
         $result = $this->logger->interpolate($message, $context, $unprocessedContext);
-        
+
         $this->assertEquals($message, $result);
         $this->assertEquals($context, $unprocessedContext);
     }
@@ -299,9 +299,9 @@ class FileLoggerTest extends TestCase
         $message = 'User {user} has {count} items';
         $context = ['user' => 'John', 'count' => 5, 'extra' => 'data'];
         $unprocessedContext = [];
-        
+
         $result = $this->logger->interpolate($message, $context, $unprocessedContext);
-        
+
         $this->assertEquals('User John has 5 items', $result);
         $this->assertEquals(['extra' => 'data'], $unprocessedContext);
     }
@@ -311,9 +311,9 @@ class FileLoggerTest extends TestCase
         $message = 'User {user.name} from {user.city}';
         $context = ['user.name' => 'John', 'user.city' => 'New York'];
         $unprocessedContext = [];
-        
+
         $result = $this->logger->interpolate($message, $context, $unprocessedContext);
-        
+
         $this->assertEquals('User John from New York', $result);
     }
 
@@ -341,10 +341,10 @@ class FileLoggerTest extends TestCase
     // public function testLogToDefaultErrorLog(): void
     // {
     //     $logger = new FileLogger(); // No filename = default error log
-        
+
     //     // This should not throw an exception
     //     $logger->log(LogLevel::INFO, 'Test message to error log');
-        
+
     //     $this->assertTrue(true); // If we get here, no exception was thrown
     // }
 
@@ -352,9 +352,9 @@ class FileLoggerTest extends TestCase
     {
         $format = '[{datetime}] [{LEVEL}] {message} {context}';
         $this->logger->setFormat($format);
-        
+
         $this->logger->log(LogLevel::ERROR, 'Test message', ['key' => 'value']);
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('[ERROR]', $content);
         $this->assertStringContainsString('Test message', $content);
@@ -364,10 +364,10 @@ class FileLoggerTest extends TestCase
     public function testLogWithDisabledInterpolation(): void
     {
         $this->logger->setInterpolatePlaceholders(false);
-        
+
         $context = ['user' => 'John'];
         $this->logger->log(LogLevel::INFO, 'User {user} logged in', $context);
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('User {user} logged in', $content);
         $this->assertStringContainsString('{"user":"John"}', $content);
@@ -376,10 +376,10 @@ class FileLoggerTest extends TestCase
     public function testLogWithDisabledContextRemoval(): void
     {
         $this->logger->setRemoveInterpolatedContext(false);
-        
+
         $context = ['user' => 'John', 'action' => 'login'];
         $this->logger->log(LogLevel::INFO, 'User {user} logged in', $context);
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('User John logged in', $content);
         $this->assertStringContainsString('{"user":"John","action":"login"}', $content);
@@ -389,10 +389,10 @@ class FileLoggerTest extends TestCase
     {
         $logger = new FileLogger(['filename' => $this->testLogFile]);
         $logger->log(LogLevel::INFO, 'Test message');
-        
+
         // Force destructor to run
         unset($logger);
-        
+
         // File should still exist and be readable
         $this->assertFileExists($this->testLogFile);
         $content = file_get_contents($this->testLogFile);
@@ -402,7 +402,7 @@ class FileLoggerTest extends TestCase
     public function testLogWithEmptyContext(): void
     {
         $this->logger->log(LogLevel::INFO, 'Message with empty context', []);
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('Message with empty context', $content);
         $this->assertStringContainsString('', $content); // Empty context should result in empty string
@@ -411,7 +411,7 @@ class FileLoggerTest extends TestCase
     public function testLogWithNullContext(): void
     {
         $this->logger->log(LogLevel::INFO, 'Message with null context');
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString('Message with null context', $content);
     }
@@ -420,7 +420,7 @@ class FileLoggerTest extends TestCase
     {
         $message = 'Message with special chars: !@#$%^&*()_+-=[]{}|;:,.<>?';
         $this->logger->log(LogLevel::INFO, $message);
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString($message, $content);
     }
@@ -429,7 +429,7 @@ class FileLoggerTest extends TestCase
     {
         $message = 'Unicode message: 你好世界 🌍';
         $this->logger->log(LogLevel::INFO, $message);
-        
+
         $content = file_get_contents($this->testLogFile);
         $this->assertStringContainsString($message, $content);
     }

@@ -14,7 +14,9 @@ class TokenRepositoryPdo implements TokenRepositoryInterface
 {
     private string $table = 'password_reset_tokens';
 
-    public function __construct(private PDO $db) {}
+    public function __construct(private PDO $db)
+    {
+    }
 
     /**
      * {@inheritDoc}

@@ -11,10 +11,12 @@ use App\Users\User;
  *
  * This event is typically dispatched by the Login request handler
  * after successful authentication.
- * 
+ *
  * @param User $user The authenticated user instance
  */
 final class LoginEvent
 {
-    public function __construct(public readonly User $user) {}
+    public function __construct(public readonly User $user)
+    {
+    }
 }

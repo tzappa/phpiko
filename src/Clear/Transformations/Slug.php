@@ -22,7 +22,7 @@ final class Slug
             'ú' => 'u',  'û' => 'u',  'ý' => 'y',  'þ' => 'b',  'ÿ' => 'y',
             'ŕ' => 'r',  'ß' => 'ss',
             // Double Cyrillic
-            'кс'=> 'x',
+            'кс' => 'x',
             // Cyrillic
             'а' => 'a',  'б' => 'b',  'в' => 'v',  'г' => 'g',  'д' => 'd',
             'е' => 'e',  'ж' => 'j',  'з' => 'z',  'и' => 'i',  'й' => 'y',
@@ -59,6 +59,6 @@ final class Slug
         // trim
         $string = trim($string, '-');
 
-       return $string;
+        return $string;
     }
 }

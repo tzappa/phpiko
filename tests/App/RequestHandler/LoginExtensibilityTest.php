@@ -36,14 +36,14 @@ class LoginExtensibilityTest extends TestCase
     public function testCanTestInheritanceStructure(): void
     {
         $reflection = new \ReflectionClass(Login::class);
-        
+
         // Verify the class can be extended by checking it's not final
         $this->assertFalse($reflection->isFinal());
-        
+
         // Verify it has the expected public methods that can be overridden
         $this->assertTrue($reflection->hasMethod('handle'));
         $this->assertTrue($reflection->hasMethod('setCaptcha'));
-        
+
         $handleMethod = $reflection->getMethod('handle');
         $this->assertTrue($handleMethod->isPublic());
     }
@@ -51,7 +51,7 @@ class LoginExtensibilityTest extends TestCase
     private function createExtendedLoginHandler()
     {
         // Create a simple test class that demonstrates extensibility concepts
-        return new class() {
+        return new class () {
             public function getSuccessUrl(): string
             {
                 return '/custom-success';

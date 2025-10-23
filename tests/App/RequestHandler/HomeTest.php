@@ -64,16 +64,16 @@ class HomeTest extends TestCase
     public function testCanExtendHomeHandler(): void
     {
         $templateMock = $this->createMock(TemplateInterface::class);
-        
-        $extendedHandler = new class($templateMock) extends Home {
+
+        $extendedHandler = new class ($templateMock) extends Home {
             private TemplateInterface $customTemplate;
-            
+
             public function __construct(TemplateInterface $template)
             {
                 parent::__construct($template);
                 $this->customTemplate = $template;
             }
-            
+
             public function getTemplateName(): string
             {
                 return 'custom.twig';

@@ -36,7 +36,6 @@ use PDO;
 #[CoversClass(BeforeExecute::class)]
 class PdoExtTest extends TestCase
 {
-
     public function testCreate()
     {
         $this->assertNotEmpty(new PdoExt('sqlite::memory:'));
@@ -95,7 +94,7 @@ class PdoExtTest extends TestCase
         $db = new PdoExt('sqlite::memory:');
         $db->exec('CREATE TABLE test (id INTEGER NOT NULL)');
         $db->setEventDispatcher($dispatcher);
-        
+
         $sth = $db->prepare('SELECT * FROM test');
         $dispatcher->expects($this->exactly(2))->method('dispatch');
         $sth->execute();
@@ -107,7 +106,7 @@ class PdoExtTest extends TestCase
         $db = new PdoExt('sqlite::memory:');
         $db->exec('CREATE TABLE test (id INTEGER NOT NULL)');
         $db->setEventDispatcher($dispatcher);
-        
+
         $dispatcher->expects($this->exactly(2))->method('dispatch');
         $db->query('SELECT * FROM test');
     }

@@ -6,7 +6,6 @@ namespace Test\Config\Parser;
 
 use Clear\Config\Parser\Ini;
 use Clear\Config\Parser\ParserInterface;
-
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Depends;
@@ -19,7 +18,7 @@ class IniTest extends TestCase
 {
     public function testIniIsParser()
     {
-        $this->assertInstanceOf(ParserInterface::class, new Ini);
+        $this->assertInstanceOf(ParserInterface::class, new Ini());
     }
 
     #[Depends('testIniIsParser')]
