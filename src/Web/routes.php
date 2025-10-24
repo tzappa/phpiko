@@ -41,9 +41,6 @@ $router->map('GET', '/', function (ServerRequestInterface $request) use ($app) {
 }, 'home');
 $router->map('*', '/login', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new Login(
-        $app->loginService,
-        $app->eventListener,
-        $app->counters,
         $app->template,
         $app->session
     );
@@ -76,7 +73,6 @@ $router->map('GET', '/verify-email', function (ServerRequestInterface $request) 
 // Complete signup route
 $router->map('*', '/complete-signup/{token}', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new CompleteSignup(
-        $app->loginService,
         $app->template,
         $app->session
     );
@@ -107,8 +103,8 @@ $router->map('*', '/reset-password/{token}', function (ServerRequestInterface $r
 }, 'reset-password');
 
 $router->map('*', '/logout', function (ServerRequestInterface $request) use ($app) {
-    $requestHandler = new Logout($app->logoutService, $app->session);
-    $requestHandler->setEventDispatcher($app->eventDispatcher);
+    $requestHandler = new Logout($app->session);
+    $requestHandler->setLogger($app->logger);
     return $requestHandler->handle($request);
 }, 'logout');
 $router->map('GET', '/avatar', function (ServerRequestInterface $request) {
@@ -116,7 +112,7 @@ $router->map('GET', '/avatar', function (ServerRequestInterface $request) {
 }, 'avatar');
 // Private routes
 $private = $router->group('/private')->middleware(new LazyMiddleware(function () use ($app) {
-    return new AuthMiddleware($app->checkLoginService, $app->session, $app->logger);
+    return new AuthMiddleware($app->session, $app->logger);
 }));
 $private->map('GET', '/hello', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new Hello($app->template);

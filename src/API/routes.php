@@ -8,6 +8,10 @@ declare(strict_types=1);
 
 namespace API;
 
+use App\Users\Auth\{
+    LoginService,
+    TokenRepositoryPdo as AuthTokenRepositoryPdo,
+};
 use App\Users\Password\{
     PasswordStrength,
     ChangePasswordService,
@@ -25,9 +29,12 @@ use App\Users\UserRepositoryPdo;
 use App\Users\NullDispatcher;
 use API\RequestHandler\{
     ChangePassword,
+    CheckAuth,
     CheckPasswordStrength,
     CompleteSignup,
     ForgotPassword,
+    Login,
+    Logout,
     ResetPassword,
     ServerStatus,
     Signup,
@@ -46,8 +53,34 @@ $router->map('GET', '/api/status', function (ServerRequestInterface $request) us
 
 // API v1.*
 $api1 = $router->group('/api/v{api_version:1(?:\.\d+)?}');
-// Server status
 
+// Authentication endpoints
+$api1->map('POST', '/login', function (ServerRequestInterface $request) use ($app) {
+    $userRepo = new UserRepositoryPdo($app->database);
+    $eventDispatcher = $app->eventDispatcher ?? new NullDispatcher();
+    $loginService = new LoginService($userRepo, $eventDispatcher);
+
+    $authTokenRepo = new AuthTokenRepositoryPdo($app->database);
+    $handler = new Login($loginService, $authTokenRepo);
+
+    return $handler->handle($request);
+});
+
+$api1->map('POST', '/logout', function (ServerRequestInterface $request) use ($app) {
+    $authTokenRepo = new AuthTokenRepositoryPdo($app->database);
+    $handler = new Logout($authTokenRepo);
+
+    return $handler->handle($request);
+});
+
+$api1->map('GET|POST', '/check-auth', function (ServerRequestInterface $request) use ($app) {
+    $authTokenRepo = new AuthTokenRepositoryPdo($app->database);
+    $handler = new CheckAuth($authTokenRepo);
+
+    return $handler->handle($request);
+});
+
+// Password strength check
 $api1->map('POST', '/check-password-strength', function (ServerRequestInterface $request) use ($app) {
     $handler = new CheckPasswordStrength(new PasswordStrength());
     return $handler->handle($request);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Web\RequestHandler;
 
-use App\Users\Auth\LoginService;
 use Clear\Logger\LoggerTrait;
 use Clear\Template\TemplateInterface;
 use Clear\Session\SessionInterface;
@@ -25,7 +24,6 @@ class CompleteSignup implements LoggerAwareInterface
     use ApiClientTrait;
 
     public function __construct(
-        private LoginService $loginService,
         private TemplateInterface $template,
         private SessionInterface $session,
     ) {
@@ -107,15 +105,29 @@ class CompleteSignup implements LoggerAwareInterface
                     ]);
 
                     if ($apiResponse['success']) {
-                        // Log the user in
-                        $err = '';
-                        $this->loginService->login($username, $password, $err);
-
-                        $this->logger->info('User signup completed successfully', [
-                            'username' => $username
+                        // Log the user in via API
+                        $loginResponse = $this->callApi($request, '/api/v1/login', [
+                            'username' => $username,
+                            'password' => $password,
                         ]);
 
-                        return new RedirectResponse('/');
+                        if ($loginResponse['success']) {
+                            // Store the token in session
+                            $this->session->set('auth_token', $loginResponse['token']);
+                            $this->session->set('user_id', $loginResponse['user']['id']);
+
+                            $this->logger->info('User signup completed and logged in successfully', [
+                                'username' => $username
+                            ]);
+
+                            return new RedirectResponse('/');
+                        } else {
+                            $this->logger->warning('Signup completed but login failed', [
+                                'username' => $username
+                            ]);
+                            // Redirect to login page if auto-login fails
+                            return new RedirectResponse('/login');
+                        }
                     } else {
                         // Handle API errors
                         if (isset($apiResponse['errors'])) {

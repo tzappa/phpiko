@@ -4,13 +4,7 @@ declare(strict_types=1);
 
 namespace Web\RequestHandler;
 
-use App\Users\Auth\LoginService;
-use App\Users\User;
-use App\Users\Events\LoginFailEvent;
-use App\Users\Events\LoginEvent;
 use Clear\Captcha\CaptchaInterface;
-use Clear\Counters\Service as Counters;
-use Clear\Events\ListenerProvider;
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
 use Clear\Template\TemplateInterface;
@@ -19,6 +13,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Exception;
 
 /**
  * Login Page
@@ -27,9 +22,7 @@ class Login implements RequestHandlerInterface
 {
     use LoggerTrait;
     use CsrfTrait;
-
-    // Lock the account after 5 failed login attempts
-    private const LOCK_ACCOUNT_AFTER = 5;
+    use ApiClientTrait;
 
     /**
      * @var \Clear\Captcha\CaptchaInterface|null
@@ -37,9 +30,6 @@ class Login implements RequestHandlerInterface
     private $captcha = null;
 
     public function __construct(
-        private LoginService $users,
-        private ListenerProvider $listener,
-        private Counters $counters,
         private TemplateInterface $template,
         private SessionInterface $session,
     ) {
@@ -54,11 +44,17 @@ class Login implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        // Check if already logged in
+        if ($this->session->has('auth_token')) {
+            return new RedirectResponse('/private/hello');
+        }
+
         $error = '';
         $method = $request->getMethod();
+
         if ($method === 'POST') {
-            $this->addEventListeners();
             $data = $request->getParsedBody();
+
             if (!$this->checkCsrfToken($data['csrf'] ?? '')) {
                 $error = 'Expired or invalid request. Please try again.';
             } elseif (
@@ -66,15 +62,58 @@ class Login implements RequestHandlerInterface
                 (!$this->captcha->verify($data['code'] ?? '', $data['checksum'] ?? ''))
             ) {
                 $error = 'Wrong CAPTCHA';
-            } elseif ($user = $this->users->login($data['username'] ?? '', $data['password'] ?? '', $error)) {
-                $this->session->set('user_id', $user->id);
-                $this->info('User {username} logged in', $user->toArray());
-                return new RedirectResponse('/private/hello');
+            } else {
+                $username = trim($data['username'] ?? '');
+                $password = $data['password'] ?? '';
+
+                try {
+                    // Call the API to login
+                    $apiResponse = $this->callApi($request, '/api/v1/login', [
+                        'username' => $username,
+                        'password' => $password,
+                    ]);
+
+                    if ($apiResponse['success']) {
+                        // Store the token in session
+                        $this->session->set('auth_token', $apiResponse['token']);
+                        $this->session->set('user_id', $apiResponse['user']['id']);
+
+                        $this->info('User {username} logged in via API', [
+                            'username' => $apiResponse['user']['username']
+                        ]);
+
+                        return new RedirectResponse('/private/hello');
+                    } else {
+                        // Handle API errors
+                        if (isset($apiResponse['errors']['username'])) {
+                            $error = $apiResponse['errors']['username'];
+                        } elseif (isset($apiResponse['errors']['password'])) {
+                            $error = $apiResponse['errors']['password'];
+                        } elseif (isset($apiResponse['error'])) {
+                            $error = $apiResponse['error'];
+                        } else {
+                            $error = 'Invalid credentials';
+                        }
+
+                        $this->logger->notice('Login failed via API', [
+                            'username' => $username,
+                            'error' => $error
+                        ]);
+                    }
+                } catch (Exception $e) {
+                    $error = 'An error occurred. Please try again later.';
+                    $this->logger->error('Login error: {message}', [
+                        'message' => $e->getMessage(),
+                        'username' => $username,
+                    ]);
+                }
             }
         }
+
         $tpl = $this->template->load('login.twig');
         $tpl->assign('csrf', $this->generateCsrfToken());
         $tpl->assign('error', $error);
+
         if (!empty($this->captcha)) {
             $this->captcha->create();
             $tpl->assign('captcha_image', 'data:image/jpeg;base64,' . base64_encode($this->captcha->getImage()));
@@ -83,59 +122,5 @@ class Login implements RequestHandlerInterface
         $html = $tpl->parse();
 
         return new HtmlResponse($html);
-    }
-
-    private function addEventListeners(): void
-    {
-        // After some failed login attempts, we can block the user's IP address, send an email to the user or to admin, etc.
-        $this->listener->addListener(LoginFailEvent::class, function (LoginFailEvent $event) {
-            $user = $event->user;
-            if (!$user->id) {
-                $this->log(
-                    'warning',
-                    'Login attempt for unknown username {username}',
-                    ['username' => $user->username]
-                );
-                // TODO: user not found - block the IP address for some time after some failed attempts
-                return ;
-            }
-            // Count failed login attempts (+1)
-            $failedCount = $this->counters->inc('login_fail_' . $user->id);
-            $this->log(
-                'warning',
-                'Login failed for {username} ({count} times)',
-                ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]
-            );
-            // Lock the user after some failed attempts
-            if ($failedCount >= self::LOCK_ACCOUNT_AFTER && $user->state === User::STATE_ACTIVE) {
-                $this->log(
-                    'alert',
-                    'User {username} locked after {count} failed login attempts',
-                    ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]
-                );
-                $user->changeState(User::STATE_NOLOGIN);
-                // TODO: notify the user by email with a link to reset the password and change the state to 'active'
-                // TODO: notify the admin by email
-            }
-        });
-        // reset the counter after a successful login
-        $this->listener->addListener(LoginEvent::class, function ($event) {
-            $user = $event->user;
-            $this->log(
-                'debug',
-                'Login successful for {username}',
-                ['username' => $user->username]
-            );
-            $failedLoginAttempts = $this->counters->get('login_fail_' . $user->id, 0);
-            if ($failedLoginAttempts > 0) {
-                $this->log(
-                    'info',
-                    'Resetting failed login attempts for {username}',
-                    ['username' => $user->username]
-                );
-                $this->counters->set('login_fail_' . $user->id, 0);
-            }
-        });
-        // TODO: add a counter failed logins for IP addresses and block the IP address after some failed attempts
     }
 }

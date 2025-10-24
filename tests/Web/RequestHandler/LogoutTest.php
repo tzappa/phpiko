@@ -30,9 +30,14 @@ class LogoutTest extends TestCase
         $traitNames = $reflection->getTraitNames();
 
         $this->assertContains(
-            'Clear\Events\EventDispatcherTrait',
+            'Web\RequestHandler\ApiClientTrait',
             $traitNames,
-            'Logout class should use EventDispatcherTrait'
+            'Logout class should use ApiClientTrait'
+        );
+        $this->assertContains(
+            'Clear\Logger\LoggerTrait',
+            $traitNames,
+            'Logout class should use LoggerTrait'
         );
     }
 
@@ -43,9 +48,9 @@ class LogoutTest extends TestCase
 
         $this->assertNotNull($constructor, 'Logout class should have a constructor');
         $this->assertEquals(
-            2,
+            1,
             $constructor->getNumberOfRequiredParameters(),
-            'Logout constructor should have 2 required parameters'
+            'Logout constructor should have 1 required parameter'
         );
     }
 

@@ -152,6 +152,7 @@ $app->database = function () use ($app) {
     }
     if ($dsn === 'sqlite::memory:') {
         $sql = file_get_contents(__DIR__ . '/Users/schema-sqlite.sql');
+        $sql .= file_get_contents(__DIR__ . '/Users/Auth/schema-auth-tokens-sqlite.sql');
         $sql .= file_get_contents(dirname(__DIR__) . '/Clear/Captcha/schema.sql');
         $sql .= file_get_contents(dirname(__DIR__) . '/Clear/Counters/schema-sqlite.sql');
         $db->exec($sql);

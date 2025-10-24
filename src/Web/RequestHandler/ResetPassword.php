@@ -65,12 +65,32 @@ class ResetPassword implements RequestHandlerInterface
                     if ($apiResponse['success']) {
                         $userData = $apiResponse['user'] ?? ['id' => 0, 'username' => ''];
 
-                        $this->info('Password reset successful for user ID {id}', ['id' => $userData['id']]);
+                        $this->info('Password reset successful for user {username}', ['username' => $userData['username']]);
 
-                        // Auto-login the user
-                        $this->session->set('user_id', $userData['id']);
+                        // Auto-login the user via API
+                        // Since we don't have the password anymore, we'll need to get it from the form
+                        $loginResponse = $this->callApi($request, '/api/v1/login', [
+                            'username' => $userData['username'],
+                            'password' => $password,
+                        ]);
 
-                        return new RedirectResponse('/private/hello');
+                        if ($loginResponse['success']) {
+                            // Store the token in session
+                            $this->session->set('auth_token', $loginResponse['token']);
+                            $this->session->set('user_id', $loginResponse['user']['id']);
+
+                            $this->logger->info('User auto-logged in after password reset', [
+                                'username' => $userData['username']
+                            ]);
+
+                            return new RedirectResponse('/private/hello');
+                        } else {
+                            $this->logger->warning('Password reset successful but auto-login failed', [
+                                'username' => $userData['username']
+                            ]);
+                            // Redirect to login page if auto-login fails
+                            return new RedirectResponse('/login');
+                        }
                     } else {
                         // Handle API errors
                         if (isset($apiResponse['error'])) {

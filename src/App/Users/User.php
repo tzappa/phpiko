@@ -64,7 +64,7 @@ class User
         $this->id = $user['id'];
         $this->username = $user['username'];
         $this->email = $user['email'] ?? null;
-        $this->state = $user['state'];
+        $this->state = $user['state'] ?? null;
     }
 
     /**
