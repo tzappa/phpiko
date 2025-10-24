@@ -42,14 +42,16 @@ INI;
 
         $arr = $parser->fromString($iniString);
 
-        $this->assertIsArray($arr);
         $this->assertSame('value', $arr['key']);
+        $this->assertIsArray($arr['db']);
         $this->assertSame('mysql', $arr['db']['type']);
         $this->assertSame(3306, $arr['db']['port']);
         $this->assertSame('clear', $arr['db']['name']);
         $this->assertSame('clear', $arr['db']['user']);
         $this->assertSame('', $arr['db']['pass']);
+        $this->assertIsArray($arr['api']);
         $this->assertSame(1.1, $arr['api']['version']);
+        $this->assertIsArray($arr['api']['log']);
         $this->assertTrue($arr['api']['log']['enabled']);
         $this->assertSame('debug', $arr['api']['log']['level']);
     }
@@ -74,15 +76,18 @@ INI;
 
         $arr = $parser->fromString($iniString);
 
-        $this->assertIsArray($arr);
         $this->assertArrayHasKey('general', $arr);
         $this->assertArrayHasKey('database', $arr);
         $this->assertArrayHasKey('api', $arr);
+        $this->assertIsArray($arr['general']);
         $this->assertSame('value', $arr['general']['key']);
+        $this->assertIsArray($arr['database']);
         $this->assertSame('mysql', $arr['database']['type']);
         $this->assertSame(3306, $arr['database']['port']);
         $this->assertSame('clear', $arr['database']['name']);
+        $this->assertIsArray($arr['api']);
         $this->assertSame(1.1, $arr['api']['version']);
+        $this->assertIsArray($arr['api']['log']);
         $this->assertSame(1, $arr['api']['log']['enabled']);
         $this->assertSame('debug', $arr['api']['log']['level']);
     }
@@ -92,7 +97,6 @@ INI;
         $parser = new Ini();
         $arr = $parser->fromString('');
 
-        $this->assertIsArray($arr);
         $this->assertEmpty($arr);
     }
 
@@ -101,7 +105,6 @@ INI;
         $parser = new Ini();
         $arr = $parser->fromString("   \n\t  \n  ");
 
-        $this->assertIsArray($arr);
         $this->assertEmpty($arr);
     }
 
@@ -121,8 +124,8 @@ INI;
 
         $arr = $parser->fromString($iniString);
 
-        $this->assertIsArray($arr);
         $this->assertSame('value', $arr['key']);
+        $this->assertIsArray($arr['db']);
         $this->assertSame('mysql', $arr['db']['type']);
         $this->assertSame(3306, $arr['db']['port']);
     }
@@ -143,7 +146,6 @@ INI;
 
         $arr = $parser->fromString($iniString);
 
-        $this->assertIsArray($arr);
         $this->assertSame(1, $arr['enabled']);
         $this->assertSame(0, $arr['disabled']);
         $this->assertSame(true, $arr['true_val']);
@@ -166,7 +168,6 @@ INI;
 
         $arr = $parser->fromString($iniString);
 
-        $this->assertIsArray($arr);
         $this->assertSame(42, $arr['integer']);
         $this->assertSame(3.14, $arr['float']);
         $this->assertSame(-10, $arr['negative']);
@@ -185,7 +186,6 @@ INI;
 
         $arr = $parser->fromString($iniString);
 
-        $this->assertIsArray($arr);
         $this->assertSame('quoted value', $arr['single_quoted']);
         $this->assertSame('quoted value', $arr['double_quoted']);
         $this->assertSame("quoted 'with' single", $arr['mixed']);
@@ -204,7 +204,6 @@ INI;
 
         $arr = $parser->fromString($iniString);
 
-        $this->assertIsArray($arr);
         $this->assertSame('', $arr['empty']);
         $this->assertSame('', $arr['empty_quoted']);
         $this->assertSame('', $arr['empty_single']);
@@ -242,8 +241,8 @@ INI;
         $parser = new Ini();
         $arr = $parser->fromFile(__DIR__ . '/test.ini');
 
-        $this->assertIsArray($arr);
         $this->assertSame('value', $arr['key']);
+        $this->assertIsArray($arr['db']);
         $this->assertSame('mysql', $arr['db']['type']);
         $this->assertSame(3306, $arr['db']['port']);
     }

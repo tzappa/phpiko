@@ -26,7 +26,6 @@ class PhpTest extends TestCase
         $parser = new Php();
         $arr = $parser->fromFile(__DIR__ . '/../test_config.php');
 
-        $this->assertIsArray($arr);
         $this->assertSame('value', $arr['key']);
         $this->assertIsArray($arr['db']);
         $this->assertSame('mysql', $arr['db']['type']);
@@ -34,6 +33,7 @@ class PhpTest extends TestCase
         $this->assertSame(3306, $arr['db']['port']);
         $this->assertSame('clear', $arr['db']['user']);
         $this->assertSame('', $arr['db']['pass']);
+        $this->assertIsArray($arr['api']);
         $this->assertIsArray($arr['api']['log']);
         $this->assertSame('debug', $arr['api']['log']['level']);
         $this->assertTrue($arr['api']['log']['enabled']);

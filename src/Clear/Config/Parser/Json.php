@@ -20,10 +20,14 @@ final class Json extends AbstractFileReader
     {
         $arr = json_decode($string, true);
 
-        if (json_last_error() === JSON_ERROR_NONE) {
-            return $arr;
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new ParserException(json_last_error_msg());
         }
 
-        throw new ParserException(json_last_error_msg());
+        if (!is_array($arr)) {
+            throw new ParserException("JSON string is not a valid array");
+        }
+
+        return $arr;
     }
 }

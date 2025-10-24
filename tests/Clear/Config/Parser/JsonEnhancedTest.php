@@ -24,18 +24,21 @@ class JsonEnhancedTest extends TestCase
     public function testFromStringWithValidJson(): void
     {
         $parser = new Json();
-        $jsonString = '{"key":"value","db":{"type":"mysql","port":3306,"name":"clear","user":"clear","pass":""},"api":{"version":1.1,"log":{"enabled":true,"level":"debug"}}}';
+        $jsonString = '{"key":"value","db":{"type":"mysql","port":3306,"name":"clear","user":"clear","pass":""}'
+            . ',"api":{"version":1.1,"log":{"enabled":true,"level":"debug"}}}';
 
         $arr = $parser->fromString($jsonString);
 
-        $this->assertIsArray($arr);
         $this->assertSame('value', $arr['key']);
+        $this->assertIsArray($arr['db']);
         $this->assertSame('mysql', $arr['db']['type']);
         $this->assertSame(3306, $arr['db']['port']);
         $this->assertSame('clear', $arr['db']['name']);
         $this->assertSame('clear', $arr['db']['user']);
         $this->assertSame('', $arr['db']['pass']);
+        $this->assertIsArray($arr['api']);
         $this->assertSame(1.1, $arr['api']['version']);
+        $this->assertIsArray($arr['api']['log']);
         $this->assertTrue($arr['api']['log']['enabled']);
         $this->assertSame('debug', $arr['api']['log']['level']);
     }
@@ -45,7 +48,6 @@ class JsonEnhancedTest extends TestCase
         $parser = new Json();
         $arr = $parser->fromString('{}');
 
-        $this->assertIsArray($arr);
         $this->assertEmpty($arr);
     }
 
@@ -56,7 +58,6 @@ class JsonEnhancedTest extends TestCase
 
         $arr = $parser->fromString($jsonString);
 
-        $this->assertIsArray($arr);
         $this->assertIsArray($arr['level1']);
         $this->assertIsArray($arr['level1']['level2']);
         $this->assertIsArray($arr['level1']['level2']['level3']);
@@ -70,7 +71,6 @@ class JsonEnhancedTest extends TestCase
 
         $arr = $parser->fromString($jsonString);
 
-        $this->assertIsArray($arr);
         $this->assertIsArray($arr['items']);
         $this->assertIsArray($arr['numbers']);
         $this->assertSame(['item1', 'item2', 'item3'], $arr['items']);
@@ -80,11 +80,11 @@ class JsonEnhancedTest extends TestCase
     public function testFromStringWithMixedTypes(): void
     {
         $parser = new Json();
-        $jsonString = '{"string":"value","number":42,"float":3.14,"boolean":true,"null":null,"array":[1,2,3],"object":{"key":"value"}}';
+        $jsonString = '{"string":"value","number":42,"float":3.14,"boolean":true,'
+            . '"null":null,"array":[1,2,3],"object":{"key":"value"}}';
 
         $arr = $parser->fromString($jsonString);
 
-        $this->assertIsArray($arr);
         $this->assertSame('value', $arr['string']);
         $this->assertSame(42, $arr['number']);
         $this->assertSame(3.14, $arr['float']);
@@ -101,7 +101,6 @@ class JsonEnhancedTest extends TestCase
 
         $arr = $parser->fromString($jsonString);
 
-        $this->assertIsArray($arr);
         $this->assertSame('Hello 世界', $arr['unicode']);
         $this->assertSame('😀', $arr['emoji']);
         $this->assertSame('Special chars: é ñ', $arr['special']);
@@ -110,11 +109,11 @@ class JsonEnhancedTest extends TestCase
     public function testFromStringWithEscapedCharacters(): void
     {
         $parser = new Json();
-        $jsonString = '{"quotes":"He said \\"Hello\\"","backslash":"path\\\\to\\\\file","newline":"line1\\nline2","tab":"col1\\tcol2"}';
+        $jsonString = '{"quotes":"He said \\"Hello\\"","backslash":"path\\\\to\\\\file",'
+            . '"newline":"line1\\nline2","tab":"col1\\tcol2"}';
 
         $arr = $parser->fromString($jsonString);
 
-        $this->assertIsArray($arr);
         $this->assertSame('He said "Hello"', $arr['quotes']);
         $this->assertSame('path\\to\\file', $arr['backslash']);
         $this->assertSame("line1\nline2", $arr['newline']);
@@ -170,7 +169,7 @@ class JsonEnhancedTest extends TestCase
     {
         $parser = new Json();
 
-        $this->expectException(\TypeError::class);
+        $this->expectException(ParserException::class);
 
         $parser->fromString('"just a string"');
     }
@@ -182,7 +181,6 @@ class JsonEnhancedTest extends TestCase
         // JSON parser actually accepts arrays, not just objects
         $arr = $parser->fromString('["array", "not", "object"]');
 
-        $this->assertIsArray($arr);
         $this->assertSame(['array', 'not', 'object'], $arr);
     }
 
@@ -190,7 +188,7 @@ class JsonEnhancedTest extends TestCase
     {
         $parser = new Json();
 
-        $this->expectException(\TypeError::class);
+        $this->expectException(ParserException::class);
 
         $parser->fromString('42');
     }
@@ -199,7 +197,7 @@ class JsonEnhancedTest extends TestCase
     {
         $parser = new Json();
 
-        $this->expectException(\TypeError::class);
+        $this->expectException(ParserException::class);
 
         $parser->fromString('true');
     }
@@ -208,7 +206,7 @@ class JsonEnhancedTest extends TestCase
     {
         $parser = new Json();
 
-        $this->expectException(\TypeError::class);
+        $this->expectException(ParserException::class);
 
         $parser->fromString('null');
     }
@@ -247,7 +245,6 @@ class JsonEnhancedTest extends TestCase
 
         $arr = $parser->fromString($jsonString);
 
-        $this->assertIsArray($arr);
         $this->assertSame('second', $arr['key']); // Last value wins
     }
 
@@ -256,8 +253,8 @@ class JsonEnhancedTest extends TestCase
         $parser = new Json();
         $arr = $parser->fromFile(__DIR__ . '/test.json');
 
-        $this->assertIsArray($arr);
         $this->assertSame('value', $arr['key']);
+        $this->assertIsArray($arr['db']);
         $this->assertSame('mysql', $arr['db']['type']);
         $this->assertSame(3306, $arr['db']['port']);
     }

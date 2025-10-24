@@ -115,28 +115,28 @@ class FactoryTest extends TestCase
 
     public function testCreateFromNull(): void
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(ConfigException::class);
 
         Factory::create(null);
     }
 
     public function testCreateFromBoolean(): void
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(ConfigException::class);
 
         Factory::create(true);
     }
 
     public function testCreateFromInteger(): void
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(ConfigException::class);
 
         Factory::create(123);
     }
 
     public function testCreateFromObject(): void
     {
-        $this->expectException(\TypeError::class);
+        $this->expectException(ConfigException::class);
 
         Factory::create(new \stdClass());
     }

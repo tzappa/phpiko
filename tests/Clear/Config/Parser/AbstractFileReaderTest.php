@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(AbstractFileReader::class)]
 class AbstractFileReaderTest extends TestCase
 {
-    private $testParser;
+    private AbstractFileReader $testParser;
 
     protected function setUp(): void
     {
@@ -44,7 +44,6 @@ class AbstractFileReaderTest extends TestCase
         try {
             $result = $this->testParser->fromFile($tempFile);
 
-            $this->assertIsArray($result);
             $this->assertSame('test content', $result['parsed']);
         } finally {
             unlink($tempFile);
@@ -94,7 +93,6 @@ class AbstractFileReaderTest extends TestCase
         try {
             $result = $this->testParser->fromFile($tempFile);
 
-            $this->assertIsArray($result);
             $this->assertSame('', $result['parsed']);
         } finally {
             unlink($tempFile);
@@ -111,7 +109,6 @@ class AbstractFileReaderTest extends TestCase
         try {
             $result = $this->testParser->fromFile($tempFile);
 
-            $this->assertIsArray($result);
             $this->assertSame($largeContent, $result['parsed']);
         } finally {
             unlink($tempFile);
@@ -128,7 +125,6 @@ class AbstractFileReaderTest extends TestCase
         try {
             $result = $this->testParser->fromFile($tempFile);
 
-            $this->assertIsArray($result);
             $this->assertSame($binaryContent, $result['parsed']);
         } finally {
             unlink($tempFile);
@@ -145,7 +141,6 @@ class AbstractFileReaderTest extends TestCase
         try {
             $result = $this->testParser->fromFile($tempFile);
 
-            $this->assertIsArray($result);
             $this->assertSame($contentWithNulls, $result['parsed']);
         } finally {
             unlink($tempFile);
@@ -162,7 +157,6 @@ class AbstractFileReaderTest extends TestCase
         try {
             $result = $this->testParser->fromFile($tempFile);
 
-            $this->assertIsArray($result);
             $this->assertSame($contentWithNewlines, $result['parsed']);
         } finally {
             unlink($tempFile);
@@ -179,7 +173,6 @@ class AbstractFileReaderTest extends TestCase
         try {
             $result = $this->testParser->fromFile($tempFile);
 
-            $this->assertIsArray($result);
             $this->assertSame($specialContent, $result['parsed']);
         } finally {
             unlink($tempFile);
@@ -197,7 +190,6 @@ class AbstractFileReaderTest extends TestCase
         try {
             $result = $this->testParser->fromFile($symlinkFile);
 
-            $this->assertIsArray($result);
             $this->assertSame('test content', $result['parsed']);
         } finally {
             unlink($symlinkFile);
@@ -237,9 +229,9 @@ class AbstractFileReaderTest extends TestCase
 
         // Create a custom parser that deletes the file after is_file check
         $customParser = new class extends AbstractFileReader {
-            private $tempFile;
+            private string $tempFile;
 
-            public function setTempFile($file)
+            public function setTempFile(string $file): void
             {
                 $this->tempFile = $file;
             }

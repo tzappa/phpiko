@@ -22,7 +22,7 @@ abstract class AbstractFileReader implements ParserInterface
      *
      * @param string $fileName
      *
-     * @return array
+     * @return array<mixed>
      */
     public function fromFile(string $fileName): array
     {

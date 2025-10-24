@@ -76,16 +76,17 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 // Application Container used as DI
 $app = new Container();
-
 $app->set('name', __NAMESPACE__);
 // Environment "production", "development", etc.
 $app->set('env', getenv('APPLICATION_ENV') ?: 'production');
-// Configurations
-$app->config = ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . strtolower($app->name) . '.php');
+// Configurations (@phpstan-ignore-next-line)
+$configFile = dirname(__DIR__, 2) . '/config/' . $app->get('env') . '/' . strtolower($app->get('name')) . '.php';
+$app->set('config', ConfigFactory::create($configFile));
 
-// Timezone settings
-if ($app->config->has('timezone')) {
-    date_default_timezone_set($app->config->get('timezone'));
+// Timezone settings (@phpstan-ignore-next-line)
+$timezone = $app->get('config')->get('timezone');
+if (is_string($timezone) ) {
+    date_default_timezone_set($timezone);
 }
 
 // Logger

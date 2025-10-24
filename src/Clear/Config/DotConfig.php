@@ -19,14 +19,14 @@ namespace Clear\Config;
 final class DotConfig implements ConfigInterface
 {
     /**
-     * @var array
+     * @var array<mixed>
      */
-    private $registry = [];
+    private array $registry = [];
 
     /**
      * Constructor.
      *
-     * @param array $data
+     * @param array<mixed> $data
      */
     public function __construct(array $data)
     {
@@ -52,7 +52,7 @@ final class DotConfig implements ConfigInterface
     /**
      * {@inheritDoc}
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $registry = $this->registry;
         $parts = explode('.', $key);

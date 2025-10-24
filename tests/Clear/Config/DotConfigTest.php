@@ -6,7 +6,6 @@ namespace Test\Config;
 
 use Clear\Config\DotConfig;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\Depends;
 
@@ -16,7 +15,10 @@ use PHPUnit\Framework\Attributes\Depends;
 #[CoversClass(DotConfig::class)]
 class DotConfigTest extends TestCase
 {
-    private $conf = [
+    /**
+     * @var array<string, mixed>
+     */
+    private array $conf = [
         'key' => 'value',
         'db'  => [
             'type' => 'mysql',

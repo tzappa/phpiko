@@ -26,8 +26,11 @@ class JsonTest extends TestCase
     public function testJsonFromString(): void
     {
         $parser = new Json();
-        $arr = $parser->fromString(file_get_contents(__DIR__ . '/test.json'));
-        $this->assertIsArray($arr);
+        $jsonString = file_get_contents(__DIR__ . '/test.json');
+        if ($jsonString === false) {
+            $this->fail('Failed to read test.json file');
+        }
+        $arr = $parser->fromString($jsonString);
         $this->assertSame('value', $arr['key']);
         $this->assertIsArray($arr['db']);
         $this->assertSame('mysql', $arr['db']['type']);
@@ -36,6 +39,7 @@ class JsonTest extends TestCase
         $this->assertSame('', $arr['db']['pass']);
         $this->assertSame(3306, $arr['db']['port']);
         $this->assertArrayNotHasKey('host', $arr['db']);
+        $this->assertIsArray($arr['api']);
         $this->assertIsArray($arr['api']['log']);
         $this->assertSame('debug', $arr['api']['log']['level']);
         $this->assertSame(true, $arr['api']['log']['enabled']);
@@ -46,7 +50,6 @@ class JsonTest extends TestCase
     {
         $parser = new Json();
         $arr = $parser->fromFile(__DIR__ . '/test.json');
-        $this->assertIsArray($arr);
         $this->assertNotEmpty($arr['key']);
     }
 
@@ -60,6 +63,9 @@ class JsonTest extends TestCase
 
         $parser2 = new Json();
         $string = file_get_contents($filename);
+        if ($string === false) {
+            $this->fail('Failed to read test file');
+        }
         $arr2 = $parser->fromString($string);
 
         $this->assertEquals($arr, $arr2);

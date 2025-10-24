@@ -25,8 +25,11 @@ class IniTest extends TestCase
     public function testIniFromString(): void
     {
         $parser = new Ini();
-        $arr = $parser->fromString(file_get_contents(__DIR__ . '/test.ini'));
-        $this->assertIsArray($arr);
+        $content = file_get_contents(__DIR__ . '/test.ini');
+        if ($content === false) {
+            $this->fail('Failed to read test.ini file');
+        }
+        $arr = $parser->fromString($content);
         $this->assertSame('value', $arr['key']);
         $this->assertIsArray($arr['db']);
         $this->assertSame('mysql', $arr['db']['type']);
@@ -35,6 +38,8 @@ class IniTest extends TestCase
         $this->assertSame(3306, $arr['db']['port']);
         $this->assertSame('clear', $arr['db']['user']);
         $this->assertSame('', $arr['db']['pass']);
+        $this->assertIsArray($arr['api']);
+        $this->assertIsArray($arr['api']['log']);
         $this->assertTrue($arr['api']['log']['enabled']);
         $this->assertSame('debug', $arr['api']['log']['level']);
     }

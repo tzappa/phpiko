@@ -10,10 +10,14 @@ use function pathinfo;
 
 final class Factory
 {
-    public static function create($data): ConfigInterface
+    public static function create(mixed $data): ConfigInterface
     {
         if (is_array($data)) {
             return new DotConfig($data);
+        }
+
+        if (!is_string($data)) {
+            throw new Exception\ConfigException("Invalid data type");
         }
 
         if (is_file($data)) {

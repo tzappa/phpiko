@@ -15,7 +15,7 @@ interface ParserInterface
      *
      * @param string $string
      *
-     * @return array
+     * @return array<mixed>
      */
     public function fromString(string $string): array;
 
@@ -26,7 +26,7 @@ interface ParserInterface
      *
      * @param string $fileName
      *
-     * @return array
+     * @return array<mixed>
      */
     public function fromFile(string $fileName): array;
 }

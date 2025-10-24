@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Application configuration template
+ * Web configuration template
  *
  * Copy this file to config/development/app.php and edit it
  * to match your environment.
