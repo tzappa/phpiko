@@ -14,7 +14,7 @@ trait CsrfTrait
     /**
      * The session instance.
      *
-     * @var \App\Session\SessionInterface
+     * @var \Clear\Session\SessionInterface
      */
     private SessionInterface $session;
 
@@ -23,7 +23,8 @@ trait CsrfTrait
      */
     private function generateCsrfToken(): string
     {
-        // Check if a token is already set (e.g. when several forms are on the same page, or when the user has multiple tabs open)
+        // Check if a token is already set (e.g. when several forms are on the same page,
+        // or when the user has multiple tabs open)
         if ($this->session->has('csrf')) {
             return $this->session->get('csrf');
         }

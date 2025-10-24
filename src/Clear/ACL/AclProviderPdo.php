@@ -278,7 +278,8 @@ final class AclProviderPdo implements AclProviderInterface
      */
     public function getRoleRefs(int $roleId, $order = '', int $items = 0, int $offset = 0): array
     {
-        $sql = "SELECT ref_id FROM {$this->grantsTable} WHERE role_id = ? {$this->order($order)} {$this->limit($items, $offset)}";
+        $sql = "SELECT ref_id FROM {$this->grantsTable}
+            WHERE role_id = ? {$this->order($order)} {$this->limit($items, $offset)}";
         $sth = $this->db->prepare($sql);
         $sth->execute([$roleId]);
 

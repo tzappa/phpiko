@@ -52,8 +52,6 @@ use Clear\Database\Event\{
 };
 use Clear\Events\Dispatcher;
 use Clear\Events\ListenerProvider;
-use Clear\Http\Router;
-use Clear\Http\LazyMiddleware;
 use Clear\Http\Exception\NotFoundException;
 use Clear\Http\Exception\UnauthorizedException;
 use Clear\Http\Exception\ForbiddenException;

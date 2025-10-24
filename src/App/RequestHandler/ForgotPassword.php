@@ -71,7 +71,10 @@ class ForgotPassword implements RequestHandlerInterface
             $data = $request->getParsedBody();
             if (!$this->checkCsrfToken($data['csrf'] ?? '')) {
                 $error = 'Expired or invalid request. Please try again.';
-            } elseif (!empty($this->captcha) && (!$this->captcha->verify($data['code'] ?? '', $data['checksum'] ?? ''))) {
+            } elseif (
+                !empty($this->captcha) &&
+                (!$this->captcha->verify($data['code'] ?? '', $data['checksum'] ?? ''))
+            ) {
                 $error = 'Wrong CAPTCHA';
             } else {
                 $email = $data['email'] ?? '';
@@ -82,7 +85,8 @@ class ForgotPassword implements RequestHandlerInterface
                 } else {
                     // Always show success message, even if email doesn't exist
                     // This prevents user enumeration attacks
-                    $success = 'If your email address exists in our database, you will receive a password recovery link shortly.';
+                    $success = 'If your email address exists in our database,'
+                        . ' you will receive a password recovery link shortly.';
                     $this->info('Password reset requested for email: {email}', ['email' => $email]);
                 }
             }

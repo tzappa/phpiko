@@ -45,7 +45,12 @@ class DatabaseProvider implements ProviderInterface
             return null;
         }
 
-        return new Counter((string) $res['id'], (int) $res['current'], new DateTime($res['created_at']), new DateTime($res['updated_at']));
+        return new Counter(
+            (string) $res['id'],
+            (int) $res['current'],
+            new DateTime($res['created_at']),
+            new DateTime($res['updated_at'])
+        );
     }
 
     /**
@@ -58,14 +63,20 @@ class DatabaseProvider implements ProviderInterface
         $sql = "INSERT INTO {$this->tableName} (id, current, created_at, updated_at) VALUES (:id, :inc, :now, :now)
                     ON CONFLICT (id) DO UPDATE
                     SET current = (SELECT current + EXCLUDED.current
-                                                FROM {$this->tableName} WHERE id = EXCLUDED.id),
+                                   FROM {$this->tableName}
+                                   WHERE id = EXCLUDED.id),
                         updated_at = EXCLUDED.updated_at
                     RETURNING *";
         $sth = $this->db->prepare($sql);
         $sth->execute(['id' => $id, 'inc' => $value, 'now' => $date]);
         $res = $sth->fetch(PDO::FETCH_ASSOC);
 
-        return new Counter((string) $res['id'], (int) $res['current'], new DateTime($res['created_at']), new DateTime($res['updated_at']));
+        return new Counter(
+            (string) $res['id'],
+            (int) $res['current'],
+            new DateTime($res['created_at']),
+            new DateTime($res['updated_at'])
+        );
     }
 
     /**

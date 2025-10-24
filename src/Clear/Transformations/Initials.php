@@ -16,7 +16,7 @@ final class Initials
      *
      * @return string
      */
-    public static function fromName(string $value)
+    public static function fromName(string $value): string
     {
         // max symbols
         $len = 2;

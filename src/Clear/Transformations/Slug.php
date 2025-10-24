@@ -9,9 +9,9 @@ namespace Clear\Transformations;
  */
 final class Slug
 {
-    public static function fromText(string $string)
+    public static function fromText(string $string): string
     {
-        $transliterate = array(
+        $transliterate = [
             // Latin
             'š' => 's',  'đ' => 'dj', 'ž' => 'z',  'č' => 'c',  'ć' => 'c',
             'à' => 'a',  'á' => 'a',  'â' => 'a',  'ã' => 'a',  'ä' => 'a',
@@ -39,7 +39,7 @@ final class Slug
             'ρ' => 'r', 'σ' => 's', 'τ' => 't', 'υ' => 'y', 'φ' => 'f', 'χ' => 'x', 'ψ' => 'ps', 'ω' => 'w',
             'ά' => 'a', 'έ' => 'e', 'ί' => 'i', 'ό' => 'o', 'ύ' => 'y', 'ή' => 'h', 'ώ' => 'w', 'ς' => 's',
             'ϊ' => 'i', 'ΰ' => 'y', 'ϋ' => 'y', 'ΐ' => 'i',
-        );
+        ];
 
         // Make sure string is in UTF-8 and strip invalid UTF-8 characters
         $string = mb_convert_encoding((string)$string, 'UTF-8', mb_list_encodings());

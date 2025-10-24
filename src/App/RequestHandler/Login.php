@@ -25,11 +25,11 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class Login implements RequestHandlerInterface
 {
-    // Lock the account after 5 failed login attempts
-    private const LOCK_ACCOUNT_AFTER = 5;
-
     use LoggerTrait;
     use CsrfTrait;
+
+    // Lock the account after 5 failed login attempts
+    private const LOCK_ACCOUNT_AFTER = 5;
 
     /**
      * @var \Clear\Captcha\CaptchaInterface|null
@@ -61,7 +61,10 @@ class Login implements RequestHandlerInterface
             $data = $request->getParsedBody();
             if (!$this->checkCsrfToken($data['csrf'] ?? '')) {
                 $error = 'Expired or invalid request. Please try again.';
-            } elseif (!empty($this->captcha) && (!$this->captcha->verify($data['code'] ?? '', $data['checksum'] ?? ''))) {
+            } elseif (
+                !empty($this->captcha) &&
+                (!$this->captcha->verify($data['code'] ?? '', $data['checksum'] ?? ''))
+            ) {
                 $error = 'Wrong CAPTCHA';
             } elseif ($user = $this->users->login($data['username'] ?? '', $data['password'] ?? '', $error)) {
                 $this->session->set('user_id', $user->id);
@@ -88,16 +91,28 @@ class Login implements RequestHandlerInterface
         $this->listener->addListener(LoginFailEvent::class, function (LoginFailEvent $event) {
             $user = $event->user;
             if (!$user->id) {
-                $this->log('warning', 'Login attempt for unknown username {username}', ['username' => $user->username]);
+                $this->log(
+                    'warning',
+                    'Login attempt for unknown username {username}',
+                    ['username' => $user->username]
+                );
                 // TODO: user not found - block the IP address for some time after some failed attempts
                 return ;
             }
             // Count failed login attempts (+1)
             $failedCount = $this->counters->inc('login_fail_' . $user->id);
-            $this->log('warning', 'Login failed for {username} ({count} times)', ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]);
+            $this->log(
+                'warning',
+                'Login failed for {username} ({count} times)',
+                ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]
+            );
             // Lock the user after some failed attempts
             if ($failedCount >= self::LOCK_ACCOUNT_AFTER && $user->state === User::STATE_ACTIVE) {
-                $this->log('alert', 'User {username} locked after {count} failed login attempts', ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]);
+                $this->log(
+                    'alert',
+                    'User {username} locked after {count} failed login attempts',
+                    ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]
+                );
                 $user->changeState(User::STATE_NOLOGIN);
                 // TODO: notify the user by email with a link to reset the password and change the state to 'active'
                 // TODO: notify the admin by email
@@ -106,10 +121,18 @@ class Login implements RequestHandlerInterface
         // reset the counter after a successful login
         $this->listener->addListener(LoginEvent::class, function ($event) {
             $user = $event->user;
-            $this->log('debug', 'Login successful for {username}', ['username' => $user->username]);
+            $this->log(
+                'debug',
+                'Login successful for {username}',
+                ['username' => $user->username]
+            );
             $failedLoginAttempts = $this->counters->get('login_fail_' . $user->id, 0);
             if ($failedLoginAttempts > 0) {
-                $this->log('info', 'Resetting failed login attempts for {username}', ['username' => $user->username]);
+                $this->log(
+                    'info',
+                    'Resetting failed login attempts for {username}',
+                    ['username' => $user->username]
+                );
                 $this->counters->set('login_fail_' . $user->id, 0);
             }
         });

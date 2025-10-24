@@ -28,7 +28,7 @@ final class Counter implements CounterInterface
      */
     private DateTime $updatedAt;
 
-    public function __construct(string $id, int $value, DateTime|null $createdAt = null, DateTime|null $updatedAt = null)
+    public function __construct(string $id, int $value, ?DateTime $createdAt = null, ?DateTime $updatedAt = null)
     {
         $now = new DateTime();
         $this->id = $id;

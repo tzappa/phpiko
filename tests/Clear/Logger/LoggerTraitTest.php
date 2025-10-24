@@ -68,7 +68,7 @@ class LoggerTraitTest extends TestCase
         // Should not throw an exception when no logger is set
         $this->traitObject->log(LogLevel::INFO, 'Test message', ['key' => 'value']);
 
-        $this->assertTrue(true); // If we get here, no exception was thrown
+        $this->expectNotToPerformAssertions();
     }
 
     public function testLogWithStringableMessage(): void
@@ -189,7 +189,7 @@ class LoggerTraitTest extends TestCase
         $this->traitObject->alert('Alert message');
         $this->traitObject->emergency('Emergency message');
 
-        $this->assertTrue(true); // If we get here, no exception was thrown
+        $this->expectNotToPerformAssertions();
     }
 
     public function testAllMethodsWithEmptyContext(): void
@@ -296,7 +296,7 @@ class LoggerTraitTest extends TestCase
 
         ob_start();
         $this->traitObject->log(LogLevel::INFO, 'Test with StdoutLogger');
-        $output = ob_get_clean();
+        $output = (string) ob_get_clean();
 
         $this->assertStringContainsString('Test with StdoutLogger', $output);
     }
@@ -372,8 +372,11 @@ class LoggerTraitTest extends TestCase
     {
         $this->expectException(\TypeError::class);
         $resource = fopen('php://memory', 'r');
+        /** @phpstan-ignore-next-line */
         $this->traitObject->log(LogLevel::INFO, $resource);
-        fclose($resource);
+        if ($resource !== false) {
+            fclose($resource);
+        }
     }
 
     public function testLogWithCallableMessage(): void
@@ -468,8 +471,9 @@ class LoggerTraitTest extends TestCase
 
         $this->traitObject->setLogger($logger);
         $this->traitObject->log(LogLevel::INFO, 'Complex context', $context);
-
-        fclose($context['resource']);
+        if ($context['resource'] !== false) {
+            fclose($context['resource']);
+        }
     }
 
     public function testLogWithNestedArrayContext(): void
@@ -515,7 +519,7 @@ class LoggerTraitTest extends TestCase
     public function testLogWithAnonymousClassInContext(): void
     {
         $anonymous = new class {
-            public $property = 'value';
+            public string $property = 'value';
         };
         $context = ['anonymous' => $anonymous];
 
@@ -530,7 +534,7 @@ class LoggerTraitTest extends TestCase
 
     public function testLogWithClosureInContext(): void
     {
-        $closure = function ($x) {
+        $closure = function (float $x): float {
             return $x * 2;
         };
         $context = ['closure' => $closure];
