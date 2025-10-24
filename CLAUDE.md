@@ -9,10 +9,11 @@ phpiko is a PHP web application built using PSR standards and a custom micro-fra
 ## Architecture
 
 ### Namespace Structure
-- `App\` - Main application logic (user-facing features)
-- `Admin\` - Administrative interface  
+- `App\` - Main application logic
+- `Admin\` - Administrative interface
 - `API\` - RESTful API endpoints
 - `Clear\` - Custom micro-framework providing core services
+- `Web\` - Web-specific request handlers and middleware
 
 ### Core Components
 
@@ -30,8 +31,8 @@ phpiko is a PHP web application built using PSR standards and a custom micro-fra
 1. `public/index.php` → `src/bootstrap.php`
 2. Route detection based on URI prefix:
    - `/adm` → Admin module
-   - `/api` → API module  
-   - Default → App module
+   - `/api` → API module
+   - Default → Web module
 3. Each module has its own bootstrap file setting up container, routes, and middleware
 
 ### Database Layer
@@ -67,7 +68,7 @@ vendor/bin/phpunit --coverage-html reports
 # Install dependencies
 composer install
 
-# Update dependencies  
+# Update dependencies
 composer update
 
 # Validate composer files
@@ -92,10 +93,29 @@ This project strictly follows PSR standards:
 - Grouped use statements by namespace origin
 - Add newline at end of files
 
+### PHPStan - PHP Static Analysis Tool
+PHPStan is used for static analysis
+```bash
+# Run PHPStan analysis
+composer analyse
+```
+
+### PHP-CS-Fixer - PHP Coding Standards Fixer
+PHP-CS-Fixer is used to enforce coding standards
+```bash
+# Run PHP-CS-Fixer to check coding standards
+composer lint
+
+# Fix coding standards issues
+composer lint:fix
+```
+
 ## Key Files
 
 - `src/bootstrap.php` - Main application bootstrap and routing logic
-- `src/App/bootstrap.php` - App module container and route configuration
+- `src/Web/bootstrap.php` - Web module container and route configuration
+- `src/Admin/bootstrap.php` - Admin module container and route configuration
+- `src/API/bootstrap.php` - API module container and route configuration
 - `composer.json` - Dependencies and autoloading configuration
 - `phpunit.xml` - PHPUnit configuration with coverage reporting
 - `config/` - Application configuration files
