@@ -4,11 +4,6 @@ declare(strict_types=1);
 
 namespace Web\RequestHandler;
 
-use App\Users\Events\ChangePasswordEvent;
-use App\Users\Events\InvalidPasswordEvent;
-use App\Users\Password\ChangePasswordService;
-use Clear\Counters\Service as Counters;
-use Clear\Events\ListenerProvider;
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
 use Clear\Template\TemplateInterface;
@@ -17,6 +12,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Exception;
 
 /**
  * Change Password Page
@@ -25,14 +21,9 @@ class ChangePassword implements RequestHandlerInterface
 {
     use LoggerTrait;
     use CsrfTrait;
-
-    // Lock the account after 5 failed password change attempts
-    private const LOCK_ACCOUNT_AFTER = 5;
+    use ApiClientTrait;
 
     public function __construct(
-        private ChangePasswordService $users,
-        private ListenerProvider $listener,
-        private Counters $counters,
         private TemplateInterface $template,
         private SessionInterface $session,
     ) {
@@ -43,68 +34,61 @@ class ChangePassword implements RequestHandlerInterface
         if (!$user = $request->getAttribute('user')) {
             return new RedirectResponse('/login');
         }
+
         $error = '';
         $method = $request->getMethod();
+
         if ($method === 'POST') {
-            $this->addEventListeners();
             $data = $request->getParsedBody();
             if (!$this->checkCsrfToken($data['csrf'] ?? '')) {
                 $error = 'Expired or invalid request. Please try again.';
-            } elseif (
-                !$error = $this->users->changePassword(
-                    $user,
-                    $data['current'] ?? '',
-                    $data['password1'] ?? '',
-                    $data['password2'] ?? ''
-                )
-            ) {
-                $this->info('Password change for user {username}', $user->toArray());
-                return new RedirectResponse('/private/hello');
+            } else {
+                $currentPassword = $data['current'] ?? '';
+                $newPassword = $data['password1'] ?? '';
+                $confirmPassword = $data['password2'] ?? '';
+
+                try {
+                    // Call the API to change password
+                    $apiResponse = $this->callApi($request, '/api/v1/change-password', [
+                        'current_password' => $currentPassword,
+                        'new_password' => $newPassword,
+                        'confirm_password' => $confirmPassword,
+                    ]);
+
+                    if ($apiResponse['success']) {
+                        $this->info('Password changed for user {username}', [
+                            'username' => $user->username
+                        ]);
+
+                        return new RedirectResponse('/private/hello');
+                    } else {
+                        // Handle API errors
+                        if (isset($apiResponse['error'])) {
+                            $error = $apiResponse['error'];
+                        } else {
+                            $error = 'An error occurred. Please try again later.';
+                        }
+
+                        $this->logger->notice('Password change error from API', [
+                            'username' => $user->username,
+                            'error' => $error
+                        ]);
+                    }
+                } catch (Exception $e) {
+                    $error = 'An error occurred. Please try again later.';
+                    $this->logger->error('Password change error: {message}', [
+                        'message' => $e->getMessage(),
+                        'username' => $user->username,
+                    ]);
+                }
             }
         }
+
         $tpl = $this->template->load('change-password.twig');
         $tpl->assign('csrf', $this->generateCsrfToken());
         $tpl->assign('error', $error);
         $html = $tpl->parse();
 
         return new HtmlResponse($html);
-    }
-
-    private function addEventListeners(): void
-    {
-        // After some failed password change attempts lock the account
-        $this->listener->addListener(InvalidPasswordEvent::class, function (InvalidPasswordEvent $event) {
-            $user = $event->user;
-            // Count failed attempts (+1)
-            $failedCount = $this->counters->inc('invalid_password_' . $user->id);
-            $this->log(
-                'warning',
-                'Change password failure for {username} ({count} times)',
-                ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]
-            );
-            // TODO: what to do after some failed attempts?
-            if ($failedCount >= self::LOCK_ACCOUNT_AFTER) {
-                $this->log(
-                    'alert',
-                    'User {username} locked after {count} failed change password attempts',
-                    ['username' => $user->username, 'count' => $failedCount, 'user' => $user->toArray()]
-                );
-                // TODO: notify the user by email
-            }
-        });
-        // reset the counter after a successful password change
-        $this->listener->addListener(ChangePasswordEvent::class, function (ChangePasswordEvent $event) {
-            $user = $event->user;
-            $this->log('debug', 'Change password for {username}', ['username' => $user->username]);
-            $failedLoginAttempts = $this->counters->get('invalid_password_' . $user->id, 0);
-            if ($failedLoginAttempts > 0) {
-                $this->log(
-                    'info',
-                    'Resetting failed password change attempts for {username}',
-                    ['username' => $user->username]
-                );
-                $this->counters->set('invalid_password_' . $user->id, 0);
-            }
-        });
     }
 }

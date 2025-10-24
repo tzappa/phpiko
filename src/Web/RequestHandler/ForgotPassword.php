@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace Web\RequestHandler;
 
-use App\Users\Events\PasswordResetRequestEvent;
-use App\Users\ResetPassword\ResetPasswordService;
-use App\Users\ResetPassword\EmailServiceInterface;
 use Clear\Captcha\CaptchaInterface;
 use Clear\Logger\LoggerTrait;
 use Clear\Session\SessionInterface;
 use Clear\Template\TemplateInterface;
-use Clear\Events\ListenerProvider;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Exception;
 
 /**
  * Forgot Password Page
@@ -25,22 +22,14 @@ class ForgotPassword implements RequestHandlerInterface
 {
     use LoggerTrait;
     use CsrfTrait;
+    use ApiClientTrait;
 
-    private ?EmailServiceInterface $emailService = null;
     private ?CaptchaInterface $captcha = null;
 
     public function __construct(
-        private ResetPasswordService $resetPasswordService,
-        private ListenerProvider $listener,
         private TemplateInterface $template,
         private SessionInterface $session,
     ) {
-    }
-
-    public function setEmailService(EmailServiceInterface $emailService): self
-    {
-        $this->emailService = $emailService;
-        return $this;
     }
 
     public function setCaptcha(CaptchaInterface $captcha): self
@@ -67,7 +56,6 @@ class ForgotPassword implements RequestHandlerInterface
         $baseUrl .= '/reset-password';
 
         if ($method === 'POST') {
-            $this->addEventListeners();
             $data = $request->getParsedBody();
             if (!$this->checkCsrfToken($data['csrf'] ?? '')) {
                 $error = 'Expired or invalid request. Please try again.';
@@ -77,17 +65,40 @@ class ForgotPassword implements RequestHandlerInterface
             ) {
                 $error = 'Wrong CAPTCHA';
             } else {
-                $email = $data['email'] ?? '';
-                $resetError = $this->resetPasswordService->createResetRequest($email, $baseUrl);
+                $email = trim($data['email'] ?? '');
 
-                if ($resetError) {
-                    $error = $resetError;
-                } else {
-                    // Always show success message, even if email doesn't exist
-                    // This prevents user enumeration attacks
-                    $success = 'If your email address exists in our database,'
-                        . ' you will receive a password recovery link shortly.';
-                    $this->info('Password reset requested for email: {email}', ['email' => $email]);
+                try {
+                    // Call the API to initiate password reset
+                    $apiResponse = $this->callApi($request, '/api/v1/forgot-password', [
+                        'email' => $email,
+                        'reset_base_url' => $baseUrl,
+                    ]);
+
+                    if ($apiResponse['success']) {
+                        // Always show success message (from API)
+                        $success = $apiResponse['message'] ?? 'If your email address exists in our database,'
+                            . ' you will receive a password recovery link shortly.';
+                        $this->info('Password reset requested for email: {email}', ['email' => $email]);
+                    } else {
+                        if (isset($apiResponse['errors']['email'])) {
+                            $error = $apiResponse['errors']['email'];
+                        } elseif (isset($apiResponse['error'])) {
+                            $error = $apiResponse['error'];
+                        } else {
+                            $error = 'An error occurred. Please try again later.';
+                        }
+
+                        $this->logger->notice('Password reset error from API', [
+                            'email' => $email,
+                            'error' => $error
+                        ]);
+                    }
+                } catch (Exception $e) {
+                    $error = 'An error occurred. Please try again later.';
+                    $this->logger->error('Password reset request error: {message}', [
+                        'message' => $e->getMessage(),
+                        'email' => $email,
+                    ]);
                 }
             }
         }
@@ -104,39 +115,5 @@ class ForgotPassword implements RequestHandlerInterface
         }
 
         return new HtmlResponse($tpl->parse());
-    }
-
-    private function addEventListeners(): void
-    {
-        // Listen for password reset requests to send an email
-        if ($this->emailService !== null) {
-            $this->listener->addListener(PasswordResetRequestEvent::class, function (PasswordResetRequestEvent $event) {
-                $user = $event->user;
-                if (!$user->email) {
-                    $this->warning('Cannot send password reset email: User {username} has no email address', [
-                        'username' => $user->username
-                    ]);
-                    return;
-                }
-
-                $success = $this->emailService->sendPasswordResetEmail(
-                    $user->email,
-                    $user->username,
-                    $event->resetUrl
-                );
-
-                if ($success) {
-                    $this->info('Password reset email sent to {email} for user {username}', [
-                        'email' => $user->email,
-                        'username' => $user->username
-                    ]);
-                } else {
-                    $this->error('Failed to send password reset email to {email} for user {username}', [
-                        'email' => $user->email,
-                        'username' => $user->username
-                    ]);
-                }
-            });
-        }
     }
 }

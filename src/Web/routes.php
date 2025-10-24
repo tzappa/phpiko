@@ -76,10 +76,7 @@ $router->map('GET', '/verify-email', function (ServerRequestInterface $request) 
 // Complete signup route
 $router->map('*', '/complete-signup/{token}', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new CompleteSignup(
-        $app->signupService,
         $app->loginService,
-        $app->eventListener,
-        $app->counters,
         $app->template,
         $app->session
     );
@@ -90,14 +87,11 @@ $router->map('*', '/complete-signup/{token}', function (ServerRequestInterface $
 // Forgot Password route
 $router->map('*', '/forgot-password', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new ForgotPassword(
-        $app->resetPasswordService,
-        $app->eventListener,
         $app->template,
         $app->session
     );
     $requestHandler->setLogger($app->logger);
     $requestHandler->setCaptcha($app->captcha);
-    $requestHandler->setEmailService($app->emailService);
     return $requestHandler->handle($request);
 }, 'forgot-password');
 
@@ -105,8 +99,6 @@ $router->map('*', '/forgot-password', function (ServerRequestInterface $request)
 $router->map('*', '/reset-password/{token}', function (ServerRequestInterface $request, array $args) use ($app) {
     $request = $request->withAttribute('token', $args['token'] ?? '');
     $requestHandler = new ResetPassword(
-        $app->resetPasswordService,
-        $app->eventListener,
         $app->template,
         $app->session
     );
@@ -132,9 +124,6 @@ $private->map('GET', '/hello', function (ServerRequestInterface $request) use ($
 });
 $private->map('*', '/change-password', function (ServerRequestInterface $request) use ($app) {
     $requestHandler = new ChangePassword(
-        $app->changePasswordService,
-        $app->eventListener,
-        $app->counters,
         $app->template,
         $app->session
     );

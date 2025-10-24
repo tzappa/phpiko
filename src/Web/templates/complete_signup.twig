@@ -7,8 +7,12 @@
     <h1 class="mt-4 mb-3">Complete Your Registration</h1>
 
     {% if errors.general is defined %}
-    <div class="alert alert-danger">
+    <div class="error-message">
         {{ errors.general }}
+    </div>
+    {% elseif errors.csrf is defined %}
+    <div class="error-message">
+        {{ errors.csrf }}
     </div>
     {% endif %}
 
@@ -23,6 +27,8 @@
             </p>
 
             <form method="post" action="">
+                <input type="hidden" name="csrf" value="{{ csrf }}">
+
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control {% if errors.username is defined %}is-invalid{% endif %}"

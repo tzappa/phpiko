@@ -8,17 +8,27 @@ declare(strict_types=1);
 
 namespace API;
 
-// Internal
-use App\Users\Password\PasswordStrength;
+use App\Users\Password\{
+    PasswordStrength,
+    ChangePasswordService,
+};
 use App\Users\Signup\{
     SignupService,
     EmailVerificationRepositoryPdo,
     EmailVerificationService,
 };
+use App\Users\ResetPassword\{
+    ResetPasswordService,
+    TokenRepositoryPdo,
+};
 use App\Users\UserRepositoryPdo;
 use App\Users\NullDispatcher;
 use API\RequestHandler\{
+    ChangePassword,
     CheckPasswordStrength,
+    CompleteSignup,
+    ForgotPassword,
+    ResetPassword,
     ServerStatus,
     Signup,
 };
@@ -53,6 +63,49 @@ $api1->map('POST', '/signup', function (ServerRequestInterface $request) use ($a
 
     // Optionally set email service if available in app context
     $handler->setEmailService($app->emailService ?? null);
+
+    return $handler->handle($request);
+});
+
+$api1->map('POST', '/complete-signup', function (ServerRequestInterface $request) use ($app) {
+    $verificationRepo = new EmailVerificationRepositoryPdo($app->database);
+    $userRepo = new UserRepositoryPdo($app->database);
+    $eventDispatcher = new NullDispatcher();
+
+    $signupService = new SignupService($verificationRepo, $userRepo, $eventDispatcher);
+    $handler = new CompleteSignup($signupService);
+
+    return $handler->handle($request);
+});
+
+$api1->map('POST', '/forgot-password', function (ServerRequestInterface $request) use ($app) {
+    $tokenRepo = new TokenRepositoryPdo($app->database);
+    $userRepo = new UserRepositoryPdo($app->database);
+    $eventDispatcher = $app->eventDispatcher ?? new NullDispatcher();
+
+    $resetPasswordService = new ResetPasswordService($tokenRepo, $userRepo, $eventDispatcher);
+    $handler = new ForgotPassword($resetPasswordService);
+
+    return $handler->handle($request);
+});
+
+$api1->map('POST', '/reset-password', function (ServerRequestInterface $request) use ($app) {
+    $tokenRepo = new TokenRepositoryPdo($app->database);
+    $userRepo = new UserRepositoryPdo($app->database);
+    $eventDispatcher = $app->eventDispatcher ?? new NullDispatcher();
+
+    $resetPasswordService = new ResetPasswordService($tokenRepo, $userRepo, $eventDispatcher);
+    $handler = new ResetPassword($resetPasswordService);
+
+    return $handler->handle($request);
+});
+
+$api1->map('POST', '/change-password', function (ServerRequestInterface $request) use ($app) {
+    $userRepo = new UserRepositoryPdo($app->database);
+    $eventDispatcher = $app->eventDispatcher ?? new NullDispatcher();
+
+    $changePasswordService = new ChangePasswordService($userRepo, $eventDispatcher);
+    $handler = new ChangePassword($changePasswordService);
 
     return $handler->handle($request);
 });
