@@ -70,6 +70,9 @@ class FileLoggerTest extends TestCase
 
         $this->assertFileExists($this->testLogFile);
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
         $this->assertStringContainsString('Test message', $content);
         $this->assertStringContainsString('[info]', $content);
     }
@@ -87,6 +90,9 @@ class FileLoggerTest extends TestCase
 
         $this->assertFileExists($this->testLogFile);
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
         $this->assertStringContainsString('Stringable message', $content);
     }
 
@@ -96,6 +102,10 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::INFO, 'User action', $context);
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
+
         $this->assertStringContainsString('User action', $content);
         $this->assertStringContainsString('{"user_id":123,"action":"login"}', $content);
     }
@@ -106,6 +116,10 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::INFO, 'User {user} has {count} items', $context);
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
+
         $this->assertStringContainsString('User John has 5 items', $content);
     }
 
@@ -116,6 +130,10 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::INFO, 'Date is {date}', $context);
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
+
         $this->assertStringContainsString('Date is 2023-01-01 12:00:00', $content);
     }
 
@@ -125,6 +143,10 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::INFO, 'Data: {data}', $context);
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
+
         $this->assertStringContainsString('Data: {"key":"value","number":42}', $content);
     }
 
@@ -134,6 +156,10 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::INFO, 'User {user} performed {action}', $context);
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
+
         $this->assertStringContainsString('User John performed login', $content);
     }
 
@@ -143,6 +169,10 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::INFO, 'User {user} has {unknown} items', $context);
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
+
         $this->assertStringContainsString('User John has {unknown} items', $content);
     }
 
@@ -156,6 +186,10 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::ERROR, 'Error message');
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
+
         $this->assertStringNotContainsString('Debug message', $content);
         $this->assertStringNotContainsString('Info message', $content);
         $this->assertStringContainsString('Warning message', $content);
@@ -180,6 +214,10 @@ class FileLoggerTest extends TestCase
         }
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
+
         foreach ($levels as $level) {
             $this->assertStringContainsString("Message for {$level}", $content);
         }
@@ -191,6 +229,10 @@ class FileLoggerTest extends TestCase
         $this->logger->log(7, 'Debug message');     // 7 = DEBUG
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
+
         $this->assertStringContainsString('Emergency message', $content);
         $this->assertStringContainsString('Debug message', $content);
     }
@@ -356,6 +398,9 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::ERROR, 'Test message', ['key' => 'value']);
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
         $this->assertStringContainsString('[ERROR]', $content);
         $this->assertStringContainsString('Test message', $content);
         $this->assertStringContainsString('{"key":"value"}', $content);
@@ -369,6 +414,10 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::INFO, 'User {user} logged in', $context);
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
+
         $this->assertStringContainsString('User {user} logged in', $content);
         $this->assertStringContainsString('{"user":"John"}', $content);
     }
@@ -381,6 +430,10 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::INFO, 'User {user} logged in', $context);
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
+
         $this->assertStringContainsString('User John logged in', $content);
         $this->assertStringContainsString('{"user":"John","action":"login"}', $content);
     }
@@ -396,6 +449,9 @@ class FileLoggerTest extends TestCase
         // File should still exist and be readable
         $this->assertFileExists($this->testLogFile);
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
         $this->assertStringContainsString('Test message', $content);
     }
 
@@ -404,6 +460,9 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::INFO, 'Message with empty context', []);
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
         $this->assertStringContainsString('Message with empty context', $content);
         $this->assertStringContainsString('', $content); // Empty context should result in empty string
     }
@@ -413,6 +472,9 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::INFO, 'Message with null context');
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
         $this->assertStringContainsString('Message with null context', $content);
     }
 
@@ -422,6 +484,9 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::INFO, $message);
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
         $this->assertStringContainsString($message, $content);
     }
 
@@ -431,6 +496,9 @@ class FileLoggerTest extends TestCase
         $this->logger->log(LogLevel::INFO, $message);
 
         $content = file_get_contents($this->testLogFile);
+        if ($content === false) {
+            $this->fail('Failed to read log file');
+        }
         $this->assertStringContainsString($message, $content);
     }
 }

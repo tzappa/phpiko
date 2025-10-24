@@ -16,15 +16,18 @@ use Stringable;
  */
 final class FileLogger extends AbstractLogger implements LoggerInterface
 {
-    protected static $levels = [
-        LogLevel::EMERGENCY, // 0
-        LogLevel::ALERT,     // 1
-        LogLevel::CRITICAL,  // 2
-        LogLevel::ERROR,     // 3
-        LogLevel::WARNING,   // 4
-        LogLevel::NOTICE,    // 5
-        LogLevel::INFO,      // 6
-        LogLevel::DEBUG      // 7
+    /**
+     * @var array<string>
+     */
+    protected static array $levels = [
+        LogLevel::EMERGENCY, // 'emergency'
+        LogLevel::ALERT,     // 'alert'
+        LogLevel::CRITICAL,  // 'critical'
+        LogLevel::ERROR,     // 'error'
+        LogLevel::WARNING,   // 'warning'
+        LogLevel::NOTICE,    // 'notice'
+        LogLevel::INFO,      // 'info'
+        LogLevel::DEBUG      // 'debug'
     ];
 
     /**
@@ -58,8 +61,10 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
 
     /**
      * Opened file handler.
+     *
+     * @var resource|false|null
      */
-    private $file;
+    private $file = null;
 
     /**
      * Interpolate placeholders in the message.
@@ -93,20 +98,20 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
      *    'removeInterpolatedContext' => true,
      * ];
      *
-     * @param array $config
+     * @param array<string, mixed> $config
      */
-    public function __construct(array $config = array())
+    public function __construct(array $config = [])
     {
-        if (isset($config['filename'])) {
+        if (isset($config['filename']) && is_string($config['filename'])) {
             $this->setFileName($config['filename']);
         }
-        if (isset($config['format'])) {
+        if (isset($config['format']) && is_string($config['format'])) {
             $this->setFormat($config['format']);
         }
-        if (isset($config['dateFormat'])) {
+        if (isset($config['dateFormat']) && is_string($config['dateFormat'])) {
             $this->setDateFormat($config['dateFormat']);
         }
-        if (isset($config['level'])) {
+        if (isset($config['level']) && is_string($config['level'])) {
             $this->setLevel($config['level']);
         }
         if (isset($config['interpolatePlaceholders'])) {
@@ -127,7 +132,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
     /**
      * Logs with an arbitrary level.
      *
-     * @param mixed $level
+     * @param string|int $level
      * @param string $message
      * @param mixed[] $context
      *
@@ -141,6 +146,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
             return ;
         }
 
+        /** @var array<string, mixed> $context */
         $formattedMessage = $this->formatMessage($level, $message, $context);
         $filename = $this->getFileName();
         if (!$filename) {
@@ -150,11 +156,12 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
 
         // if the file has never been opened
         if (is_null($this->file)) {
-            set_error_handler(function () use ($filename) {
+            set_error_handler(function (int $errno, string $errstr, string $errfile, int $errline): bool {
                 // mark as not available
                 $this->file = false;
                 // Log that we cannot open the file
-                error_log("The log file {$filename} cannot be opened!");
+                error_log("The log file cannot be opened!");
+                return true;
             }, E_WARNING);
             $this->file = fopen($filename, 'a');
             restore_error_handler();
@@ -180,7 +187,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
      *
      * @return string
      */
-    public function getFileName()
+    public function getFileName(): string
     {
         return $this->filename;
     }
@@ -191,7 +198,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
      *
      * @param string $filename
      */
-    public function setFileName($filename = '')
+    public function setFileName($filename = ''): void
     {
         if ($this->file) {
             fclose($this->file);
@@ -204,11 +211,11 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
     /**
      * Set Log Level Threshold.
      *
-     * @param mixed $level
+     * @param string|int $level
      *
      * @throws InvalidArgumentException
      */
-    public function setLevel($level)
+    public function setLevel($level): void
     {
         $this->logLevel = $this->levelName($level);
     }
@@ -218,7 +225,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
      *
      * @return string
      */
-    public function getLevel()
+    public function getLevel(): string
     {
         return $this->logLevel;
     }
@@ -228,7 +235,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
      *
      * @param string $format
      */
-    public function setFormat($format)
+    public function setFormat($format): void
     {
         if (!$format) {
             throw new InvalidArgumentException('Log format cannot be empty!');
@@ -242,7 +249,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
      *
      * @return string
      */
-    public function getFormat()
+    public function getFormat(): string
     {
         return $this->logFormat;
     }
@@ -254,7 +261,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
      *
      * @throws InvalidArgumentException On empty format
      */
-    public function setDateFormat($format)
+    public function setDateFormat(string $format): void
     {
         if (!$format) {
             throw new InvalidArgumentException('Date format cannot be empty');
@@ -268,7 +275,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
      *
      * @return string
      */
-    public function getDateFormat()
+    public function getDateFormat(): string
     {
         return $this->dateFormat;
     }
@@ -276,11 +283,11 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
     /**
      * Returns the PSR-3 logging level name.
      *
-     * @param mixed $level
+     * @param string|int $level
      *
-     * @return mixed
+     * @return string|false
      */
-    public static function getLevelName($level)
+    public static function getLevelName(string|int $level): string|false
     {
         if (is_integer($level) && array_key_exists($level, static::$levels)) {
             return static::$levels[$level];
@@ -330,7 +337,7 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
      *
      * @return boolean
      */
-    public static function checkThreshold($level, $threshold)
+    public static function checkThreshold(string $level, string $threshold): bool
     {
         return array_search($threshold, static::$levels) >= array_search($level, static::$levels);
     }
@@ -338,36 +345,53 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
     /**
      * Interpolates context values into the message placeholders.
      *
-     * @param string $message
-     * @param array $context
-     * @param array $unprocessedContext
+     * @param string|Stringable $message
+     * @param array<string, mixed> $context
+     * @param array<string, mixed> $unprocessedContext
      *
      * @return string
      */
-    public function interpolate(string $message, array $context, &$unprocessedContext = [])
+    public function interpolate(string|Stringable $message, array $context, array &$unprocessedContext = []): string
     {
+        $message = (string) $message;
         $unprocessedContext = $context;
         $re = '/{([a-zA-Z0-9_\.]+)}/';
-        $callback = function ($matches) use ($context, &$unprocessedContext) {
-            if (isset($context[$matches[1]]) === false) {
-                return $matches[0];
+        $callback = function (array $matches) use ($context, &$unprocessedContext): string {
+            $key = isset($matches[1]) && is_string($matches[1]) ? $matches[1] : '';
+            if (isset($context[$key]) === false) {
+                return isset($matches[0]) && is_string($matches[0]) ? $matches[0] : '';
             }
-            unset($unprocessedContext[$matches[1]]);
-            if ($context[$matches[1]] instanceof \DateTime) {
-                return $context[$matches[1]]->format($this->getDateFormat());
+            unset($unprocessedContext[$key]);
+            $value = $context[$key];
+            if ($value instanceof \DateTime) {
+                return $value->format($this->getDateFormat());
             }
-            if (is_array($context[$matches[1]])) {
-                return json_encode($context[$matches[1]]);
+            if (is_array($value)) {
+                $json = json_encode($value);
+                return $json ?: '';
             }
-            return $context[$matches[1]];
+            if (is_string($value)) {
+                return $value;
+            }
+            if (is_numeric($value)) {
+                return (string) $value;
+            }
+            if (is_bool($value)) {
+                return $value ? '1' : '0';
+            }
+            if (is_object($value) && method_exists($value, '__toString')) {
+                return (string) $value;
+            }
+            return '[' . gettype($value) . ']';
         };
-        return preg_replace_callback($re, $callback, $message);
+        $result = preg_replace_callback($re, $callback, $message);
+        return $result ?? $message;
     }
 
     /**
      * Returns the PSR-3 logging level name.
      */
-    private function levelName($level)
+    private function levelName(string|int $level): string
     {
         $level = $this->getLevelName($level);
         if (!$level) {
@@ -377,10 +401,13 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
         return $level;
     }
 
-    private function formatMessage($level, $message, array $context)
+    /**
+     * @param array<string, mixed> $context
+     */
+    private function formatMessage(string $level, string|Stringable $message, array $context): string
     {
         $unprocessedContext = [];
-        if ($this->interpolatePlaceholders && (count($context) > 0) && (strpos($message, '{') !== false)) {
+        if ($this->interpolatePlaceholders && (count($context) > 0) && (strpos((string) $message, '{') !== false)) {
             $message = $this->interpolate($message, $context, $unprocessedContext);
             if ($this->removeInterpolatedContext) {
                 $context = $unprocessedContext;
@@ -390,20 +417,20 @@ final class FileLogger extends AbstractLogger implements LoggerInterface
         $date = new DateTimeImmutable();
         $msg = $this->logFormat;
         $msg = str_replace(
-            array(
+            [
                 '{datetime}',
                 '{level}',
                 '{LEVEL}',
                 '{message}',
                 '{context}'
-            ),
-            array(
+            ],
+            [
                 $date->format($this->dateFormat),
                 $level,
                 strtoupper($level),
                 (string) $message,
-                ($context) ? json_encode($context) : '',
-            ),
+                ($context) ? (json_encode($context) ?: '') : '',
+            ],
             $msg
         );
 

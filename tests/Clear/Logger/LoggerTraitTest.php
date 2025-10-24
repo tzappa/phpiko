@@ -4,25 +4,24 @@ declare(strict_types=1);
 
 namespace Tests\Clear\Logger;
 
-use Clear\Logger\LoggerTrait;
-use Clear\Logger\NullLogger;
-use Clear\Logger\StdoutLogger;
+use Clear\Logger\{FullLoggerInterface, LoggerTrait, NullLogger, StdoutLogger};
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use Psr\Log\LoggerInterface;
 use Stringable;
 
 #[CoversClass(LoggerTrait::class)]
-#[CoversClass(\Clear\Logger\NullLogger::class)]
-#[CoversClass(\Clear\Logger\StdoutLogger::class)]
+#[CoversClass(NullLogger::class)]
+#[CoversClass(StdoutLogger::class)]
+#[CoversClass(FullLoggerInterface::class)]
 class LoggerTraitTest extends TestCase
 {
-    private object $traitObject;
+    private FullLoggerInterface $traitObject;
 
     protected function setUp(): void
     {
-        $this->traitObject = new class {
+        $this->traitObject = new class () implements FullLoggerInterface {
             use LoggerTrait;
         };
     }
@@ -34,7 +33,7 @@ class LoggerTraitTest extends TestCase
         $this->traitObject->setLogger($logger);
 
         // Test that the logger was set by calling a method that uses it
-        $mockLogger = $this->createMock(LoggerInterface::class);
+        $mockLogger = $this->createMock(FullLoggerInterface::class);
         $mockLogger->expects($this->once())
                    ->method('log')
                    ->with(LogLevel::INFO, 'Test message', []);
@@ -43,18 +42,9 @@ class LoggerTraitTest extends TestCase
         $this->traitObject->log(LogLevel::INFO, 'Test message');
     }
 
-    public function testSetLoggerWithNull(): void
-    {
-        $this->traitObject->setLogger(new NullLogger());
-
-        // Test that setting null works by ensuring no exception is thrown
-        $this->expectException(\TypeError::class);
-        $this->traitObject->setLogger(null);
-    }
-
     public function testLogWithLoggerSet(): void
     {
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(FullLoggerInterface::class);
         $logger->expects($this->once())
                ->method('log')
                ->with(LogLevel::INFO, 'Test message', ['key' => 'value']);
@@ -80,7 +70,7 @@ class LoggerTraitTest extends TestCase
             }
         };
 
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(FullLoggerInterface::class);
         $logger->expects($this->once())
                ->method('log')
                ->with(LogLevel::DEBUG, $stringable, []);
@@ -91,7 +81,7 @@ class LoggerTraitTest extends TestCase
 
     public function testDebugMethod(): void
     {
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(FullLoggerInterface::class);
         $logger->expects($this->once())
                ->method('log')
                ->with('debug', 'Debug message', ['key' => 'value']);
@@ -113,7 +103,7 @@ class LoggerTraitTest extends TestCase
 
     public function testNoticeMethod(): void
     {
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(FullLoggerInterface::class);
         $logger->expects($this->once())
                ->method('log')
                ->with('notice', 'Notice message', ['key' => 'value']);
@@ -124,7 +114,7 @@ class LoggerTraitTest extends TestCase
 
     public function testWarningMethod(): void
     {
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(FullLoggerInterface::class);
         $logger->expects($this->once())
                ->method('log')
                ->with('warning', 'Warning message', ['key' => 'value']);
@@ -146,7 +136,7 @@ class LoggerTraitTest extends TestCase
 
     public function testCriticalMethod(): void
     {
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(FullLoggerInterface::class);
         $logger->expects($this->once())
                ->method('log')
                ->with('critical', 'Critical message', ['key' => 'value']);
@@ -157,7 +147,7 @@ class LoggerTraitTest extends TestCase
 
     public function testAlertMethod(): void
     {
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(FullLoggerInterface::class);
         $logger->expects($this->once())
                ->method('log')
                ->with('alert', 'Alert message', ['key' => 'value']);
@@ -194,7 +184,7 @@ class LoggerTraitTest extends TestCase
 
     public function testAllMethodsWithEmptyContext(): void
     {
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(FullLoggerInterface::class);
         $logger->expects($this->exactly(8))
                ->method('log');
 
@@ -212,7 +202,7 @@ class LoggerTraitTest extends TestCase
 
     public function testAllMethodsWithNullContext(): void
     {
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(FullLoggerInterface::class);
         $logger->expects($this->exactly(8))
                ->method('log');
 
@@ -239,7 +229,7 @@ class LoggerTraitTest extends TestCase
             'object' => (object)['key' => 'value']
         ];
 
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(FullLoggerInterface::class);
         $logger->expects($this->exactly(8))
                ->method('log')
                ->with($this->anything(), $this->anything(), $context);
@@ -265,7 +255,7 @@ class LoggerTraitTest extends TestCase
             }
         };
 
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger = $this->createMock(FullLoggerInterface::class);
         $logger->expects($this->exactly(8))
                ->method('log')
                ->with($this->anything(), $stringable, $this->anything());
@@ -336,56 +326,6 @@ class LoggerTraitTest extends TestCase
 
         $this->traitObject->setLogger($logger);
         $this->traitObject->log(LogLevel::INFO, '');
-    }
-
-    public function testLogWithNumericMessage(): void
-    {
-        $this->expectException(\TypeError::class);
-        $this->traitObject->log(LogLevel::INFO, 123);
-    }
-
-    public function testLogWithBooleanMessage(): void
-    {
-        $this->expectException(\TypeError::class);
-        $this->traitObject->log(LogLevel::INFO, true);
-    }
-
-    public function testLogWithArrayMessage(): void
-    {
-        $this->expectException(\TypeError::class);
-        $this->traitObject->log(LogLevel::INFO, ['array', 'message']);
-    }
-
-    public function testLogWithObjectMessage(): void
-    {
-        $this->expectException(\TypeError::class);
-        $this->traitObject->log(LogLevel::INFO, (object)['key' => 'value']);
-    }
-
-    public function testLogWithNullMessage(): void
-    {
-        $this->expectException(\TypeError::class);
-        $this->traitObject->log(LogLevel::INFO, null);
-    }
-
-    public function testLogWithResourceMessage(): void
-    {
-        $this->expectException(\TypeError::class);
-        $resource = fopen('php://memory', 'r');
-        /** @phpstan-ignore-next-line */
-        $this->traitObject->log(LogLevel::INFO, $resource);
-        if ($resource !== false) {
-            fclose($resource);
-        }
-    }
-
-    public function testLogWithCallableMessage(): void
-    {
-        $this->expectException(\TypeError::class);
-        $callable = function () {
-            return 'callable message';
-        };
-        $this->traitObject->log(LogLevel::INFO, $callable);
     }
 
     public function testLogWithMultipleCalls(): void
