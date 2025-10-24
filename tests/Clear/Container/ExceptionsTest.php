@@ -7,7 +7,6 @@ namespace Tests\Clear\Container;
 use Clear\Container\ContainerException;
 use Clear\Container\NotFoundException;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -21,16 +20,16 @@ class ExceptionsTest extends TestCase
 {
     public function testContainerExceptionImplementsPsrContainerExceptionInterface(): void
     {
-        $this->assertTrue(new ContainerException() instanceof ContainerExceptionInterface);
+        $this->assertInstanceOf(ContainerExceptionInterface::class, new ContainerException());
     }
 
     public function testNotFoundExceptionImplementsPsrContainerNotFoundExceptionInterface(): void
     {
-        $this->assertTrue(new NotFoundException() instanceof NotFoundExceptionInterface);
+        $this->assertInstanceOf(NotFoundExceptionInterface::class, new NotFoundException());
     }
 
     public function testNotFoundExceptionExtendsContainerException(): void
     {
-        $this->assertTrue(new NotFoundException() instanceof ContainerException);
+        $this->assertInstanceOf(ContainerException::class, new NotFoundException());
     }
 }

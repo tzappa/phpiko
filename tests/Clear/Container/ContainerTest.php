@@ -331,6 +331,7 @@ class ContainerTest extends TestCase
         });
 
         $StdClass = $container->raw('closure');
+        $this->assertIsCallable($StdClass);
         $this->assertInstanceOf('StdClass', $StdClass());
 
         $this->assertEquals($StdClass(), $StdClass());
@@ -352,33 +353,33 @@ class ContainerTest extends TestCase
     {
         $container = new Container();
         $this->assertFalse($container->has('test'));
-        $this->assertFalse(isset($container->test));
-        $container->test = function () {
-            return array('foo', 'bar');
-        };
+        $this->assertFalse(isset($container['test']));
+        $container->set('test', function (): array {
+            return ['foo', 'bar'];
+        });
         $this->assertTrue($container->has('test'));
-        $this->assertTrue(isset($container->test));
         $this->assertTrue(isset($container['test']));
-        $this->assertEquals(array('foo', 'bar'), $container->test);
-        $this->assertEquals(array('foo', 'bar'), $container['test']);
-        $this->assertEquals(array('foo', 'bar'), $container->get('test'));
+        $this->assertTrue(isset($container['test']));
+        $this->assertEquals(['foo', 'bar'], $container['test']);
+        $this->assertEquals(['foo', 'bar'], $container['test']);
+        $this->assertEquals(['foo', 'bar'], $container->get('test'));
     }
 
     public function testPropertyUnset(): void
     {
         $container = new Container();
-        $container->test = function () {
+        $container->set('test', function () {
             return array('foo', 'bar');
-        };
-        unset($container->test);
+        });
+        unset($container['test']);
         $this->assertFalse($container->has('test'));
-        $this->assertFalse(isset($container->test));
+        $this->assertFalse(isset($container['test']));
     }
 
     public function testEmpty(): void
     {
         $container = new Container();
-        $container->test = 'test';
-        $this->assertFalse(empty($container->test));
+        $container->set('test', 'test');
+        $this->assertFalse(empty($container['test']));
     }
 }

@@ -9,4 +9,4 @@
 - psr-11 container interface
 - psr-15 request handler
 - psr-17 server request factory
-- php-pds/skeleton
+- pds/skeleton

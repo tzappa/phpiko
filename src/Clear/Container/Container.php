@@ -10,38 +10,52 @@ use Psr\Container\ContainerInterface;
 
 /**
  * Container that implements PSR-11 ContainerInterface
+ *
+ * @implements ArrayAccess<string, mixed>
  */
 final class Container implements ArrayAccess, ContainerInterface
 {
     /**
      * Table of Definitions
+     *
+     * @var array<string, mixed>
      */
-    protected $definitions = array();
+    protected array $definitions = [];
 
     /**
      * Table of returned objects
+     *
+     * @var array<string, mixed>
      */
-    protected $objects = array();
+    protected array $objects = [];
 
     /**
      * Table of generated objects
+     *
+     * @var array<string, bool>
      */
-    protected $calcs = array();
+    protected array $calcs = [];
 
     /**
      * Table of all closures that should always return fresh objects.
+     *
+     * @var SplObjectStorage<object, mixed>
      */
-    protected $factories;
+    protected SplObjectStorage $factories;
 
     /**
      * Table of closures that get() method should always return raw results
+     *
+     * @var SplObjectStorage<object, mixed>
      */
-    protected $raws;
+    protected SplObjectStorage $raws;
 
     /**
      * Table of locked keys that cannot be overridden and deleted
+     *
+     * @var array<string, bool>
      */
-    protected $locks = array();
+    protected array $locks = [];
 
     /**
      * Constructor
@@ -55,22 +69,22 @@ final class Container implements ArrayAccess, ContainerInterface
     /**
      * Property overloading magic method.
      *
-     * @param string $name  Parameter name
-     * @param mixed  $value The value to be assigned for the parameter
+     * @param string $name  Key Name
+     * @param mixed  $value The value to be assigned for the key
      */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
-        return $this->set($name, $value);
+        $this->set($name, $value);
     }
 
     /**
      * Property overloading magic method.
      *
-     * @param string $name Parameter name
+     * @param string $name Key Name
      *
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         return $this->get($name);
     }
@@ -78,11 +92,11 @@ final class Container implements ArrayAccess, ContainerInterface
     /**
      * Property overloading magic method.
      *
-     * @param string $name Parameter name
+     * @param string $name Key Name
      *
      * @return boolean
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return $this->has($name);
     }
@@ -90,9 +104,9 @@ final class Container implements ArrayAccess, ContainerInterface
     /**
      * Property overloading magic method.
      *
-     * @param string $name Parameter name
+     * @param string $name Key Name
      */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         $this->delete($name);
     }
@@ -101,13 +115,15 @@ final class Container implements ArrayAccess, ContainerInterface
      * Sets a parameter defined in an unique key ID.
      * You can set objects as a closures.
      *
-     * @param string $id    Key Name
-     * @param mixed  $value Value or closure function
+     * @param string $id   Identifier of the entry to set
+     * @param mixed $value Value or closure function
+     *
+     * @throws ContainerException If the key is locked
      */
-    public function set($id, $value)
+    public function set(string $id, mixed $value): void
     {
         if (!empty($this->locks[$id])) {
-            throw new ContainerException("Cannot override locked key {$id}");
+            throw new ContainerException("Cannot override locked key '{$id}'");
         }
         $this->definitions[$id] = $value;
         $this->calcs[$id] = false;
@@ -120,30 +136,30 @@ final class Container implements ArrayAccess, ContainerInterface
      *
      * @param string $id Identifier of the entry to look for.
      *
-     * @throws \Clear\Container\NotFoundException  No entry was found for this identifier.
-     * @throws \Clear\Container\ContainerException Error while retrieving the entry.
+     * @throws NotFoundException  No entry was found for this identifier.
      *
      * @return mixed Entry.
      */
-    public function get($id)
+    public function get(string $id): mixed
     {
         if (!$this->has($id)) {
             throw new NotFoundException("No entry was found for the identifier '{$id}'");
         }
 
         if (is_object($this->definitions[$id]) && method_exists($this->definitions[$id], '__invoke')) {
-            if (isset($this->raws[$this->definitions[$id]])) {
-                return $this->definitions[$id];
+            $definition = $this->definitions[$id];
+            if (isset($this->raws[$definition])) {
+                return $definition;
             }
 
-            if (isset($this->factories[$this->definitions[$id]])) {
-                return $this->definitions[$id]();
+            if (isset($this->factories[$definition])) {
+                return $definition();
             }
 
             if ($this->calcs[$id]) {
                 return $this->objects[$id];
             }
-            $obj = $this->definitions[$id]();
+            $obj = $definition();
             $this->objects[$id] = $obj;
             $this->calcs[$id] = true;
 
@@ -163,7 +179,7 @@ final class Container implements ArrayAccess, ContainerInterface
      *
      * @return mixed
      */
-    public function factory($idOrClosure)
+    public function factory(mixed $idOrClosure): mixed
     {
         if (is_object($idOrClosure) && method_exists($idOrClosure, '__invoke')) {
             $this->factories->attach($idOrClosure);
@@ -171,30 +187,30 @@ final class Container implements ArrayAccess, ContainerInterface
             return $idOrClosure;
         }
 
-        if (!isset($this->definitions[$idOrClosure])) {
+        if (!is_string($idOrClosure) || !isset($this->definitions[$idOrClosure])) {
             return null;
         }
 
+        $definition = $this->definitions[$idOrClosure];
         if (
-            is_object($this->definitions[$idOrClosure])
-            && method_exists($this->definitions[$idOrClosure], '__invoke')
+            is_object($definition)
+            && method_exists($definition, '__invoke')
         ) {
-            return $this->definitions[$idOrClosure]($this);
+            return $definition($this);
         }
 
-        return $this->definitions[$idOrClosure];
+        return $definition;
     }
 
     /**
      * Returns a raw definition. Used when a closure is set and
      * you want to get the closure not the result of it.
      *
-     * @param mixed $idOrClosure
+     * @param mixed $idOrClosure Identifier or closure
      *
-     * @return mixed Returns whatever it is stored in the key. NULL if
-     * nothing is stored.
+     * @return mixed
      */
-    public function raw($idOrClosure)
+    public function raw(mixed $idOrClosure): mixed
     {
         if (is_object($idOrClosure) and method_exists($idOrClosure, '__invoke')) {
             $this->raws->attach($idOrClosure);
@@ -202,7 +218,7 @@ final class Container implements ArrayAccess, ContainerInterface
             return $idOrClosure;
         }
 
-        if (!isset($this->definitions[$idOrClosure])) {
+        if (!is_string($idOrClosure) || !isset($this->definitions[$idOrClosure])) {
             return null;
         }
 
@@ -225,15 +241,16 @@ final class Container implements ArrayAccess, ContainerInterface
     /**
      * Unsets a parameter or an object.
      *
-     * @param string $id
+     * @param string $id Key name
      */
-    public function delete($id)
+    public function delete(string $id): void
     {
         if (!empty($this->locks[$id])) {
-            throw new ContainerException("Cannot delete locked key {$id}");
+            throw new ContainerException("Cannot delete locked key '{$id}'");
         }
         if (is_object($this->definitions[$id])) {
-            unset($this->factories[$this->definitions[$id]]);
+            $definition = $this->definitions[$id];
+            unset($this->factories[$definition]);
         }
         unset($this->definitions[$id], $this->objects[$id], $this->calcs[$id]);
     }
@@ -242,11 +259,11 @@ final class Container implements ArrayAccess, ContainerInterface
      * Lock the key, so it cannot be overwritten.
      * Note that there is no unlock method and will never be!
      *
-     * @param string $id
+     * @param string $id Key name
      *
-     * @return mixed
+     * @return void
      */
-    public function lock($id)
+    public function lock(string $id): void
     {
         $this->locks[$id] = true;
     }
@@ -258,6 +275,9 @@ final class Container implements ArrayAccess, ContainerInterface
      */
     public function offsetSet(mixed $id, mixed $value): void
     {
+        if (!is_string($id)) {
+            throw new ContainerException('Key must be a string');
+        }
         $this->set($id, $value);
     }
 
@@ -268,6 +288,10 @@ final class Container implements ArrayAccess, ContainerInterface
      */
     public function offsetGet(mixed $id): mixed
     {
+        // @phpstan-ignore-next-line
+        if (!is_string($id)) {
+            throw new ContainerException('Key must be a string');
+        }
         return $this->get($id);
     }
 
@@ -278,6 +302,10 @@ final class Container implements ArrayAccess, ContainerInterface
      */
     public function offsetExists(mixed $id): bool
     {
+        // @phpstan-ignore-next-line
+        if (!is_string($id)) {
+            throw new ContainerException('Key must be a string');
+        }
         return $this->has($id);
     }
 
@@ -288,6 +316,10 @@ final class Container implements ArrayAccess, ContainerInterface
      */
     public function offsetUnset(mixed $id): void
     {
+        // @phpstan-ignore-next-line
+        if (!is_string($id)) {
+            throw new ContainerException('Key must be a string');
+        }
         $this->delete($id);
     }
 }
