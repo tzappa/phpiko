@@ -1,12 +1,12 @@
 <?php
 
 /**
- * App bootstrap file
+ * Web bootstrap file
  */
 
 declare(strict_types=1);
 
-namespace App;
+namespace Web;
 
 use App\Users\{
     User,
@@ -76,9 +76,10 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 // Application Container used as DI
 $app = new Container();
-$app->name = __NAMESPACE__;
+
+$app->set('name', __NAMESPACE__);
 // Environment "production", "development", etc.
-$app->env = getenv('APPLICATION_ENV') ?: 'production';
+$app->set('env', getenv('APPLICATION_ENV') ?: 'production');
 // Configurations
 $app->config = ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . strtolower($app->name) . '.php');
 
