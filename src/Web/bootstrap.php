@@ -41,7 +41,8 @@ use Clear\Config\Factory as ConfigFactory;
 use Clear\Container\Container;
 use Clear\Counters\DatabaseProvider as CounterRepositoryPdo;
 use Clear\Counters\Service as CounterService;
-use Clear\Database\PdoExt as PDO;
+use Clear\Database\PdoExt;
+use Clear\Database\PdoInterface;
 use Clear\Database\Event\{
     AfterExec,
     AfterExecute,
@@ -69,6 +70,7 @@ use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Psr\Log\LoggerInterface;
 // PHP
 use Exception;
+use PDO;
 use PDOException;
 
 // Load Composer's autoloader
@@ -105,18 +107,18 @@ $app->eventDispatcher = function () use ($app) {
 };
 
 // Database connection
-$app->database = function () use ($app) {
-    if ('sqlite' == $app->config->get('database.driver')) {
-        $dsn = 'sqlite:' . $app->config->get('database.dbname');
+$app->database = function () use ($app, $config): PDOInterface {
+    if ('sqlite' == $config->get('database.driver')) {
+        $dsn = 'sqlite:' . $config->get('database.dbname');
     } else {
-        $dsn = $app->config->get('database.driver') . ':' . 'dbname=' . $app->config->get('database.dbname');
-        if ($host = $app->config->get('database.host')) {
+        $dsn = $config->get('database.driver') . ':' . 'dbname=' . $config->get('database.dbname');
+        if ($host = $config->get('database.host')) {
             $dsn .= ';host=' . $host;
         }
-        if ($port = $app->config->get('database.port')) {
+        if ($port = $config->get('database.port')) {
             $dsn .= ';port=' . $port;
         }
-        if ($charset = $app->config->get('database.charset')) {
+        if ($charset = $config->get('database.charset')) {
             $dsn .= ';charset=' . $charset;
         }
     }
@@ -124,47 +126,15 @@ $app->database = function () use ($app) {
         PDO::ATTR_TIMEOUT => 1, // in seconds - for pgsql driver 2s. is the minimum value.
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     ];
-    // Profiler
-    if ($app->config->get('database.log_enabled', false)) {
-        $options['dispatcher'] = $app->eventDispatcher;
-        $profiler = new LogProfiler($app->logger);
-        $profiler->setLogLevel($app->config->get('database.log_level', 'debug'));
-        // Registering events for profiling
-        $app->eventListener->addListener(BeforeExec::class, function (BeforeExec $event) use ($profiler) {
-            $profiler->start('Exec');
-        });
-        $app->eventListener->addListener(AfterExec::class, function (AfterExec $event) use ($profiler) {
-            $profiler->finish('', ['sql' => $event->getQueryString(), 'rows' => $event->getResult()]);
-        });
-        $app->eventListener->addListener(BeforeQuery::class, function (BeforeQuery $event) use ($profiler) {
-            $profiler->start('Query');
-        });
-        $app->eventListener->addListener(AfterQuery::class, function (AfterQuery $event) use ($profiler) {
-            $profiler->finish('', ['sql' => $event->getQueryString()]);
-        });
-        $app->eventListener->addListener(BeforeExecute::class, function (BeforeExecute $event) use ($profiler) {
-            $profiler->start('Execute');
-        });
-        $app->eventListener->addListener(AfterExecute::class, function (AfterExecute $event) use ($profiler) {
-            $profiler->finish('', ['sql' => $event->getQueryString(), 'params' => $event->getParams(), 'result' => $event->getResult()]);
-        });
-    }
     try {
-        $db = new PDO($dsn, $app->config->get('database.user', ''), $app->config->get('database.pass', ''), $options);
+        $db = new PdoExt($dsn, $config->get('database.user', ''), $config->get('database.pass', ''), $options);
     } catch (PDOException $e) {
         $app->logger->log('emergency', 'PDOException: ' . $e->getMessage());
-        exit;
-    }
-    if ($dsn === 'sqlite::memory:') {
-        $sql = file_get_contents(__DIR__ . '/Users/schema-sqlite.sql');
-        $sql .= file_get_contents(__DIR__ . '/Users/Auth/schema-auth-tokens-sqlite.sql');
-        $sql .= file_get_contents(dirname(__DIR__) . '/Clear/Captcha/schema.sql');
-        $sql .= file_get_contents(dirname(__DIR__) . '/Clear/Counters/schema-sqlite.sql');
-        $db->exec($sql);
+        throw new \RuntimeException('Failed to connect to the database', 0, $e);
     }
 
     // Sets the Database connection to be on read/write or only in read mode.
-    $db->setState($app->config->get('database.state', 'rw'));
+    $db->setState($config->get('database.state', 'rw'));
 
     return $db;
 };

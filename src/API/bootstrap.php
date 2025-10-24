@@ -11,7 +11,8 @@ namespace API;
 // Clear Project
 use Clear\Config\Factory as ConfigFactory;
 use Clear\Container\Container;
-use Clear\Database\PdoExt as PDO;
+use Clear\Database\PdoExt;
+use Clear\Database\PdoInterface;
 use Clear\Logger\FileLogger;
 use Clear\Http\Exception\NotFoundException;
 // Vendor
@@ -21,6 +22,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 // PSR
 use Psr\Log\LoggerInterface;
 // PHP
+use PDO;
 use PDOException;
 
 // Load Composer's autoloader
@@ -53,18 +55,18 @@ $app->logger = function () use ($config): LoggerInterface {
 };
 
 // Database connection
-$app->database = function () use ($app) {
-    if ('sqlite' == $app->config->get('database.driver')) {
-        $dsn = 'sqlite:' . $app->config->get('database.dbname');
+$app->database = function () use ($app, $config): PDOInterface {
+    if ('sqlite' == $config->get('database.driver')) {
+        $dsn = 'sqlite:' . $config->get('database.dbname');
     } else {
-        $dsn = $app->config->get('database.driver') . ':' . 'dbname=' . $app->config->get('database.dbname');
-        if ($host = $app->config->get('database.host')) {
+        $dsn = $config->get('database.driver') . ':' . 'dbname=' . $config->get('database.dbname');
+        if ($host = $config->get('database.host')) {
             $dsn .= ';host=' . $host;
         }
-        if ($port = $app->config->get('database.port')) {
+        if ($port = $config->get('database.port')) {
             $dsn .= ';port=' . $port;
         }
-        if ($charset = $app->config->get('database.charset')) {
+        if ($charset = $config->get('database.charset')) {
             $dsn .= ';charset=' . $charset;
         }
     }
@@ -73,14 +75,14 @@ $app->database = function () use ($app) {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     ];
     try {
-        $db = new PDO($dsn, $app->config->get('database.user', ''), $app->config->get('database.pass', ''), $options);
+        $db = new PdoExt($dsn, $config->get('database.user', ''), $config->get('database.pass', ''), $options);
     } catch (PDOException $e) {
         $app->logger->log('emergency', 'PDOException: ' . $e->getMessage());
-        return null;
+        throw new \RuntimeException('Failed to connect to the database', 0, $e);
     }
 
     // Sets the Database connection to be on read/write or only in read mode.
-    $db->setState($app->config->get('database.state', 'rw'));
+    $db->setState($config->get('database.state', 'rw'));
 
     return $db;
 };
