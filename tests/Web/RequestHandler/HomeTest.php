@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\App\RequestHandler;
+namespace Tests\Web\RequestHandler;
 
-use App\RequestHandler\Home;
+use Web\RequestHandler\Home;
 use Clear\Template\TemplateInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use PHPUnit\Framework\Attributes\CoversClass;

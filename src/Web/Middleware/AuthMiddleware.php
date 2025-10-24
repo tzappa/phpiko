@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Middleware;
+namespace Web\Middleware;
 
 use App\Users\Auth\CheckLoginService;
 use Clear\Session\SessionInterface;

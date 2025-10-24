@@ -6,14 +6,14 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace Web;
 
 // Internal
-use App\Middleware\{
+use Web\Middleware\{
     AuthMiddleware,
     AclMiddleware,
 };
-use App\RequestHandler\{
+use Web\RequestHandler\{
     Avatar,
     Home,
     Hello,
@@ -24,7 +24,6 @@ use App\RequestHandler\{
     ResetPassword,
     Signup,
     SignupEmailSent,
-    VerifyEmail,
     CompleteSignup,
 };
 use Clear\Http\LazyMiddleware;

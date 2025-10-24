@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\RequestHandler;
+namespace Web\RequestHandler;
 
 use Clear\Session\SessionInterface;
 

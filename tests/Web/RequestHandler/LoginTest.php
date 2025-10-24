@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\App\RequestHandler;
+namespace Tests\Web\RequestHandler;
 
-use App\RequestHandler\Login;
+use Web\RequestHandler\Login;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -39,7 +39,7 @@ class LoginTest extends TestCase
         $traitNames = $reflection->getTraitNames();
 
         $this->assertContains('Clear\Logger\LoggerTrait', $traitNames, 'Login class should use LoggerTrait');
-        $this->assertContains('App\RequestHandler\CsrfTrait', $traitNames, 'Login class should use CsrfTrait');
+        $this->assertContains('Web\RequestHandler\CsrfTrait', $traitNames, 'Login class should use CsrfTrait');
     }
 
     public function testHasRequiredConstructorParameters(): void

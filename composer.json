@@ -29,7 +29,8 @@
             "Admin\\": "src/Admin/",
             "API\\": "src/API/",
             "App\\": "src/App/",
-            "Clear\\": "src/Clear/"
+            "Clear\\": "src/Clear/",
+            "Web\\": "src/Web/"
         }
     },
     "autoload-dev": {

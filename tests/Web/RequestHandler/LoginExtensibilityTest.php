@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\App\RequestHandler;
+namespace Tests\Web\RequestHandler;
 
-use App\RequestHandler\Login;
+use Web\RequestHandler\Login;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

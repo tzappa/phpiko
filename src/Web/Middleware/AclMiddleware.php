@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Middleware;
+namespace Web\Middleware;
 
 use Clear\ACL\Service as ACL;
 use Clear\Http\Exception\ForbiddenException;

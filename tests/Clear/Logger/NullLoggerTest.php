@@ -44,7 +44,7 @@ class NullLoggerTest extends TestCase
         // NullLogger should not output anything or throw exceptions
         $this->logger->log(LogLevel::DEBUG, $stringable);
 
-       $this->expectNotToPerformAssertions();
+        $this->expectNotToPerformAssertions();
     }
 
     public function testLogWithContext(): void

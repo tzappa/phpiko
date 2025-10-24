@@ -15,5 +15,5 @@ if (str_starts_with($uri, '/adm')) {
 } elseif (str_starts_with($uri, '/api')) {
     require __DIR__ . '/API/bootstrap.php';
 } else {
-    require __DIR__ . '/App/bootstrap.php';
+    require __DIR__ . '/Web/bootstrap.php';
 }
