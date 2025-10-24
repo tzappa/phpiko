@@ -81,18 +81,21 @@ $app->set('name', __NAMESPACE__);
 $app->set('env', getenv('APPLICATION_ENV') ?: 'production');
 // Configurations (@phpstan-ignore-next-line)
 $configFile = dirname(__DIR__, 2) . '/config/' . $app->get('env') . '/' . strtolower($app->get('name')) . '.php';
-$app->set('config', ConfigFactory::create($configFile));
+// Configurations (@phpstan-ignore-next-line)
+$configFile = dirname(__DIR__, 2) . '/config/' . $app->get('env') . '/' . strtolower($app->get('name')) . '.php';
+$config = ConfigFactory::create($configFile);
+$app->set('config', $config);
 
-// Timezone settings (@phpstan-ignore-next-line)
-$timezone = $app->get('config')->get('timezone');
-if (is_string($timezone) ) {
+// Timezone settings
+$timezone = $config->get('timezone');
+if (is_string($timezone)) {
     date_default_timezone_set($timezone);
 }
 
 // Logger
-$app->logger = function () use ($app): LoggerInterface {
-    $config = $app->config->get('logger');
-    return new FileLogger($config);
+$app->logger = function () use ($config): LoggerInterface {
+    $loggerConfig = $config->get('logger') ?? [];
+    return new FileLogger($loggerConfig);
 };
 
 // Events

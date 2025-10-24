@@ -35,20 +35,21 @@ $app->env = function () {
     return getenv('APPLICATION_ENV') ?: 'production';
 };
 
-// Load configurations
-$app->config = ConfigFactory::create(dirname(__DIR__, 2) . '/config/' . $app->env . '/' . strtolower($app->name) . '.php');
+// Configurations (@phpstan-ignore-next-line)
+$configFile = dirname(__DIR__, 2) . '/config/' . $app->get('env') . '/' . strtolower($app->get('name')) . '.php';
+$config = ConfigFactory::create($configFile);
+$app->set('config', $config);
 
 // Timezone settings
-if ($app->config->has('timezone')) {
-    date_default_timezone_set($app->config->get('timezone'));
+$timezone = $config->get('timezone');
+if (is_string($timezone)) {
+    date_default_timezone_set($timezone);
 }
 
 // Logger
-$app->logger = function () use ($app): LoggerInterface {
-    $config = $app->config->get('logger');
-    $logger = new FileLogger($config);
-
-    return $logger;
+$app->logger = function () use ($config): LoggerInterface {
+    $loggerConfig = $config->get('logger') ?? [];
+    return new FileLogger($loggerConfig);
 };
 
 // Database connection
