@@ -14,7 +14,6 @@ use Stringable;
 #[CoversClass(LoggerTrait::class)]
 #[CoversClass(NullLogger::class)]
 #[CoversClass(StdoutLogger::class)]
-#[CoversClass(FullLoggerInterface::class)]
 class LoggerTraitTest extends TestCase
 {
     private FullLoggerInterface $traitObject;
